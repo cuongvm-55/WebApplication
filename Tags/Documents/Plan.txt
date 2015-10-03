@@ -1,0 +1,25 @@
+- Sửa dropdown list thành tab menu
+- Nhân viên pha chế: Hiển thị list tất cả các món được order theo bàn đang chờ, có một dấu tick để hoàn thành món và dấu tick để hoàn thành xong order. 
+Order hoàn thành tự động xóa khỏi list
+- Thêm tab quản lý: thống kê, quản lý món, cấu hình
+------
+- Thêm phần ghi chú cho thêm mới order
+- Thêm thông tin thời gian đợi trong trang nhân viên pha chế
+
+ToDO:
+- Tạo Vaadin project                   2 ngày
+- Thiết kế và tạo cơ sở dữ liệu        3 ngày + 2 ngày
+- Implement mongodb facade             5 ngày
+- Implement table view                 10 ngày
+- Implement order view                 10 ngày
+- Implement ordered foods and drinks   7 ngày
+- Implement management tab:
+   + Statistic                         5 ngày
+   + Foods and drinks management       7 ngày
+   + Configuration                     5 ngày
+- Deployment                           10 ngày
+
+Tổng                                   66 ngày +- 5 ngày
+Giá                                    6 triệu (ngày 26/9 đã nhận 2 triệu)
+
+Demo 15/12
