@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="Base">
+    <wb-module deploy-name="CoffeeShop">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="context-root" value="Base"/>
-        <property name="java-output-path" value="/Base/build/classes"/>
+        <property name="java-output-path" value="/CoffeeShop/build/classes"/>
+        <property name="context-root" value="CoffeeShop"/>
     </wb-module>
 </project-modules>
