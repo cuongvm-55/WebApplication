@@ -7,6 +7,10 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
 public class MongoDBConnection {
+	// Database URLs
+	public static final String MONGOCONNECTION_MONGOLAB = "mongodb://root:root@ds041992.mongolab.com:41992/coffeeshop";
+	public static final String MONGOCONNECTION_LOCALHOST = "mongodb://localhost:27017/coffeeshop";
+	    
 	private static MongoDBConnection instance;
     private static MongoClient mongoClient;
     private static DB database;
@@ -16,12 +20,12 @@ public class MongoDBConnection {
      */
     public void connectMongoDB() {
         try{
-            MongoClientURI uri = new MongoClientURI(DatabaseTags.MONGOCONNECTION_MONGOLAB);
+            MongoClientURI uri = new MongoClientURI(MONGOCONNECTION_MONGOLAB);
             mongoClient = new MongoClient(uri);
             database = mongoClient.getDB(uri.getDatabase());
             if( database == null ){
                 System.out.println("Cannot connect to MongoDB!....");
-                System.out.println("URL: " + DatabaseTags.MONGOCONNECTION_MONGOLAB);              
+                System.out.println("URL: " + MONGOCONNECTION_MONGOLAB);              
             }
         }catch( UnknownHostException e ){
             // TODO Auto-generated catch block

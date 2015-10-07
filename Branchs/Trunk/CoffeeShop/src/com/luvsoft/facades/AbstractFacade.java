@@ -6,14 +6,15 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import com.luvsoft.entities.AbstractEntity;
-import com.luvsoft.utils.DatabaseTags;
 import com.luvsoft.utils.MongoDBConnection;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-public abstract class AbstractFacade {	
+public abstract class AbstractFacade {
+	public static final String TAG_ID = "_id";
+	
     // ///////////////////////////////////////////////////////////
     // ! Function is used to get all document in a collection
     // !
@@ -71,7 +72,7 @@ public abstract class AbstractFacade {
         }
         
         try{
-	        BasicDBObject query = new BasicDBObject(DatabaseTags.TAG_ID, new ObjectId(id));
+	        BasicDBObject query = new BasicDBObject(TAG_ID, new ObjectId(id));
 	        DBObject dbobj = collection.findOne(query);
 	        if( dbobj != null )
 	        {
