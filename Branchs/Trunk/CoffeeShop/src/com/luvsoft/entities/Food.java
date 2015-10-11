@@ -1,10 +1,10 @@
 package com.luvsoft.entities;
 
-import com.luvsoft.entities.Table.State;
+import java.util.HashMap;
+
 import com.mongodb.DBObject;
 
 public class Food extends AbstractEntity{
-    public static final String DB_TABLE_NAME_FOOD = "Food";
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_CODE = "Code";
     public static final String DB_FIELD_NAME_NAME = "Name";
@@ -21,6 +21,22 @@ public class Food extends AbstractEntity{
         code = "";
         name = "";
         price = 0;
+    }
+
+    public Food(DBObject object)
+    {
+        super(object);
+    }
+
+    @Override
+    public HashMap<String, String> toHashMap()
+    {
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put(DB_FIELD_NAME_ID, id);
+        map.put(DB_FIELD_NAME_CODE, code);
+        map.put(DB_FIELD_NAME_NAME, name);
+        map.put(DB_FIELD_NAME_PRICE, "" + price);
+        return map;
     }
 
     @Override

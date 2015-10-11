@@ -1,9 +1,10 @@
 package com.luvsoft.entities;
 
+import java.util.HashMap;
+
 import com.mongodb.DBObject;
 
 public class OrderDetail extends AbstractEntity{
-    public static final String DB_TABLE_NAME_ORDER_DETAIL = "OrderDetails";
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_FOOD_ID = "FoodId";
     public static final String DB_FIELD_NAME_QUANTITY = "Quantity";
@@ -22,6 +23,23 @@ public class OrderDetail extends AbstractEntity{
         state = Types.State.UNDEFINED;
     }
     
+    public OrderDetail(DBObject object)
+    {
+        super(object);
+    }
+
+    @Override
+    public HashMap<String, String> toHashMap()
+    {
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put(DB_FIELD_NAME_ID, id);
+        map.put(DB_FIELD_NAME_FOOD_ID, foodId);
+        map.put(DB_FIELD_NAME_QUANTITY, quantity + "");
+        map.put(DB_FIELD_NAME_STATE, state.toString());
+        return map;
+    }
+
+    @Override
     public void setObject(DBObject dbObject)
     {
         id = dbObject.get(DB_FIELD_NAME_ID).toString();

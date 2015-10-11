@@ -3,13 +3,13 @@ package com.luvsoft.entities;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 
 public class Order extends AbstractEntity{
-    public static final String DB_TABLE_NAME_ORDER = "Order";
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_ORDER_DETAIL_LIST = "OrderDetailList";
     public static final String DB_FIELD_NAME_STATUS = "Status"; // Wait, Paid, NotPaid
@@ -38,6 +38,26 @@ public class Order extends AbstractEntity{
         note = "";
     }
 
+    public Order(DBObject object)
+    {
+        super(object);
+    }
+
+    @Override
+    public HashMap<String, String> toHashMap()
+    {
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put(DB_FIELD_TABLE_ID, id);
+        map.put(DB_FIELD_NAME_NOTE, note);
+        map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, orderDetailIdList.toString());
+        map.put(DB_FIELD_NAME_PAID_MONEY, "" + paidMoney);
+        map.put(DB_FIELD_NAME_PAID_TIME, paidTime.toString());
+        map.put(DB_FIELD_NAME_WAITING_TIME, waitingTime.toString());
+        map.put(DB_FIELD_NAME_STATUS, status.toString());
+        return map;
+    }
+
+    @Override
     public void setObject(DBObject dbobject)
     {
         id = dbobject.get(DB_FIELD_NAME_ID).toString();

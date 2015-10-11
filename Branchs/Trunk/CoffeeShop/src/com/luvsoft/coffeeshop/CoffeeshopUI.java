@@ -1,7 +1,11 @@
 package com.luvsoft.coffeeshop;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.annotation.WebServlet;
 
+import com.luvsoft.entities.Floor;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
@@ -34,6 +38,16 @@ public class CoffeeshopUI extends UI {
 			}
 		});
 		layout.addComponent(button);
+		Floor floor = new Floor();
+		floor.setId("1");
+		floor.setCode("code1");
+		floor.setName("1st Floor");
+		List<String> tableIdList = new ArrayList<String>();
+		tableIdList.add("Table 1");
+		tableIdList.add("Table 2");
+		tableIdList.add("Table 3");
+		floor.setTableIdList(tableIdList);
+		System.out.println(floor.toHashMap().toString());
 	}
 
 }

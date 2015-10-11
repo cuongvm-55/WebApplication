@@ -1,13 +1,13 @@
 package com.luvsoft.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 
 public class Category extends AbstractEntity{
-    public static final String DB_TABLE_NAME_CATEGORY = "Category";
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_CODE = "Code";
     public static final String DB_FIELD_NAME_NAME = "Name";
@@ -24,6 +24,22 @@ public class Category extends AbstractEntity{
         code = "";
         name = "";
         foodIdList = new ArrayList<String>();
+    }
+
+    public Category(DBObject object)
+    {
+        super(object);
+    }
+
+    @Override
+    public HashMap<String, String> toHashMap()
+    {
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put(DB_FIELD_NAME_ID, id);
+        map.put(DB_FIELD_NAME_CODE, code);
+        map.put(DB_FIELD_NAME_NAME, name);
+        map.put(DB_FIELD_NAME_FODD_LIST, foodIdList.toString());
+        return map;
     }
 
     @Override
