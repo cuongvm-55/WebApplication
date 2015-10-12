@@ -92,10 +92,16 @@ public abstract class AbstractFacade {
         return true;
     }
 
+    public <T extends AbstractEntity> boolean save(BasicDBObject object) {
+        DBCollection collection = getDBCollection();
+        collection.insert(object);
+        return true;
+    }
+    
     /*
      * Replace a current query Entity by a new Entity
      */
-    public <T extends AbstractEntity> boolean update(T queryEntity, T newEntity)
+    public <T extends AbstractEntity> boolean replace(T queryEntity, T newEntity)
             throws MongoException {
         try {
             DBCollection collection = getDBCollection();
@@ -114,7 +120,7 @@ public abstract class AbstractFacade {
             String value) {
         try {
             BasicDBObject newDocument = new BasicDBObject();
-            newDocument.put(fieldName, value);
+            newDocument.append("$set", new BasicDBObject(fieldName, value));
 
             BasicDBObject searchQuery = new BasicDBObject().append(TAG_ID,
                     new ObjectId(objectId));

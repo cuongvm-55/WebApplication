@@ -1,17 +1,17 @@
 package com.luvsoft.entities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 
 public class Category extends AbstractEntity{
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_CODE = "Code";
     public static final String DB_FIELD_NAME_NAME = "Name";
-    public static final String DB_FIELD_NAME_FODD_LIST = "FoodList";
+    public static final String DB_FIELD_NAME_FOOD_LIST = "FoodList";
 
     private String id;
     private String code;
@@ -38,7 +38,18 @@ public class Category extends AbstractEntity{
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_CODE, code);
         map.put(DB_FIELD_NAME_NAME, name);
-        map.put(DB_FIELD_NAME_FODD_LIST, foodIdList.toString());
+        //map.put(DB_FIELD_NAME_FOOD_LIST, foodIdList.toString());
+        // Map list
+        String str="";
+        for(int i=0;i<foodIdList.size()-1;i++)
+        {
+            str += foodIdList.get(i) + ",";
+        }
+        if( foodIdList.size() > 0 ){
+            str += foodIdList.get(foodIdList.size()-1);
+        }
+        map.put(DB_FIELD_NAME_FOOD_LIST, str);
+
         return map;
     }
 
@@ -47,12 +58,15 @@ public class Category extends AbstractEntity{
         id = dbobject.get(DB_FIELD_NAME_ID).toString();
         code = dbobject.get(DB_FIELD_NAME_CODE).toString();
         name = dbobject.get(DB_FIELD_NAME_NAME).toString();
-        BasicDBList  list = (BasicDBList)dbobject.get(DB_FIELD_NAME_FODD_LIST);
-        foodIdList = new ArrayList<String>(); 
-        for(Object item : list)
-        {
-            foodIdList.add((String)item);
-        }
+        String str = dbobject.get(DB_FIELD_NAME_FOOD_LIST).toString();
+        String[] list = str.split(",");
+        foodIdList = Arrays.asList(list);
+//        BasicDBList  list = (BasicDBList)dbobject.get(DB_FIELD_NAME_FOOD_LIST);
+//        foodIdList = new ArrayList<String>(); 
+//        for(Object item : list)
+//        {
+//            foodIdList.add((String)item);
+//        }
     }
 
     public String getId() {

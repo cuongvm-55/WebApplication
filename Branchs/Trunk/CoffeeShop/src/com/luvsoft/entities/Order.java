@@ -3,10 +3,10 @@ package com.luvsoft.entities;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 
 public class Order extends AbstractEntity{
@@ -49,11 +49,21 @@ public class Order extends AbstractEntity{
         HashMap<String, String> map = new HashMap<String, String>();
         map.put(DB_FIELD_TABLE_ID, id);
         map.put(DB_FIELD_NAME_NOTE, note);
-        map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, orderDetailIdList.toString());
         map.put(DB_FIELD_NAME_PAID_MONEY, "" + paidMoney);
         map.put(DB_FIELD_NAME_PAID_TIME, paidTime.toString());
         map.put(DB_FIELD_NAME_WAITING_TIME, waitingTime.toString());
         map.put(DB_FIELD_NAME_STATUS, status.toString());
+        // map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, orderDetailIdList.toString());
+        // Map list
+        String str="";
+        for(int i=0;i<orderDetailIdList.size()-1;i++)
+        {
+            str += orderDetailIdList.get(i) + ",";
+        }
+        if( orderDetailIdList.size() > 0 ){
+            str += orderDetailIdList.get(orderDetailIdList.size()-1);
+        }
+        map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, str);
         return map;
     }
 
@@ -61,14 +71,15 @@ public class Order extends AbstractEntity{
     public void setObject(DBObject dbobject)
     {
         id = dbobject.get(DB_FIELD_NAME_ID).toString();
-        
-        BasicDBList orderDetailList = (BasicDBList)dbobject.get(DB_FIELD_NAME_ORDER_DETAIL_LIST);
-        orderDetailIdList = new ArrayList<String>(); 
-        for(Object item : orderDetailList)
-        {
-            orderDetailIdList.add((String)item);
-        }
-        
+        String str = dbobject.get(DB_FIELD_NAME_ORDER_DETAIL_LIST).toString();
+        String[] list = str.split(",");
+        orderDetailIdList = Arrays.asList(list);
+//        BasicDBList orderDetailList = (BasicDBList)dbobject.get(DB_FIELD_NAME_ORDER_DETAIL_LIST);
+//        orderDetailIdList = new ArrayList<String>(); 
+//        for(Object item : orderDetailList)
+//        {
+//            orderDetailIdList.add((String)item);
+//        }
         switch( dbobject.get(DB_FIELD_NAME_STATUS).toString() )
         {
         case "WAITING":

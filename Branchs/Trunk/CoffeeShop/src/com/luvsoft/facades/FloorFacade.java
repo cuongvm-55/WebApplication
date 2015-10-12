@@ -16,7 +16,4 @@ public class FloorFacade extends AbstractFacade{
         return floor;
     }
 
-    public boolean addFloor(Floor floor){
-        return true;
-    }
 }

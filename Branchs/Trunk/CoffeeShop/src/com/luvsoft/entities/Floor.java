@@ -1,10 +1,10 @@
 package com.luvsoft.entities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 
 public class Floor extends AbstractEntity{
@@ -36,12 +36,15 @@ public class Floor extends AbstractEntity{
         id = dbobject.get(DB_FIELD_NAME_ID).toString();
         code = dbobject.get(DB_FIELD_NAME_CODE).toString();
         name = dbobject.get(DB_FIELD_NAME_NAME).toString();
-        BasicDBList  list = (BasicDBList)dbobject.get(DB_FIELD_NAME_TABLE_LIST);
-        tableIdList = new ArrayList<String>();
-        for(Object item : list)
-        {
-            tableIdList.add((String)item);
-        }
+        String str = dbobject.get(DB_FIELD_NAME_TABLE_LIST).toString();
+        String[] list = str.split(",");
+        tableIdList = Arrays.asList(list);
+//        BasicDBList  list = (BasicDBList)dbobject.get(DB_FIELD_NAME_TABLE_LIST);
+//        tableIdList = new ArrayList<String>();
+//        for(Object item : list)
+//        {
+//            tableIdList.add((String)item);
+//        }
     }
 
     @Override
@@ -51,7 +54,17 @@ public class Floor extends AbstractEntity{
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_CODE, code);
         map.put(DB_FIELD_NAME_NAME, name);
-        map.put(DB_FIELD_NAME_TABLE_LIST, tableIdList.toString());
+        //map.put(DB_FIELD_NAME_TABLE_LIST, tableIdList.toString());
+        // Map list
+        String str="";
+        for(int i=0;i<tableIdList.size()-1;i++)
+        {
+            str += tableIdList.get(i) + ",";
+        }
+        if( tableIdList.size() > 0 ){
+            str += tableIdList.get(tableIdList.size()-1);
+        }
+        map.put(DB_FIELD_NAME_TABLE_LIST, str);
         return map;
     }
     
