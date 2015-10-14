@@ -32,5 +32,51 @@
 @mixin coffeeshop {
   @include valo;
 
-  // Insert your own theme rules here
+  //========================================
+  // UNILITY CSS RULES
+  //========================================
+  .BACKGROUND_BLUE {
+     background-color:#3bb697;
+  }
+
+  .TEXT_WHITE {
+     color: #ffffff;
+  }
+
+  .TEXT_BLUE {
+     color:#3bb697;
+  }
+
+  .TEXT_RED {
+     color:#e62020;
+  }
+
+  .FONT_TAHOMA {
+     font-family: Tahoma, Verdana, Segoe, sans-serif;
+  }
+
+   .TEXT_CENTER {
+     text-align:center;
+  }
+
+  //========================================
+  // CLASS CSS
+  //========================================
+
+  .v-popupview-popup-leftMenuStyle {
+     top:0px;
+     width:40%;
+     height:100%;
+  }
+
+  .customizationButton {
+     background-color:#3bb697;
+     background-image:none;
+     border:1px solid #ffffff;
+     color:#ffffff;
+  }
+
+  .elementContainerStyle {
+     margin-top: 20px;
+  }
 }
