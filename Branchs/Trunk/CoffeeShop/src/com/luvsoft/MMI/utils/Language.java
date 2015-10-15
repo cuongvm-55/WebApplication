@@ -1,5 +1,13 @@
 package com.luvsoft.MMI.utils;
 
+/**
+ * @author datnq.55
+ * 
+ * This class is used to set up language for application
+ * 
+ * Tip: Language lang = new Language();
+ *      lang.setLanguage(yourLanguage);
+ */
 public class Language {
     public enum LANGUAGE {
         ENGLISH, VIETNAMESE, JAPANESE

@@ -9,6 +9,11 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+/**
+ * @author datnq.55
+ * This class is used to create a coffee table element
+ *
+ */
 public class CoffeeTableElement extends VerticalLayout implements ClickListener {
     
     private Image btnTableState;
@@ -23,7 +28,15 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     public CoffeeTableElement(TABLE_STATE tableState, int waitingTime,
             int tableNumber) {
         super();
-        
+        initCoffeeTableElement(tableState, waitingTime, tableNumber);
+    }
+
+    /*
+     * This function is used to initialize a coffee table element
+     * @param: Table state, wating time and table number
+     */
+    private void initCoffeeTableElement(TABLE_STATE tableState, int waitingTime,
+            int tableNumber) {
         this.setStyleName("card");
         this.setSizeFull();
         
@@ -49,14 +62,22 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         // Add click listener
         this.btnTableState.addClickListener(this);
     }
-    
+
+    /*
+     * This function is used to set waiting time for a table
+     * @param waiting time
+     */
     public void setWaitingTime(int waitingTime) {
         if (0 < waitingTime) {
             this.lblWaitingTime.setValue(Language.WAITING + " " + waitingTime
                     + " " + Language.MINUTE);
         }
     }
-    
+
+    /*
+     * This function is used to change button state
+     * @param state of table
+     */
     public void setButtonResource(TABLE_STATE tableState) {
         switch (tableState) {
             case STATE_FULL: {
