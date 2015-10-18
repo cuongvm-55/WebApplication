@@ -33,25 +33,24 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
 
     /*
      * This function is used to initialize a coffee table element
-     * @param: Table state, wating time and table number
+     * @param: Table state, waiting time and table number
      */
     private void initCoffeeTableElement(TABLE_STATE tableState, int waitingTime,
             int tableNumber) {
         this.setStyleName("card");
         this.setSizeFull();
-        
+
         this.btnTableState = new Image();
         this.btnTableState.setWidth("50%");
         this.btnTableState.setHeight("50%");
         this.setButtonResource(tableState);
         
         this.lblWaitingTime = new Label();
-        this.lblWaitingTime.setStyleName("small bold TEXT_RED");
         this.lblWaitingTime.setSizeUndefined();
         this.setWaitingTime(waitingTime);
         
         this.lblTableNumber = new Label(Language.TABLE + " " + tableNumber);
-        this.lblTableNumber.setStyleName("bold TEXT_BLUE");
+        this.lblTableNumber.setStyleName("huge bold TEXT_BLUE");
         this.lblTableNumber.setSizeUndefined();
         
         this.addComponents(btnTableState, lblWaitingTime, lblTableNumber);
@@ -69,8 +68,12 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
      */
     public void setWaitingTime(int waitingTime) {
         if (0 < waitingTime) {
+            this.lblWaitingTime.setStyleName("huge bold TEXT_RED");
             this.lblWaitingTime.setValue(Language.WAITING + " " + waitingTime
                     + " " + Language.MINUTE);
+        } else {
+            this.lblWaitingTime.setStyleName("huge bold TEXT_WHITE");
+            this.lblWaitingTime.setValue("NO TIME");
         }
     }
 

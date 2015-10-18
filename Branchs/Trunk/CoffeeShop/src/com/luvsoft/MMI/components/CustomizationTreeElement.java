@@ -43,7 +43,7 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.btnExpandElement.setHeight("100%");
 
         this.lblFloorName = new Label(title);
-        this.lblFloorName.setStyleName("large bold FONT_TAHOMA TEXT_CENTER");
+        this.lblFloorName.setStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_CENTER");
         this.lblFloorName.setWidth("100%");
 
         this.lblAdditionalLabel = new Label();

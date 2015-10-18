@@ -16,8 +16,8 @@ import com.vaadin.ui.UI;
 public class CoffeeshopUI extends UI {
 
     public static final String MAIN_VIEW = "main";
-    public static final String WAITER_VIEW = "waiter";
-    public static final String BARTENDER_VIEW = "bartender";
+    public static final String TABLE_LIST_VIEW = "tablelist";
+    public static final String ORDER_LIST_VIEW = "orderlist";
     public static final String MANAGEMENT_VIEW = "management";
 
     public static Navigator navigator;
@@ -37,7 +37,7 @@ public class CoffeeshopUI extends UI {
         navigator = new Navigator(this, this);
 
         // Create and register the view
-        navigator.addView("", new WaiterView());
-        navigator.addView(CoffeeshopUI.MAIN_VIEW, new WaiterView());
+        navigator.addView("", new TableListView());
+        navigator.addView(CoffeeshopUI.MAIN_VIEW, new TableListView());
     }
 }

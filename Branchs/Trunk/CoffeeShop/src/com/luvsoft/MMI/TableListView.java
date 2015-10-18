@@ -19,12 +19,13 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupView;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 /*
  * We consider that WaiterView is the main view
  */
-public class WaiterView extends VerticalLayout implements View {
+public class TableListView extends VerticalLayout implements View {
 
     private VerticalLayout mainLayout;
     private HorizontalLayout horzTitleContainer;
@@ -33,12 +34,13 @@ public class WaiterView extends VerticalLayout implements View {
     private Label lblStaffName;
     private Button btnEditName;
 
-    private PopupView leftMenuPopup;
+    private PopupView popLeftMenu;
+    private PopupView popEditName;
     private Button btnWaiterView;
     private Button btnBartenderView;
     private Button btnManagementView;
     
-    public WaiterView() {
+    public TableListView() {
         super();
         initView();
     }
@@ -81,11 +83,11 @@ public class WaiterView extends VerticalLayout implements View {
         mainLayout.addComponent(panelContentContainer);
 
         createLeftMenuPopup();
+        createEditNamePopup();
 
         // Add all layouts to the container
-        this.addComponents(horzTitleContainer, mainLayout);
-        this.addComponent(leftMenuPopup);
-        this.setExpandRatio(horzTitleContainer, 1.0f);
+        this.addComponents(horzTitleContainer, mainLayout, popLeftMenu, popEditName);
+        this.setExpandRatio(horzTitleContainer, 1.2f);
         this.setExpandRatio(mainLayout, 10.0f);
 
         // Add event listener
@@ -100,35 +102,34 @@ public class WaiterView extends VerticalLayout implements View {
         // Title container
         horzTitleContainer = new HorizontalLayout();
         horzTitleContainer.setResponsive(true);
-        horzTitleContainer.setWidth("100%");
-        horzTitleContainer.setHeight("50px");
+        horzTitleContainer.setSizeFull();
 
         btnMenu = new Button();
         btnMenu.setIcon(FontAwesome.ALIGN_JUSTIFY);
         btnMenu.setStyleName("icon-only huge");
         btnMenu.setResponsive(true);
-        btnMenu.setWidth("40%");
-        btnMenu.setHeight("100%");
+        btnMenu.setSizeFull();
 
         lblStaffName = new Label(title);
         lblStaffName.setResponsive(true);
-        lblStaffName.setStyleName("bold TEXT_BLUE huge FONT_TAHOMA TEXT_CENTER");
-        lblStaffName.setSizeFull();
+        lblStaffName.setStyleName("bold TEXT_BLUE FONT_OVER_OVERSIZE FONT_TAHOMA TEXT_CENTER");
+        lblStaffName.setSizeUndefined();
 
-        btnEditName = new Button(FontAwesome.PENCIL);
-        btnMenu.setStyleName("icon-only huge");
-        btnMenu.setResponsive(true);
-        btnMenu.setWidth("40%");
-        btnMenu.setHeight("100%");
+        btnEditName = new Button();
+        btnEditName.setIcon(FontAwesome.PENCIL);
+        btnEditName.setStyleName("icon-only huge");
+        btnEditName.setResponsive(true);
+        btnEditName.setSizeFull();
 
         horzTitleContainer.addComponent(btnMenu);
-        horzTitleContainer.setExpandRatio(btnMenu, 1.0f);
+        horzTitleContainer.setExpandRatio(btnMenu, 0.7f);
 
         horzTitleContainer.addComponent(lblStaffName);
-        horzTitleContainer.setExpandRatio(lblStaffName, 2.0f);
+        horzTitleContainer.setExpandRatio(lblStaffName, 2.6f);
+        horzTitleContainer.setComponentAlignment(lblStaffName, Alignment.MIDDLE_CENTER);
 
         horzTitleContainer.addComponent(btnEditName);
-        horzTitleContainer.setExpandRatio(btnEditName, 1.0f);
+        horzTitleContainer.setExpandRatio(btnEditName, 0.7f);
         horzTitleContainer.setComponentAlignment(btnEditName, Alignment.MIDDLE_RIGHT);
         
         this.addComponents(horzTitleContainer);
@@ -140,28 +141,25 @@ public class WaiterView extends VerticalLayout implements View {
     private void createLeftMenuPopup() {
         VerticalLayout vtcPopupContent = new VerticalLayout();
         btnWaiterView = new Button(Language.WAITER);
-        btnWaiterView.setStyleName("customizationButton");
-        btnWaiterView.setWidth("100%");
-        
+        btnWaiterView.setStyleName("customizationButton FULL_SIZE FONT_OVERSIZE");
+
         btnBartenderView = new Button(Language.BARTENDER);
-        btnBartenderView.setStyleName("customizationButton");
-        btnBartenderView.setWidth("100%");
+        btnBartenderView.setStyleName("customizationButton FULL_SIZE FONT_OVERSIZE");
         
         btnManagementView = new Button(Language.MANAGEMENT);
-        btnManagementView.setStyleName("customizationButton");
-        btnManagementView.setWidth("100%");
+        btnManagementView.setStyleName("customizationButton FULL_SIZE FONT_OVERSIZE");
 
         vtcPopupContent.addComponents(btnWaiterView, btnBartenderView, btnManagementView);
 
-        leftMenuPopup = new PopupView(null, vtcPopupContent);
-        leftMenuPopup.setStyleName("leftMenuStyle");
-        leftMenuPopup.setPopupVisible(false);
-        leftMenuPopup.setHideOnMouseOut(false);
+        popLeftMenu = new PopupView(null, vtcPopupContent);
+        popLeftMenu.setStyleName("leftMenuStyle");
+        popLeftMenu.setPopupVisible(false);
+        popLeftMenu.setHideOnMouseOut(false);
 
-        leftMenuPopup.addPopupVisibilityListener(new PopupVisibilityListener() {
+        popLeftMenu.addPopupVisibilityListener(new PopupVisibilityListener() {
             @Override
             public void popupVisibilityChange(PopupVisibilityEvent event) {
-                if(leftMenuPopup.isPopupVisible()) {
+                if(popLeftMenu.isPopupVisible()) {
                     panelContentContainer.setEnabled(false);
                 } else {
                     panelContentContainer.setEnabled(true);
@@ -180,22 +178,22 @@ public class WaiterView extends VerticalLayout implements View {
         if(event.getParameters() == null || event.getParameters().isEmpty()) {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(panelContentContainer);
-            leftMenuPopup.setPopupVisible(false);
+            popLeftMenu.setPopupVisible(false);
 
-        } else if(event.getParameters().equals(CoffeeshopUI.WAITER_VIEW)) {
+        } else if(event.getParameters().equals(CoffeeshopUI.TABLE_LIST_VIEW)) {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(panelContentContainer);
-            leftMenuPopup.setPopupVisible(false);
+            popLeftMenu.setPopupVisible(false);
 
-        } else if(event.getParameters().equals(CoffeeshopUI.BARTENDER_VIEW)) {
+        } else if(event.getParameters().equals(CoffeeshopUI.ORDER_LIST_VIEW)) {
             mainLayout.removeAllComponents();
-            mainLayout.addComponent(new BartenderView());
-            leftMenuPopup.setPopupVisible(false);
+            mainLayout.addComponent(new OrderListView());
+            popLeftMenu.setPopupVisible(false);
 
         } else if(event.getParameters().equals(CoffeeshopUI.MANAGEMENT_VIEW)) {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(new ManagementView());
-            leftMenuPopup.setPopupVisible(false);
+            popLeftMenu.setPopupVisible(false);
         }
     }
 
@@ -208,16 +206,70 @@ public class WaiterView extends VerticalLayout implements View {
             @Override
             public void buttonClick(ClickEvent event) {
                 // Show left menu popup
-                if(leftMenuPopup.isPopupVisible()) {
-                    leftMenuPopup.setPopupVisible(false);
+                if(popLeftMenu.isPopupVisible()) {
+                    popLeftMenu.setPopupVisible(false);
                 } else {
-                    leftMenuPopup.setPopupVisible(true);
+                    popLeftMenu.setPopupVisible(true);
                 }
             }
         });
 
-        btnWaiterView.addClickListener(new MenuButtonListener(CoffeeshopUI.WAITER_VIEW));
-        btnBartenderView.addClickListener(new MenuButtonListener(CoffeeshopUI.BARTENDER_VIEW));
+        btnEditName.addClickListener(new ClickListener() {
+            
+            @Override
+            public void buttonClick(ClickEvent event) {
+                // Show edit name popup
+                if(popEditName.isPopupVisible()) {
+                    popEditName.setPopupVisible(false);
+                } else {
+                    popEditName.setPopupVisible(true);
+                }
+            }
+        });
+
+        btnWaiterView.addClickListener(new MenuButtonListener(CoffeeshopUI.TABLE_LIST_VIEW));
+        btnBartenderView.addClickListener(new MenuButtonListener(CoffeeshopUI.ORDER_LIST_VIEW));
         btnManagementView.addClickListener(new MenuButtonListener(CoffeeshopUI.MANAGEMENT_VIEW));
+    }
+
+    private void createEditNamePopup() {
+        VerticalLayout popupContent = new VerticalLayout();
+        popupContent.setHeightUndefined();
+
+        TextField txtName = new TextField();
+        txtName.setValue(lblStaffName.getValue());
+        txtName.setWidth("100%");
+        txtName.setStyleName("huge");
+
+        Button btnConfirm = new Button("Xác Nhận");
+        btnConfirm.setStyleName("huge customizationButton");
+
+        popupContent.addComponents(txtName, btnConfirm);
+        popupContent.setComponentAlignment(btnConfirm, Alignment.MIDDLE_CENTER);
+
+        popEditName = new PopupView(null, popupContent);
+        popEditName.setStyleName("popupStyle");
+        popEditName.setPopupVisible(false);
+        popEditName.setHideOnMouseOut(false);
+
+        popEditName.addPopupVisibilityListener(new PopupVisibilityListener() {
+            @Override
+            public void popupVisibilityChange(PopupVisibilityEvent event) {
+                if(popEditName.isPopupVisible()) {
+                    panelContentContainer.setEnabled(false);
+                } else {
+                    panelContentContainer.setEnabled(true);
+                }
+                
+            }
+        });
+
+        btnConfirm.addClickListener(new ClickListener() {
+            
+            @Override
+            public void buttonClick(ClickEvent event) {
+                lblStaffName.setValue(txtName.getValue());
+            }
+        });
     }
 }

@@ -3,6 +3,12 @@ package com.luvsoft.MMI;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+/**
+ * 
+ * @author datnq.55
+ *
+ * This class is used to implement Management View
+ */
 public class ManagementView extends VerticalLayout{
     public ManagementView() {
         // TODO Add your components at here
