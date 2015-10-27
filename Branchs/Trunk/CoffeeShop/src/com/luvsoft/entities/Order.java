@@ -18,7 +18,8 @@ public class Order extends AbstractEntity{
     public static final String DB_FIELD_NAME_PAID_TIME = "PaidTime";
     public static final String DB_FIELD_TABLE_ID = "TableId";
     public static final String DB_FIELD_NAME_NOTE = "Note";
-    
+    public static final String DB_FIELD_NAME_STAFF_NAME = "StaffName";
+
     private String id;
     private List<String> orderDetailIdList; // list of order detail object id
     private Types.State status;
@@ -27,7 +28,8 @@ public class Order extends AbstractEntity{
     private LocalDateTime paidTime;
     private String tableId;
     private String note;
-    
+    private String staffName;
+
     public Order()
     {
         id = "";
@@ -36,6 +38,7 @@ public class Order extends AbstractEntity{
         paidMoney = 0;
         tableId = "";
         note = "";
+        staffName = "";
     }
 
     public Order(DBObject object)
@@ -53,6 +56,7 @@ public class Order extends AbstractEntity{
         map.put(DB_FIELD_NAME_PAID_TIME, paidTime.toString());
         map.put(DB_FIELD_NAME_WAITING_TIME, waitingTime.toString());
         map.put(DB_FIELD_NAME_STATUS, status.toString());
+        map.put(DB_FIELD_NAME_STAFF_NAME, staffName);
         // map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, orderDetailIdList.toString());
         // Map list
         String str="";
@@ -101,6 +105,7 @@ public class Order extends AbstractEntity{
         paidTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_PAID_TIME).toString(), formatter);
         tableId = dbobject.get(DB_FIELD_TABLE_ID).toString();
         note = dbobject.get(DB_FIELD_NAME_NOTE).toString();
+        staffName = dbobject.get(DB_FIELD_NAME_STAFF_NAME).toString();
     }
 
     public String getId() {
@@ -167,11 +172,20 @@ public class Order extends AbstractEntity{
         this.note = note;
     }
 
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
+    }
+
     @Override
     public String toString() {
         return "Order [id=" + id + ", orderDetailIdList=" + orderDetailIdList
                 + ", status=" + status + ", paidMoney=" + paidMoney
                 + ", waitingTime=" + waitingTime + ", paidTime=" + paidTime
-                + ", tableId=" + tableId + ", note=" + note + "]";
+                + ", tableId=" + tableId + ", note=" + note + ", staffName="
+                + staffName + "]";
     }
 }

@@ -4,6 +4,7 @@ import com.luvsoft.MMI.CoffeeshopUI;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
+@SuppressWarnings("serial")
 public class MenuButtonListener implements ClickListener{
 
     private String menuItem;
@@ -15,5 +16,4 @@ public class MenuButtonListener implements ClickListener{
     public void buttonClick(ClickEvent event) {
         CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + menuItem);
     }
-    
 }

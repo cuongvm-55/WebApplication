@@ -24,6 +24,20 @@ public class Language {
                 WAITER = "Waiter";
                 BARTENDER = "Bartender";
                 MANAGEMENT = "Management";
+                
+                SEQUENCE = "No";
+                FOOD_NAME = "Name";
+                STATUS = "Status";
+                QUANTITY = "Quantity";
+                PRICE = "Price";
+                ADD_FOOD = "Add Food";
+                CONFIRM_PAID = "Confirm Paid";
+                CONFIRM_ORDER = "Confirm Order";
+                TOTAL_AMOUNT = "Total: ";
+                PAID_AMOUNT = "Paid:  ";
+                CURRENCY_SYMBOL = "$";
+                NOTE = "Note";
+                ALL_DONE = "All Done";
             }
                 break;
             case VIETNAMESE:
@@ -35,6 +49,20 @@ public class Language {
                 WAITER = "Nhân Viên Phục Vụ";
                 BARTENDER = "Nhân Viên Pha Chế";
                 MANAGEMENT = "Quản Lý";
+                
+                SEQUENCE = "STT";
+                FOOD_NAME = "Tên";
+                STATUS = "Trạng Thái";
+                QUANTITY = "S.Lượng";
+                PRICE = "Đơn Giá";
+                ADD_FOOD = "Thêm Món";
+                CONFIRM_PAID = "Xác Nhận T.Toán";
+                CONFIRM_ORDER = "Xác Nhận H.Đơn";
+                TOTAL_AMOUNT = "Tổng: ";
+                PAID_AMOUNT = "Thực thu: ";
+                CURRENCY_SYMBOL = "vnđ";
+                NOTE = "Ghi chú";
+                ALL_DONE = "Xong Hết";
             }
                 break;
             case JAPANESE:
@@ -51,4 +79,21 @@ public class Language {
     public static String WAITER;
     public static String BARTENDER;
     public static String MANAGEMENT;
+
+    // OrderInfoView texts
+    public static String SEQUENCE;
+    public static String FOOD_NAME;
+    public static String STATUS;
+    public static String QUANTITY;
+    public static String PRICE;
+    public static String ADD_FOOD;
+    public static String CONFIRM_PAID;
+    public static String CONFIRM_ORDER;
+    public static String TOTAL_AMOUNT;
+    public static String PAID_AMOUNT;
+    public static String NOTE;
+    // Currency
+    public static String CURRENCY_SYMBOL;
+
+    public static String ALL_DONE;
 }

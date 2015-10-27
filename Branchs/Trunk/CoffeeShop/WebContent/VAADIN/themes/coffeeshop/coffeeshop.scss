@@ -97,4 +97,39 @@
   .elementContainerStyle {
      margin-top: 20px;
   }
+    .v-table-cell-wrapper {
+        white-space: normal;
+    }
+
+    .v-table-resizer {
+        display: none;
+    }
+    
+    .text-align-left{
+        text-align: left;
+    }
+    
+    .table-name-orderList {
+        font-size: 30px;
+        background-color:#ffffff;
+        background-image:none;
+        color:#3bb697;
+        margin-top: 1px;
+    }
+    
+    .top-line{
+        margin-top: 1px;
+        margin-bottom: 1px;
+        height: 1px;
+        background-color:#3bb697;
+    }
+    .bottom-line{
+        margin-top: 0px;
+        margin-bottom: 3px;
+        height: 1px;
+        background-color:#3bb697;
+    }
+    .scrollable {
+        overflow: auto;
+    }
 }

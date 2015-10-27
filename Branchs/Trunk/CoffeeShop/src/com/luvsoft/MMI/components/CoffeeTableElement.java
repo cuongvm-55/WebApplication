@@ -1,5 +1,6 @@
 package com.luvsoft.MMI.components;
 
+import com.luvsoft.MMI.CoffeeshopUI;
 import com.luvsoft.MMI.utils.Language;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
@@ -14,6 +15,7 @@ import com.vaadin.ui.VerticalLayout;
  * This class is used to create a coffee table element
  *
  */
+@SuppressWarnings("serial")
 public class CoffeeTableElement extends VerticalLayout implements ClickListener {
     
     private Image btnTableState;
@@ -103,10 +105,14 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         }
     }
     
+    /*
+     * Navigate to OrderInfoView
+     */
     @Override
     public void click(ClickEvent event) {
         if (event.getComponent() == btnTableState) {
-            System.out.println("Image was clicked");
+            // System.out.println("Image was clicked");
+            CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + CoffeeshopUI.ORDER_INFO_VIEW);
         }
     }
 

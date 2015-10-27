@@ -1,35 +1,51 @@
 package com.luvsoft.MMI;
 
-import com.luvsoft.MMI.components.CoffeeTableElement;
-import com.luvsoft.MMI.components.CustomizationTreeElement;
-import com.luvsoft.MMI.components.CoffeeTableElement.TABLE_STATE;
+import java.util.List;
+
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.MenuButtonListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.PopupView.PopupVisibilityEvent;
-import com.vaadin.ui.PopupView.PopupVisibilityListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupView;
+import com.vaadin.ui.PopupView.PopupVisibilityEvent;
+import com.vaadin.ui.PopupView.PopupVisibilityListener;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
-/*
- * We consider that WaiterView is the main view
- */
-public class TableListView extends VerticalLayout implements View {
+@SuppressWarnings("serial")
+public class MainView extends VerticalLayout implements View {
+    private List<String> orderList;
+    private Table currentTable;
+    public List<String> getOrderList() {
+        return orderList;
+    }
 
+    public void setOrderList(List<String> orderList) {
+        this.orderList = orderList;
+    }
+
+    public Table getCurrentTable() {
+        return currentTable;
+    }
+
+    public void setCurrentTable(Table currentTable) {
+        this.currentTable = currentTable;
+    }
+    
+    /*
+     * UIs
+     */
     private VerticalLayout mainLayout;
     private HorizontalLayout horzTitleContainer;
-    private Panel panelContentContainer;
     private Button btnMenu;
     private Label lblStaffName;
     private Button btnEditName;
@@ -40,7 +56,8 @@ public class TableListView extends VerticalLayout implements View {
     private Button btnBartenderView;
     private Button btnManagementView;
     
-    public TableListView() {
+    private PopupView orderInfoPopup;
+    public MainView() {
         super();
         initView();
     }
@@ -56,39 +73,23 @@ public class TableListView extends VerticalLayout implements View {
         mainLayout = new VerticalLayout();
         mainLayout.setSizeFull();
 
-        // Content Panel
-        panelContentContainer = new Panel();
-        panelContentContainer.setSizeFull();
-
-        VerticalLayout vtcContentContainer = new VerticalLayout();
-
-        for (int j = 0; j < 5; j++) {
-            GridLayout gridElementContent = new GridLayout();
-            gridElementContent.setRows(3);
-            gridElementContent.setColumns(3);
-            gridElementContent.setWidth("100%");
-
-            // Add components to grid layout
-            for (int i = 0; i < 6; i++) {
-                CoffeeTableElement tableElement = new CoffeeTableElement(TABLE_STATE.STATE_WAITING, i, i);
-
-                gridElementContent.addComponent(tableElement);
-            }
-
-            CustomizationTreeElement treeElement = new CustomizationTreeElement(gridElementContent, Language.FLOOR + " " + (j+1));
-            vtcContentContainer.addComponent(treeElement);
-            panelContentContainer.setContent(vtcContentContainer);
-        }
-
-        mainLayout.addComponent(panelContentContainer);
+        // The first screen should displays table list
+        mainLayout.addComponent(new TableListView());
 
         createLeftMenuPopup();
         createEditNamePopup();
 
+        // Order details pupop settings
+        orderInfoPopup = new PopupView(null, new OrderInfoView());
+        orderInfoPopup.setSizeFull();
+        orderInfoPopup.setPopupVisible(false);
+        orderInfoPopup.setHideOnMouseOut(false);
+
         // Add all layouts to the container
-        this.addComponents(horzTitleContainer, mainLayout, popLeftMenu, popEditName);
+        this.addComponents(horzTitleContainer, mainLayout, popLeftMenu, popEditName, orderInfoPopup);
         this.setExpandRatio(horzTitleContainer, 1.2f);
         this.setExpandRatio(mainLayout, 10.0f);
+        //this.setComponentAlignment(orderInfoPopup, Alignment.TOP_CENTER);
 
         // Add event listener
         this.addClickListener();
@@ -160,9 +161,9 @@ public class TableListView extends VerticalLayout implements View {
             @Override
             public void popupVisibilityChange(PopupVisibilityEvent event) {
                 if(popLeftMenu.isPopupVisible()) {
-                    panelContentContainer.setEnabled(false);
+                    mainLayout.setEnabled(false);
                 } else {
-                    panelContentContainer.setEnabled(true);
+                    mainLayout.setEnabled(true);
                 }
                 
             }
@@ -177,14 +178,13 @@ public class TableListView extends VerticalLayout implements View {
     public void enter(ViewChangeEvent event) {
         if(event.getParameters() == null || event.getParameters().isEmpty()) {
             mainLayout.removeAllComponents();
-            mainLayout.addComponent(panelContentContainer);
+            mainLayout.addComponent(new TableListView());
             popLeftMenu.setPopupVisible(false);
 
         } else if(event.getParameters().equals(CoffeeshopUI.TABLE_LIST_VIEW)) {
             mainLayout.removeAllComponents();
-            mainLayout.addComponent(panelContentContainer);
+            mainLayout.addComponent(new TableListView());
             popLeftMenu.setPopupVisible(false);
-
         } else if(event.getParameters().equals(CoffeeshopUI.ORDER_LIST_VIEW)) {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(new OrderListView());
@@ -194,6 +194,19 @@ public class TableListView extends VerticalLayout implements View {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(new ManagementView());
             popLeftMenu.setPopupVisible(false);
+        }
+        else if(event.getParameters().equals(CoffeeshopUI.ORDER_INFO_VIEW)){
+            //System.out.println("Display info popup");
+            orderInfoPopup.setPopupVisible(true);
+            Window subwindow = new Window();
+            subwindow.setModal(true);
+            /*mainLayout.removeAllComponents();
+            mainLayout.addComponent(new OrderInfoView());
+            popLeftMenu.setPopupVisible(false);
+            */
+        }
+        else if(event.getParameters().equals(CoffeeshopUI.ADD_FOOD_VIEW)){
+            orderInfoPopup.setPopupVisible(false);
         }
     }
 
@@ -215,7 +228,6 @@ public class TableListView extends VerticalLayout implements View {
         });
 
         btnEditName.addClickListener(new ClickListener() {
-            
             @Override
             public void buttonClick(ClickEvent event) {
                 // Show edit name popup
@@ -256,19 +268,19 @@ public class TableListView extends VerticalLayout implements View {
             @Override
             public void popupVisibilityChange(PopupVisibilityEvent event) {
                 if(popEditName.isPopupVisible()) {
-                    panelContentContainer.setEnabled(false);
+                    mainLayout.setEnabled(false);
                 } else {
-                    panelContentContainer.setEnabled(true);
+                    mainLayout.setEnabled(true);
                 }
                 
             }
         });
 
         btnConfirm.addClickListener(new ClickListener() {
-            
             @Override
             public void buttonClick(ClickEvent event) {
                 lblStaffName.setValue(txtName.getValue());
+                popEditName.setPopupVisible(false);
             }
         });
     }

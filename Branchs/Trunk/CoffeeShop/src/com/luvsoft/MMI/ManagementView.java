@@ -9,6 +9,7 @@ import com.vaadin.ui.VerticalLayout;
  *
  * This class is used to implement Management View
  */
+@SuppressWarnings("serial")
 public class ManagementView extends VerticalLayout{
     public ManagementView() {
         // TODO Add your components at here

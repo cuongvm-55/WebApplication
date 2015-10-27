@@ -21,9 +21,9 @@ public class FloorController extends AbstractController{
     }
 
     /*
-     * Gets a table info by _id
+     * Gets a table by _id
      */
-    public Table getTableInfo(String tableId)
+    public Table getTableById(String tableId)
     {
         TableFacade tableFacade = new TableFacade();
         Table table = new Table();
