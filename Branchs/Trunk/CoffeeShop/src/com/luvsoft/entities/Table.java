@@ -7,19 +7,19 @@ import com.mongodb.DBObject;
 public class Table extends AbstractEntity{
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_CODE = "Code";
-    public static final String DB_FIELD_NAME_NAME = "Name";
+    public static final String DB_FIELD_NAME_NUMBER = "Number";
     public static final String DB_FIELD_NAME_STATE = "State";
 
     private String id;
     private String code;
-    private String name;
+    private String number;
     private Types.State state;
 
     public Table()
     {
         id = "";
         code = "";
-        name = "";
+        number = "";
         state = Types.State.EMPTY;
     }
 
@@ -34,7 +34,7 @@ public class Table extends AbstractEntity{
         HashMap<String, String> map = new HashMap<String, String>();
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_CODE, code);
-        map.put(DB_FIELD_NAME_NAME, name);
+        map.put(DB_FIELD_NAME_NUMBER, number);
         map.put(DB_FIELD_NAME_STATE, state.toString());
         return map;
     }
@@ -43,7 +43,7 @@ public class Table extends AbstractEntity{
     public void setObject(DBObject dbobject){
         id = dbobject.get(DB_FIELD_NAME_ID).toString();
         code = dbobject.get(DB_FIELD_NAME_CODE).toString();
-        name = dbobject.get(DB_FIELD_NAME_NAME).toString();
+        number = dbobject.get(DB_FIELD_NAME_NUMBER).toString();
         // extract state
         switch( dbobject.get(DB_FIELD_NAME_STATE).toString() )
         {
@@ -74,12 +74,12 @@ public class Table extends AbstractEntity{
         this.code = code;
     }
 
-    public String getName() {
-        return name;
+    public String getNumber() {
+        return number;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public Types.State getState() {
@@ -92,7 +92,7 @@ public class Table extends AbstractEntity{
 
     @Override
     public String toString() {
-        return "Table [id=" + id + ", code=" + code + ", name=" + name
+        return "Table [id=" + id + ", code=" + code + ", name=" + number
                 + ", state=" + state + "]";
     }
 

@@ -17,7 +17,6 @@ import com.vaadin.ui.VerticalLayout;
  */
 @SuppressWarnings("serial")
 public class CoffeeTableElement extends VerticalLayout implements ClickListener {
-    
     private Image btnTableState;
     private Label lblWaitingTime;
     private Label lblTableNumber;
@@ -28,9 +27,9 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     }
     
     public CoffeeTableElement(TABLE_STATE tableState, int waitingTime,
-            int tableNumber) {
+            String tableName) {
         super();
-        initCoffeeTableElement(tableState, waitingTime, tableNumber);
+        initCoffeeTableElement(tableState, waitingTime, tableName);
     }
 
     /*
@@ -38,7 +37,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
      * @param: Table state, waiting time and table number
      */
     private void initCoffeeTableElement(TABLE_STATE tableState, int waitingTime,
-            int tableNumber) {
+            String tableName) {
         this.setStyleName("card");
         this.setSizeFull();
 
@@ -51,7 +50,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         this.lblWaitingTime.setSizeUndefined();
         this.setWaitingTime(waitingTime);
         
-        this.lblTableNumber = new Label(Language.TABLE + " " + tableNumber);
+        this.lblTableNumber = new Label(tableName);
         this.lblTableNumber.setStyleName("huge bold TEXT_BLUE");
         this.lblTableNumber.setSizeUndefined();
         
@@ -116,6 +115,21 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         }
     }
 
+    public static TABLE_STATE StringToTableState(String str){
+        TABLE_STATE ret = TABLE_STATE.STATE_EMPTY;
+        switch(str){
+        case "WAITING":
+            ret = TABLE_STATE.STATE_WAITING;
+            break;
+        case "FULL":
+            ret = TABLE_STATE.STATE_FULL;
+            break;
+        default:
+            break;
+        }
+        return ret;
+    }
+    
     public String getTableId() {
         return tableId;
     }

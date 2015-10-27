@@ -1,6 +1,5 @@
 package com.luvsoft.MMI;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.luvsoft.MMI.components.OrderElement;
@@ -28,22 +27,22 @@ public class OrderListView extends Panel{
         vtcLayout = new VerticalLayout();
         //vtcLayout.setSizeFull();
         panel.setSizeFull();
-        panel.setStyleName("scrollable");
-        List<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
-        for(int i=0;i<10;i++){
-        OrderInfo order = new OrderInfo();
-        order.setOrderId("12345");
-        order.setTableName("Bàn 1");
-        OrderDetailRecord record = new OrderDetailRecord();
-        record.setFoodName("Cà phê đen đá");
-        record.setPrice(50.00f);
-        record.setQuantity(2);
-        record.setStatus("WAITING");
-        List<OrderDetailRecord> list = new ArrayList<OrderDetailRecord>();
-        list.add(record);
-        order.setOrderDetailList(list);
-        orderInfoList.add(order);
-        }
+        panel.setStyleName("scrollable"); 
+        List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(MainView.getInstance().getOrderList());
+        /* for(int i=0;i<10;i++){
+            OrderInfo order = new OrderInfo();
+            order.setOrderId("12345");
+            order.setTableName("Bàn 1");
+            OrderDetailRecord record = new OrderDetailRecord();
+            record.setFoodName("Cà phê đen đá");
+            record.setPrice(50.00f);
+            record.setQuantity(2);
+            record.setStatus("WAITING");
+            List<OrderDetailRecord> list = new ArrayList<OrderDetailRecord>();
+            list.add(record);
+            order.setOrderDetailList(list);
+            orderInfoList.add(order);
+        } */
         for( OrderInfo orderInfo : orderInfoList ){
             OrderElement orderElement = new OrderElement();
             orderElement.populate(orderInfo);

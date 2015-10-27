@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.MenuButtonListener;
+import com.luvsoft.entities.Order;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -67,11 +68,12 @@ public class OrderInfoView extends VerticalLayout{
 
     protected void populate() {
         // Fill data
-        List<String> orderIdList = new ArrayList<String>();
-        orderIdList.add("560d579cb4f3a8129ce0f386");
-        List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderIdList);
+        List<Order> orderList = new ArrayList<Order >();
+        //orderIdList.add("560d579cb4f3a8129ce0f386");
+        
+        List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
         if( orderInfoList.size() <= 0 ){
-            System.out.println("Invalid orderId: " + orderIdList.toString());
+            System.out.println("Invalid orderId ");
             //return;
         }else{
             lbTableName.setValue(orderInfoList.get(0).getTableName());
@@ -111,9 +113,9 @@ public class OrderInfoView extends VerticalLayout{
                 totalAmount+= record.getPrice();
             }
         }
-        tbOrderDetails.addItem(new Object[] {new Integer(1), "Food name 1",
+        /*tbOrderDetails.addItem(new Object[] {new Integer(1), "Food name 1",
                 new Label("edit"), 3, 50.0f, null},
-                      new Integer(0));
+                      new Integer(0)); */
 
         // add food button
         Button btnAddFood = new Button(Language.ADD_FOOD);

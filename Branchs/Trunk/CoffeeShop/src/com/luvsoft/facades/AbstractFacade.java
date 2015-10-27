@@ -133,6 +133,7 @@ public abstract class AbstractFacade {
 
     /*
      * Remove a document by its _id
+     * Note: remove all uses "db.messages.remove({})"
      */
     public boolean removeById(String id) throws MongoException {
         try {

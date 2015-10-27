@@ -95,6 +95,9 @@ public class Order extends AbstractEntity{
         case "PAID":
             status = Types.State.PAID;
             break;
+        case "COMPLETE":
+            status = Types.State.COMPLETED;
+            break;
         default:
             status = Types.State.UNDEFINED;
             break;
