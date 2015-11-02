@@ -13,7 +13,7 @@ public class Types {
         // Order
         // WAITING("WAITING"), // making food
         PAID("PAID"), // have already pay the bill
-        NOTPAID("NOTPAID"), // have not pay the bill yet
+        UNPAID("UNPAID"), // have not pay the bill yet
         
         // OrderDetails
         // WAITING("WAITING"), // waiting for bartender

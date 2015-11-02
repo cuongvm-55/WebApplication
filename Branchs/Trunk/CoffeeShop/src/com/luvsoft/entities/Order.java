@@ -89,8 +89,8 @@ public class Order extends AbstractEntity{
         case "WAITING":
             status = Types.State.WAITING;
             break;
-        case "NOTPAID":
-            status = Types.State.NOTPAID;
+        case "UNPAID":
+            status = Types.State.UNPAID;
             break;
         case "PAID":
             status = Types.State.PAID;

@@ -1,6 +1,7 @@
 package com.luvsoft.MMI.components;
 
 import com.vaadin.server.FontAwesome;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -22,7 +23,7 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
     private Button btnExpandElement;
     private HorizontalLayout horzFloorTitleContainer;
     private Label lblFloorName;
-    private Label lblAdditionalLabel;
+    private Button btnAddTable;
     private GridLayout gridContent;
 
     public CustomizationTreeElement(GridLayout gridContent, String title) {
@@ -46,14 +47,17 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.lblFloorName.setStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_CENTER");
         this.lblFloorName.setWidth("100%");
 
-        this.lblAdditionalLabel = new Label();
-        this.lblAdditionalLabel.setWidth("100%");
+        this.btnAddTable = new Button();
+        this.btnAddTable.setHeight("100%");
+        btnAddTable.setIcon(FontAwesome.PLUS_CIRCLE);
+        btnAddTable.setStyleName("icon-only primary TEXT_WHITE");
 
         // Add label and button to element container
-        this.horzFloorTitleContainer.addComponents(this.btnExpandElement, this.lblFloorName, this.lblAdditionalLabel);
+        this.horzFloorTitleContainer.addComponents(this.btnExpandElement, this.lblFloorName, this.btnAddTable);
         this.horzFloorTitleContainer.setExpandRatio(this.btnExpandElement, 1.0f);
         this.horzFloorTitleContainer.setExpandRatio(this.lblFloorName, 4.0f);
-        this.horzFloorTitleContainer.setExpandRatio(this.lblAdditionalLabel, 1.0f);
+        this.horzFloorTitleContainer.setExpandRatio(this.btnAddTable, 1.0f);
+        this.horzFloorTitleContainer.setComponentAlignment(btnAddTable, Alignment.MIDDLE_RIGHT);
 
         this.addComponents(this.horzFloorTitleContainer, gridContent);
 

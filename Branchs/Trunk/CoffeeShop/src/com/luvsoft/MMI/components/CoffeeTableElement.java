@@ -1,13 +1,18 @@
 package com.luvsoft.MMI.components;
 
-import com.luvsoft.MMI.CoffeeshopUI;
+import com.luvsoft.MMI.MainView;
+import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
+import com.luvsoft.entities.Table;
+import com.luvsoft.entities.Types;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.PopupView.PopupVisibilityEvent;
+import com.vaadin.ui.PopupView.PopupVisibilityListener;
 import com.vaadin.ui.VerticalLayout;
 
 /**
@@ -17,48 +22,70 @@ import com.vaadin.ui.VerticalLayout;
  */
 @SuppressWarnings("serial")
 public class CoffeeTableElement extends VerticalLayout implements ClickListener {
+    private TableListView tableListView;
+    private Table table;
     private Image btnTableState;
     private Label lblWaitingTime;
     private Label lblTableNumber;
     private String tableId;
-    
-    public enum TABLE_STATE {
-        STATE_FULL, STATE_WAITING, STATE_EMPTY
-    }
-    
-    public CoffeeTableElement(TABLE_STATE tableState, int waitingTime,
-            String tableName) {
+    private ChangeTableStatePopup changeTableStatePopup;
+
+    public CoffeeTableElement(Table table, TableListView tableListView) {
         super();
-        initCoffeeTableElement(tableState, waitingTime, tableName);
+        this.table = table;
+        this.tableListView = tableListView;
+        initCoffeeTableElement();
     }
 
     /*
      * This function is used to initialize a coffee table element
      * @param: Table state, waiting time and table number
      */
-    private void initCoffeeTableElement(TABLE_STATE tableState, int waitingTime,
-            String tableName) {
+    private void initCoffeeTableElement() {
+        Types.State state = table.getState();
+
         this.setStyleName("card");
         this.setSizeFull();
 
         this.btnTableState = new Image();
         this.btnTableState.setWidth("50%");
         this.btnTableState.setHeight("50%");
-        this.setButtonResource(tableState);
+        this.btnTableState.setStyleName("hoverImage");
+        this.setButtonResource(state);
         
         this.lblWaitingTime = new Label();
         this.lblWaitingTime.setSizeUndefined();
-        this.setWaitingTime(waitingTime);
-        
-        this.lblTableNumber = new Label(tableName);
+        if(state == Types.State.PAID) {
+            setPaymentState(Types.State.PAID);
+        } else if (state == Types.State.UNPAID) {
+            setPaymentState(Types.State.UNPAID);
+        } else if (state == Types.State.WAITING){
+            this.setWaitingTime(table.getWaitingTime());
+        } else {
+            this.setWaitingTime(0);
+        }
+
+        this.lblTableNumber = new Label(Language.TABLE + " " + table.getNumber());
         this.lblTableNumber.setStyleName("huge bold TEXT_BLUE");
         this.lblTableNumber.setSizeUndefined();
-        
+
+        changeTableStatePopup = new ChangeTableStatePopup(this, table);
+
         this.addComponents(btnTableState, lblWaitingTime, lblTableNumber);
         this.setComponentAlignment(btnTableState, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(lblWaitingTime, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(lblTableNumber, Alignment.MIDDLE_CENTER);
-        
+
+//        changeTableStatePopup.getPopup().addPopupVisibilityListener(new PopupVisibilityListener() {
+//            @Override
+//            public void popupVisibilityChange(PopupVisibilityEvent event) {
+//                if(event.isPopupVisible()) {
+//                    MainView.getInstance().getMainLayout().setEnabled(false);
+//                } else {
+//                    MainView.getInstance().getMainLayout().setEnabled(true);
+//                }
+//            }
+//        });
         // Add click listener
         this.btnTableState.addClickListener(this);
     }
@@ -67,7 +94,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
      * This function is used to set waiting time for a table
      * @param waiting time
      */
-    public void setWaitingTime(int waitingTime) {
+    private void setWaitingTime(int waitingTime) {
         if (0 < waitingTime) {
             this.lblWaitingTime.setStyleName("huge bold TEXT_RED");
             this.lblWaitingTime.setValue(Language.WAITING + " " + waitingTime
@@ -78,23 +105,37 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         }
     }
 
+    private void setPaymentState(Types.State state) {
+        if(state == Types.State.PAID) {
+            this.lblWaitingTime.setStyleName("huge bold TEXT_RED");
+            this.lblWaitingTime.setValue(Language.PAID);
+        } else if(state == Types.State.UNPAID) {
+            this.lblWaitingTime.setStyleName("huge bold TEXT_RED");
+            this.lblWaitingTime.setValue(Language.UNPAID);
+        }
+    }
     /*
      * This function is used to change button state
      * @param state of table
      */
-    public void setButtonResource(TABLE_STATE tableState) {
+    private void setButtonResource(Types.State tableState) {
         switch (tableState) {
-            case STATE_FULL: {
+            case PAID: {
                 this.btnTableState
                         .setSource(new ThemeResource("images/red.png"));
                 break;
             }
-            case STATE_WAITING: {
+            case UNPAID: {
+                this.btnTableState
+                        .setSource(new ThemeResource("images/red.png"));
+                break;
+            }
+            case WAITING: {
                 this.btnTableState.setSource(new ThemeResource(
                         "images/yellow.png"));
                 break;
             }
-            case STATE_EMPTY: {
+            case EMPTY: {
                 this.btnTableState.setSource(new ThemeResource(
                         "images/blue.png"));
                 break;
@@ -103,29 +144,45 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
                 break;
         }
     }
-    
+
+    public void changeTableState(Types.State tableState, int waitingTime) {
+        setButtonResource(tableState);
+        if(tableState == Types.State.PAID) {
+            setPaymentState(Types.State.PAID);
+        } else if (tableState == Types.State.UNPAID) {
+            setPaymentState(Types.State.UNPAID);
+        } else if (tableState == Types.State.WAITING){
+            this.setWaitingTime(waitingTime);
+        } else {
+            this.setWaitingTime(0);
+        }
+    }
     /*
      * Navigate to OrderInfoView
      */
     @Override
     public void click(ClickEvent event) {
         if (event.getComponent() == btnTableState) {
-            // System.out.println("Image was clicked");
-            CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + CoffeeshopUI.ORDER_INFO_VIEW);
+            // CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + CoffeeshopUI.ORDER_INFO_VIEW);
+            // TODO changeTableStatePopup.setPopup
+            tableListView.getUI().addWindow(changeTableStatePopup);
         }
     }
 
-    public static TABLE_STATE StringToTableState(String str){
-        TABLE_STATE ret = TABLE_STATE.STATE_EMPTY;
+    public static Types.State StringToTableState(String str){
+        Types.State ret = Types.State.EMPTY;
         switch(str){
-        case "WAITING":
-            ret = TABLE_STATE.STATE_WAITING;
-            break;
-        case "FULL":
-            ret = TABLE_STATE.STATE_FULL;
-            break;
-        default:
-            break;
+            case "WAITING":
+                ret = Types.State.WAITING;
+                break;
+            case "PAID":
+                ret = Types.State.PAID;
+                break;
+            case "UNPAID":
+                ret = Types.State.UNPAID;
+                break;
+            default:
+                break;
         }
         return ret;
     }

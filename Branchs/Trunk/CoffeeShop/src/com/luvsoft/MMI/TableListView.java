@@ -15,6 +15,7 @@ import com.vaadin.ui.VerticalLayout;
 public class TableListView extends Panel{
     private List<Floor> floorList;
     private List<Table> tableList;
+
     public TableListView(){
         super();
         init();
@@ -26,7 +27,6 @@ public class TableListView extends Panel{
         floorList = Adapter.retrieveFloorList();
         for (int j = 0; j < floorList.size(); j++) {
             GridLayout gridElementContent = new GridLayout();
-            gridElementContent.setRows(3);
             gridElementContent.setColumns(3);
             gridElementContent.setWidth("100%");
     
@@ -34,16 +34,14 @@ public class TableListView extends Panel{
             // Add components to grid layout
             for (int i = 0; i < tableList.size(); i++) {
                 Table table = tableList.get(i);
-                CoffeeTableElement tableElement = new CoffeeTableElement(
-                        CoffeeTableElement.StringToTableState(table.getState().toString()), // table state
-                        i,                                                                  // waiting time
-                        Language.TABLE + " " + table.getNumber());                          // table number
-    
+                table.setWaitingTime(i);
+                CoffeeTableElement tableElement = new CoffeeTableElement(table, this);
                 gridElementContent.addComponent(tableElement);
             }
-    
+
             CustomizationTreeElement treeElement = new CustomizationTreeElement(gridElementContent, Language.FLOOR + " " + floorList.get(j).getNumber());
             vtcContentContainer.addComponent(treeElement);
+
             this.setContent(vtcContentContainer);
         }
     }

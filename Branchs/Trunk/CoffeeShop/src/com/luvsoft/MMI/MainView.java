@@ -21,6 +21,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class MainView extends VerticalLayout implements View {
@@ -247,7 +248,7 @@ public class MainView extends VerticalLayout implements View {
         txtName.setWidth("100%");
         txtName.setStyleName("huge");
 
-        Button btnConfirm = new Button("Xác Nhận");
+        Button btnConfirm = new Button(Language.CONFIRM);
         btnConfirm.setStyleName("huge customizationButton");
 
         popupContent.addComponents(txtName, btnConfirm);
@@ -311,5 +312,13 @@ public class MainView extends VerticalLayout implements View {
 
     public void setCurrentTable(Table currentTable) {
         this.currentTable = currentTable;
+    }
+
+    public VerticalLayout getMainLayout() {
+        return mainLayout;
+    }
+
+    public void setMainLayout(VerticalLayout mainLayout) {
+        this.mainLayout = mainLayout;
     }
 }

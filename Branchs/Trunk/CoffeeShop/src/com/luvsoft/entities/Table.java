@@ -13,6 +13,7 @@ public class Table extends AbstractEntity{
     private String id;
     private String code;
     private String number;
+    private int waitingTime;
     private Types.State state;
 
     public Table()
@@ -47,14 +48,17 @@ public class Table extends AbstractEntity{
         // extract state
         switch( dbobject.get(DB_FIELD_NAME_STATE).toString() )
         {
-        case "WAITING":
-            state = Types.State.WAITING;
-            break;
-        case "FULL":
-            state = Types.State.FULL;
-            break;
-        default:
-            state = Types.State.EMPTY;
+            case "WAITING":
+                state = Types.State.WAITING;
+                break;
+            case "PAID":
+                state = Types.State.PAID;
+                break;
+            case "UNPAID":
+                state = Types.State.UNPAID;
+                break;
+            default:
+                state = Types.State.EMPTY;
         }
     }
 
@@ -88,6 +92,14 @@ public class Table extends AbstractEntity{
 
     public void setState(Types.State state) {
         this.state = state;
+    }
+
+    public int getWaitingTime() {
+        return waitingTime;
+    }
+
+    public void setWaitingTime(int waitingTime) {
+        this.waitingTime = waitingTime;
     }
 
     @Override
