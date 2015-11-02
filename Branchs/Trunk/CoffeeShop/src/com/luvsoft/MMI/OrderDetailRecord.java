@@ -1,23 +1,25 @@
 package com.luvsoft.MMI;
 
+import com.luvsoft.entities.Types;
+import com.luvsoft.entities.Types.State;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Image;
 public class OrderDetailRecord{
     private String foodName;
-    private String status;
+    private Types.State status;
     private int quantity;
     private float price;
-    static String[] states = {"WAITING", "COMPLETE", "CANCEL"};
+    static Types.State[] states = {State.WAITING, State.COMPLETED, State.CANCELED};
     public String getFoodName() {
         return foodName;
     }
     public void setFoodName(String foodName) {
         this.foodName = foodName;
     }
-    public String getStatus() {
+    public Types.State getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+    public void setStatus(Types.State status) {
         this.status = status;
     }
     public int getQuantity() {
@@ -33,13 +35,13 @@ public class OrderDetailRecord{
         this.price = price;
     }
 
-    public Image getIconFromStatus(String _status){
+    public Image getIconFromStatus(Types.State state){
         Image img = new Image();
-        switch(_status){
-        case "CANCELED":
+        switch(state){
+        case CANCELED:
             img.setSource(new ThemeResource("images/cancel.png"));
             break;
-        case "COMPLETED":
+        case COMPLETED:
             img.setSource(new ThemeResource("images/complete.png"));
             break;
         default:
@@ -49,7 +51,7 @@ public class OrderDetailRecord{
         return img;
     }
 
-    public String getNextState(String curState){
+    public State getNextState(State curState){
         int index = 0;
         for( int i=0; i < states.length; i++ ){
             if( states[i].equals(curState)){

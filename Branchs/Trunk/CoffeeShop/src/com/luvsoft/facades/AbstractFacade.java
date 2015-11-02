@@ -65,8 +65,7 @@ public abstract class AbstractFacade {
     // ! @return ArrayList list of documents in this collection
     // ///////////////////////////////////////////////////////////
     @SuppressWarnings("unchecked")
-    public <T extends AbstractEntity> boolean findByQuery(BasicDBObject query,
-            List<T> retList) throws Exception {
+    public <T extends AbstractEntity> boolean findByQuery(BasicDBObject query, List<T> retList){
         DBCollection collection = getDBCollection();
         if (retList == null) {
             retList = new ArrayList<T>();

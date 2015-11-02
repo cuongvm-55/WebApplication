@@ -47,7 +47,7 @@ public class OrderInfoView extends VerticalLayout{
         totalAmount = 0.00f;
         paidAmount = 0.00f;
         init();
-        populate();
+        //populate();
     }
 
     public void init(){
@@ -66,13 +66,27 @@ public class OrderInfoView extends VerticalLayout{
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
     }
 
-    protected void populate() {
+    public void populate() {
         // Fill data
         List<Order> orderList = new ArrayList<Order >();
-        //orderIdList.add("560d579cb4f3a8129ce0f386");
-        
+        // find order correspond to current selected table
+        for( Order order: MainView.getInstance().getOrderList() ){
+            if( order.getTableId() == MainView.getInstance().getCurrentTable().getId() ){
+                orderList.add(order);
+            }
+        }
+
+        if( orderList.isEmpty() ){
+            System.out.println("No order's created for current table, create a new order");
+            Order order = new Order();
+            order.setTableId(MainView.getInstance().getCurrentTable().getId());
+            if( Adapter.addNewOrder(order) ){
+                orderList.add(order);
+            }
+        }
+
         List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
-        if( orderInfoList.size() <= 0 ){
+        if( orderInfoList.isEmpty() ){
             System.out.println("Invalid orderId ");
             //return;
         }else{

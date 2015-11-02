@@ -1,8 +1,9 @@
 package com.luvsoft.entities;
 
+import com.luvsoft.MMI.utils.Language;
 public class Types {
     public static final String DATE_TIME_PARTTERN = "dd/MM/yyyy HH:mm:ss";
-
+    
     public static enum State{
         UNDEFINED("UNDEFINED"),
         // Table
@@ -30,5 +31,34 @@ public class Types {
         public String toString(){
             return this.stateStr;
         }
+    }
+
+    public static State StringToState(String str){
+        State state = State.UNDEFINED;
+        if( str.equals(Language.EMPTY)){
+            state = State.EMPTY;
+        }
+        else if( str.equals(Language.WAITING) ){
+            state = State.WAITING;
+        }
+        else if( str.equals(Language.FULL)){
+            state = State.FULL;
+        }
+        else if( str.equals(Language.PAID)){
+            state = State.PAID;
+        }
+        else if( str.equals(Language.UNPAID)){
+            state = State.UNPAID;
+        }
+        else if( str.equals(Language.COMPLETED)){
+            state = State.COMPLETED;
+        }
+        else if( str.equals(Language.CANCELED)){
+            state = State.CANCELED;
+        }
+        else{
+            System.out.println("Invalid state string!");
+        }
+        return state;
     }
 }

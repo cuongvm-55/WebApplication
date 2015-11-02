@@ -15,5 +15,4 @@ public class OrderFacade extends AbstractFacade{
         Order order = new Order(dbobject);
         return order;
     }
-
 }

@@ -5,17 +5,20 @@ import java.util.List;
 
 import com.luvsoft.entities.Floor;
 import com.luvsoft.entities.Table;
+import com.luvsoft.entities.Types;
 import com.luvsoft.facades.FloorFacade;
 import com.luvsoft.facades.TableFacade;
 
 public class FloorController extends AbstractController{
+    private static TableFacade tableFacade = new TableFacade();
+    private static FloorFacade floorFacade = new FloorFacade();
+
     /*
      * Gets floor list
      */
     public List<Floor> getAllFloor()
     {
         List<Floor> list = new ArrayList<Floor>();
-        FloorFacade floorFacade = new FloorFacade();
         floorFacade.findAll(list);
         return list;
     }
@@ -25,10 +28,15 @@ public class FloorController extends AbstractController{
      */
     public Table getTableById(String tableId)
     {
-        TableFacade tableFacade = new TableFacade();
         Table table = new Table();
         tableFacade.findById(tableId, table);
         return table;
     }
-
+    
+    /*
+     * Change table state
+     */
+    public boolean setTableStatus(String tableId, Types.State status){
+        return tableFacade.updateFieldValue(tableId, Table.DB_FIELD_NAME_STATE, status.toString());
+    }
 }

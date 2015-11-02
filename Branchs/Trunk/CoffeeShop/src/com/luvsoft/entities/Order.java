@@ -36,6 +36,9 @@ public class Order extends AbstractEntity{
         orderDetailIdList = new ArrayList<String>();
         status = Types.State.UNDEFINED;
         paidMoney = 0;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Types.DATE_TIME_PARTTERN);
+        waitingTime = LocalDateTime.parse("01/01/2001 00:00:00", formatter);
+        paidTime = LocalDateTime.parse("01/01/2001 00:00:00", formatter);
         tableId = "";
         note = "";
         staffName = "";

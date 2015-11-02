@@ -24,11 +24,12 @@ import com.luvsoft.facades.OrderFacade;
 import com.luvsoft.facades.TableFacade;
 
 public class Adapter {
+    private static FloorController floorCtrl = new FloorController();
+    private static OrderController orderCtrl = new OrderController();
+    private static FoodController foodCtrl = new FoodController();
+
     public static List<OrderInfo> retrieveOrderInfoList(List<Order> orderList){
         List<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
-        OrderController orderCtrl = new OrderController();
-        FloorController floorCtrl = new FloorController();
-        FoodController foodCtrl = new FoodController();
         for( Order order : orderList ){
             Table table = floorCtrl.getTableById(order.getTableId());
             OrderInfo orderInfo = new OrderInfo();
@@ -44,7 +45,7 @@ public class Adapter {
                 record.setFoodName(food.getName());
                 record.setPrice(food.getPrice());
                 record.setQuantity(orderDetail.getQuantity());
-                record.setStatus(orderDetail.getState().toString());
+                record.setStatus(orderDetail.getState());
                 orderDetailRecordList.add(record);
             }
             orderInfo.setOrderDetailList(orderDetailRecordList);
@@ -53,12 +54,10 @@ public class Adapter {
     }
     
     public static List<Floor> retrieveFloorList(){
-        FloorController floorCtrl = new FloorController();
         return floorCtrl.getAllFloor();
     }
 
     public static List<Table> retrieveTableList(List<String> tableIdList){
-        FloorController floorCtrl = new FloorController();
         List<Table> list = new ArrayList<Table>();
         for( String tableId : tableIdList ){
             Table table = floorCtrl.getTableById(tableId);
@@ -66,7 +65,23 @@ public class Adapter {
         }
         return list;
     }
-    
+
+    public static boolean changeTableState(String tableId, Types.State state){
+        return floorCtrl.setTableStatus(tableId, state);
+    }
+
+    public static List<Order> getCurrentOrderList(){
+        return orderCtrl.getCurrentOrderList();
+    }
+
+    public static boolean changeOrderState(String orderId, Types.State state){
+        return orderCtrl.setOrderStatus(orderId, state);
+    }
+
+    public static boolean addNewOrder(Order order){
+        return orderCtrl.addNewOrder(order);
+    }
+
     public static void createDataForMongoDB(){
         // Food list
         FoodFacade foodFacade = new FoodFacade();

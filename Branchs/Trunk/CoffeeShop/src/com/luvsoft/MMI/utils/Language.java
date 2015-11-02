@@ -29,6 +29,10 @@ public class Language {
                 BARTENDER = "Bartender";
                 MANAGEMENT = "Management";
                 
+                // States
+                COMPLETED = "Completed";
+                CANCELED = "Canceled";
+                
                 SEQUENCE = "No";
                 FOOD_NAME = "Name";
                 STATUS = "Status";
@@ -60,7 +64,11 @@ public class Language {
                 WAITER = "Nhân Viên Phục Vụ";
                 BARTENDER = "Nhân Viên Pha Chế";
                 MANAGEMENT = "Quản Lý";
-                
+
+                // States
+                COMPLETED = "Xong";
+                CANCELED = "Đã hủy";
+
                 SEQUENCE = "STT";
                 FOOD_NAME = "Tên";
                 STATUS = "Trạng Thái";
@@ -88,16 +96,20 @@ public class Language {
 
     public static String FLOOR;
     public static String TABLE;
-    public static String EMPTY;
-    public static String FULL;
-    public static String WAITING;
-    public static String UNPAID;
-    public static String PAID;
     public static String MINUTE;
     public static String WAITER;
     public static String BARTENDER;
     public static String MANAGEMENT;
 
+    // States
+    public static String EMPTY;
+    public static String FULL;
+    public static String WAITING;
+    public static String UNPAID;
+    public static String PAID;
+    public static String COMPLETED;
+    public static String CANCELED;
+    
     // OrderInfoView texts
     public static String SEQUENCE;
     public static String FOOD_NAME;

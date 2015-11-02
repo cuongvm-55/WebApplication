@@ -1,10 +1,10 @@
 package com.luvsoft.MMI.components;
 
+import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.CoffeeshopUI;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
-import com.luvsoft.entities.Types.State;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -12,9 +12,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.OptionGroup;
-import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -66,8 +64,12 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
         } else if(event.getComponent() == btnConfirm){
             //popupChangeTableState.setPopupVisible(false);
             close();
-            Types.State tableState = StringToTableState(optionState.getValue().toString());
-            coffeTableContainer.changeTableState(tableState, 0);
+            
+            // Save to db, change the displayed state upon success
+            Types.State tableState = Types.StringToState(optionState.getValue().toString());
+            if( Adapter.changeTableState(table.getId(), tableState) ){
+                coffeTableContainer.changeTableState(tableState, 0);
+            }
         }
     }
 
@@ -103,19 +105,6 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
         return footer;
     }
 
-    private Types.State StringToTableState(String str) {
-        Types.State state = State.EMPTY;
-
-        if(str.equals(Language.PAID)) {
-            state = State.PAID;
-        } else if(str.equals(Language.UNPAID)) {
-            state = State.UNPAID;
-        } else if(str.equals(Language.WAITING)) {
-            state = State.WAITING;
-        }
-
-        return state;
-    }
     private void selectOptionState(Types.State tableState) {
         switch (tableState) {
             case PAID:
