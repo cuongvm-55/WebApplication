@@ -1,12 +1,10 @@
 package com.luvsoft.MMI;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.MenuButtonListener;
 import com.luvsoft.entities.Order;
-import com.luvsoft.entities.Table;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
@@ -19,8 +17,10 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.PopupView.PopupVisibilityEvent;
 import com.vaadin.ui.PopupView.PopupVisibilityListener;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class MainView extends VerticalLayout implements View {
@@ -47,9 +47,6 @@ public class MainView extends VerticalLayout implements View {
     public MainView() {
         super();
         initView();
-
-        orderList = new ArrayList<Order>();
-        currentTable = new Table();
     }
 
     public static MainView getInstance(){
@@ -75,6 +72,12 @@ public class MainView extends VerticalLayout implements View {
 
         createLeftMenuPopup();
         createEditNamePopup();
+
+        // Order details pupop settings
+//        orderInfoPopup = new PopupView(null, new OrderInfoView());
+//        orderInfoPopup.setSizeFull();
+//        orderInfoPopup.setPopupVisible(false);
+//        orderInfoPopup.setHideOnMouseOut(false);
 
         // Add all layouts to the container
         this.addComponents(horzTitleContainer, mainLayout, popLeftMenu, popEditName);
@@ -188,16 +191,9 @@ public class MainView extends VerticalLayout implements View {
         }
         else if(event.getParameters().equals(CoffeeshopUI.ORDER_INFO_VIEW)){
             //System.out.println("Display info popup");
-            // Order details pupop settings
-            OrderInfoView orderinf = new OrderInfoView();
-            orderinf.populate();
-            orderInfoPopup = new PopupView(null, new OrderInfoView());
-            orderInfoPopup.setSizeFull();
             orderInfoPopup.setPopupVisible(true);
-            orderInfoPopup.setHideOnMouseOut(false);
-            
-            //Window subwindow = new Window();
-            //subwindow.setModal(true);
+            Window subwindow = new Window();
+            subwindow.setModal(true);
             /*mainLayout.removeAllComponents();
             mainLayout.addComponent(new OrderInfoView());
             popLeftMenu.setPopupVisible(false);
@@ -299,7 +295,7 @@ public class MainView extends VerticalLayout implements View {
      * This function loads all "current orders"
      */
     public void loadOrderList(){
-        orderList = Adapter.getCurrentOrderList();
+        
     }
     public List<Order> getOrderList() {
         return orderList;
