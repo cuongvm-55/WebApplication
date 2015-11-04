@@ -1,7 +1,7 @@
 package com.luvsoft.MMI.components;
 
 import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.OrderInfoView;
+import com.luvsoft.MMI.Order.OrderInfoView;
 import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Table;
@@ -68,12 +68,12 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
     public void buttonClick(ClickEvent event) {
         if(event.getComponent() == btnAddOrder) {
             close();
-            orderInforView = new OrderInfoView();
+            orderInforView = new OrderInfoView(parentView);
             orderInforView.populate();
             parentView.getUI().addWindow(orderInforView);
         } else if(event.getComponent() == btnConfirm){
             close();
-         // Save to db, change the displayed state upon success
+            // Save to db, change the displayed state upon success
             Types.State tableState = Types.StringToState(optionState.getValue().toString());
             if( Adapter.changeTableState(table.getId(), tableState) ){
                 coffeTableContainer.changeTableState(tableState, 0);

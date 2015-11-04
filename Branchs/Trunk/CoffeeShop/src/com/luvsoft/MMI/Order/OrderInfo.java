@@ -1,4 +1,4 @@
-package com.luvsoft.MMI;
+package com.luvsoft.MMI.Order;
 
 import java.util.List;
 

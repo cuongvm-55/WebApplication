@@ -1,4 +1,4 @@
-package com.luvsoft.MMI;
+package com.luvsoft.MMI.Order;
 
 import com.luvsoft.entities.Types;
 import com.luvsoft.entities.Types.State;

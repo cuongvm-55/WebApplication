@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.luvsoft.MMI.Order.OrderDetailRecord;
+import com.luvsoft.MMI.Order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.controllers.FloorController;
 import com.luvsoft.controllers.FoodController;

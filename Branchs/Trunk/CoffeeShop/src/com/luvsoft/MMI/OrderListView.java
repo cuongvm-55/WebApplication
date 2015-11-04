@@ -2,6 +2,7 @@ package com.luvsoft.MMI;
 
 import java.util.List;
 
+import com.luvsoft.MMI.Order.OrderInfo;
 import com.luvsoft.MMI.components.OrderElement;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;

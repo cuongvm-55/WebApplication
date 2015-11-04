@@ -1,8 +1,12 @@
-package com.luvsoft.MMI;
+package com.luvsoft.MMI.Order;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.MainView;
+import com.luvsoft.MMI.TableListView;
+import com.luvsoft.MMI.components.ChangeTableStatePopup;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
@@ -12,6 +16,7 @@ import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -19,6 +24,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
 /*
  *  @author cuongvm-55
@@ -31,21 +37,21 @@ public class OrderInfoView extends Window{
      * This is a vertical layout contains list of orders 
      */
     public static OrderInfoView instance; //singleton
+    private TableListView parentView;
     private Label lbTableName;
     private Label lbTotalAmount; // label of amount caculate automatically, the amount can not be modified
     private Label lbPaidAmount; // label real amount that customer pay for the bill, the amount can be modified
 
     //private Panel panelContentContainer;
     private Table tbOrderDetails;
-    private VerticalLayout layoutOrderHandling; // contains some control buttons
-
     private float totalAmount;
     private float paidAmount;
     private VerticalLayout container;
 
     private TextField textFieldpaidAmount;
-    public OrderInfoView(){
+    public OrderInfoView(TableListView parentView){
         super();
+        parentView = parentView;
         totalAmount = 0.00f;
         paidAmount = 0.00f;
         init();
@@ -203,7 +209,12 @@ public class OrderInfoView extends Window{
         Button btnAddFood = new Button(Language.ADD_FOOD);
         btnAddFood.addStyleName(ValoTheme.BUTTON_HUGE);
         btnAddFood.addStyleName("customizationButton");
-        // TODO btnAddFood.addClickListener(new MenuButtonListener(CoffeeshopUI.ADD_FOOD_VIEW));
+        btnAddFood.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                getUI().addWindow(new AddFood());
+            }
+        });
 
         HorizontalLayout confirmButtonsContainer = new HorizontalLayout();
         // confirm button

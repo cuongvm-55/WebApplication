@@ -3,8 +3,8 @@ package com.luvsoft.MMI.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.luvsoft.MMI.OrderDetailRecord;
-import com.luvsoft.MMI.OrderInfo;
+import com.luvsoft.MMI.Order.OrderDetailRecord;
+import com.luvsoft.MMI.Order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
