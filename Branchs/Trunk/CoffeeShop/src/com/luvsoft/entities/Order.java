@@ -19,12 +19,14 @@ public class Order extends AbstractEntity{
     public static final String DB_FIELD_TABLE_ID = "TableId";
     public static final String DB_FIELD_NAME_NOTE = "Note";
     public static final String DB_FIELD_NAME_STAFF_NAME = "StaffName";
+    public static final String DB_FIELD_NAME_CREATING_TIME = "CreatingTime";
 
     private String id;
     private List<String> orderDetailIdList; // list of order detail object id
     private Types.State status;
     private float  paidMoney; // thousand vietnam dong
-    private LocalDateTime waitingTime;
+    private LocalDateTime creatingTime;
+    private int waitingTime; // in minutes
     private LocalDateTime paidTime;
     private String tableId;
     private String note;
@@ -37,8 +39,9 @@ public class Order extends AbstractEntity{
         status = Types.State.UNDEFINED;
         paidMoney = 0;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Types.DATE_TIME_PARTTERN);
-        waitingTime = LocalDateTime.parse("01/01/2001 00:00:00", formatter);
+        creatingTime = LocalDateTime.parse("01/01/2001 00:00:00", formatter);
         paidTime = LocalDateTime.parse("01/01/2001 00:00:00", formatter);
+        waitingTime = 0;
         tableId = "";
         note = "";
         staffName = "";
@@ -57,9 +60,10 @@ public class Order extends AbstractEntity{
         map.put(DB_FIELD_NAME_NOTE, note);
         map.put(DB_FIELD_NAME_PAID_MONEY, "" + paidMoney);
         map.put(DB_FIELD_NAME_PAID_TIME, paidTime.toString());
-        map.put(DB_FIELD_NAME_WAITING_TIME, waitingTime.toString());
+        map.put(DB_FIELD_NAME_WAITING_TIME, creatingTime.toString());
         map.put(DB_FIELD_NAME_STATUS, status.toString());
         map.put(DB_FIELD_NAME_STAFF_NAME, staffName);
+        map.put(DB_FIELD_NAME_CREATING_TIME, ""+creatingTime);
         // map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, orderDetailIdList.toString());
         // Map list
         String str="";
@@ -107,11 +111,12 @@ public class Order extends AbstractEntity{
         }
         paidMoney = Float.parseFloat(dbobject.get(DB_FIELD_NAME_PAID_MONEY).toString());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Types.DATE_TIME_PARTTERN);
-        waitingTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_WAITING_TIME).toString(), formatter);
+        creatingTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_WAITING_TIME).toString(), formatter);
         paidTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_PAID_TIME).toString(), formatter);
         tableId = dbobject.get(DB_FIELD_TABLE_ID).toString();
         note = dbobject.get(DB_FIELD_NAME_NOTE).toString();
         staffName = dbobject.get(DB_FIELD_NAME_STAFF_NAME).toString();
+        waitingTime = Integer.parseInt(dbobject.get(DB_FIELD_NAME_WAITING_TIME).toString());
     }
 
     public String getId() {
@@ -145,12 +150,20 @@ public class Order extends AbstractEntity{
     public void setPaidMoney(float paidMoney) {
         this.paidMoney = paidMoney;
     }
+    
+    public LocalDateTime getCreatingTime() {
+        return creatingTime;
+    }
 
-    public LocalDateTime getWaitingTime() {
+    public void setCreatingTime(LocalDateTime creatingTime) {
+        this.creatingTime = creatingTime;
+    }
+
+    public int getWaitingTime() {
         return waitingTime;
     }
 
-    public void setWaitingTime(LocalDateTime waitingTime) {
+    public void setWaitingTime(int waitingTime) {
         this.waitingTime = waitingTime;
     }
 

@@ -1,14 +1,15 @@
 package com.luvsoft.MMI.Order;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.MainView;
 import com.luvsoft.MMI.TableListView;
-import com.luvsoft.MMI.components.ChangeTableStatePopup;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
+import com.luvsoft.entities.Types;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -16,6 +17,7 @@ import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -24,7 +26,6 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
 /*
  *  @author cuongvm-55
@@ -47,13 +48,18 @@ public class OrderInfoView extends Window{
     private float totalAmount;
     private float paidAmount;
     private VerticalLayout container;
-
+    private TextField txtNote;
     private TextField textFieldpaidAmount;
+
+    // Data
+    private Order currentOrder;
+
     public OrderInfoView(TableListView parentView){
         super();
         parentView = parentView;
         totalAmount = 0.00f;
         paidAmount = 0.00f;
+        currentOrder = null;
         init();
         //populate();
     }
@@ -84,29 +90,26 @@ public class OrderInfoView extends Window{
         //tbOrderDetails.setHeight("100%");
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
 
+        // find order correspond to current selected table
+        for( Order order: MainView.getInstance().getOrderList() ){
+            if( order.getTableId() == MainView.getInstance().getCurrentTable().getId() ){
+                currentOrder = order;
+                break;
+            }
+        }
+        
         setupUI();
     }
 
     public void populate() {
         // Fill data
-        List<Order> orderList = new ArrayList<Order >();
-        // find order correspond to current selected table
-        for( Order order: MainView.getInstance().getOrderList() ){
-            if( order.getTableId() == MainView.getInstance().getCurrentTable().getId() ){
-                orderList.add(order);
-            }
-        }
-
-        if( orderList.isEmpty() ){
+        if( currentOrder == null ){
             System.out.println("No order's created for current table, create a new order");
-            Order order = new Order();
-            order.setTableId(MainView.getInstance().getCurrentTable().getId());
-            ///if( Adapter.addNewOrder(order) ){
-            orderList.add(order);
-            //}
             return;
         }
 
+        List<Order> orderList = new ArrayList<Order >();
+        orderList.add(currentOrder);
         List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
         if( orderInfoList.isEmpty() ){
             System.out.println("orderId is not exist!");
@@ -126,16 +129,13 @@ public class OrderInfoView extends Window{
                 totalAmount+= record.getPrice();
             }
         }
-        /*tbOrderDetails.addItem(new Object[] {new Integer(1), "Food name 1",
-                new Label("edit"), 3, 50.0f, null},
-                      new Integer(0)); */
         paidAmount = totalAmount; // default value of paid amount is equal total amount
         lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " " + Language.CURRENCY_SYMBOL);
         textFieldpaidAmount.setValue(paidAmount+"");
     }
     private void setupUI(){
      // Note text field
-        TextField txtNote = new TextField(Language.NOTE);
+        txtNote = new TextField(Language.NOTE);
         txtNote.addStyleName("bold large FONT_TAHOMA");
         txtNote.setSizeFull();
 
@@ -225,12 +225,50 @@ public class OrderInfoView extends Window{
         Button btnConfirmOrder = new Button(Language.CONFIRM_ORDER);
         btnConfirmOrder.addStyleName(ValoTheme.BUTTON_HUGE);
         btnConfirmOrder.addStyleName("customizationButton");
-
+     // Don't allow some button when no order exist
+        if( currentOrder == null )
+        {
+            btnConfirmOrder.setEnabled(false);
+            btnConfirmPaid.setEnabled(false);
+        }
         confirmButtonsContainer.addComponents(btnConfirmPaid, btnConfirmOrder);
 
         footer.addComponents(btnAddFood, confirmButtonsContainer);
         footer.setComponentAlignment(btnAddFood, Alignment.MIDDLE_CENTER);
         footer.setComponentAlignment(confirmButtonsContainer, Alignment.MIDDLE_CENTER);
+        
+        // Confirm order
+        btnConfirmOrder.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                // If there's no new food was selected, return
+                // close();
+                // If there's no order corresponding to current table, create new one
+                if( currentOrder == null ){
+                    currentOrder = new Order();
+                    currentOrder.setStatus(Types.State.WAITING);
+                    currentOrder.setNote(txtNote.getValue());
+                    currentOrder.setStaffName(MainView.getInstance().getLblStaffName().getValue());
+                    currentOrder.setTableId(MainView.getInstance().getCurrentTable().getId());
+                    currentOrder.setCreatingTime(LocalDateTime.now());
+                }
+            }
+        });
+        
+        // Confirm paid
+        btnConfirmPaid.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                if( currentOrder != null ){
+                    // Change order status to PAID
+                    Adapter.changeOrderState(currentOrder.getId(), Types.State.PAID);
+                    // Change table status to PAID
+                    Adapter.changeTableState(currentOrder.getTableId(), Types.State.PAID);
+                    close();// close the window
+                }
+            }
+        });
+
         return footer;
     }
 }

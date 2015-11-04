@@ -196,8 +196,8 @@ public class Adapter {
                 else if(i%3==0) order.setStatus(Types.State.COMPLETED);
                 else order.setStatus(Types.State.WAITING);
                 order.setTableId(table.getId());
-                order.setWaitingTime(paidTime);
-                
+                order.setWaitingTime(i);
+                order.setCreatingTime(paidTime);
                 orderFC.save(order);
                 i++;
             }

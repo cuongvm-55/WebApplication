@@ -42,8 +42,7 @@ public class MainView extends VerticalLayout implements View {
     private Button btnWaiterView;
     private Button btnBartenderView;
     private Button btnManagementView;
-    
-    private PopupView orderInfoPopup;
+
     public MainView() {
         super();
         initView();
@@ -171,11 +170,12 @@ public class MainView extends VerticalLayout implements View {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(new TableListView());
             popLeftMenu.setPopupVisible(false);
-
+            loadOrderList();
         } else if(event.getParameters().equals(CoffeeshopUI.TABLE_LIST_VIEW)) {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(new TableListView());
             popLeftMenu.setPopupVisible(false);
+            loadOrderList();
         } else if(event.getParameters().equals(CoffeeshopUI.ORDER_LIST_VIEW)) {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(new OrderListView());
@@ -304,4 +304,13 @@ public class MainView extends VerticalLayout implements View {
     public void setMainLayout(VerticalLayout mainLayout) {
         this.mainLayout = mainLayout;
     }
+
+    public Label getLblStaffName() {
+        return lblStaffName;
+    }
+
+    public void setLblStaffName(Label lblStaffName) {
+        this.lblStaffName = lblStaffName;
+    }
+    
 }

@@ -1,6 +1,5 @@
 package com.luvsoft.MMI.Order;
 
-import com.luvsoft.MMI.MainView;
 import com.luvsoft.MMI.utils.Language;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
