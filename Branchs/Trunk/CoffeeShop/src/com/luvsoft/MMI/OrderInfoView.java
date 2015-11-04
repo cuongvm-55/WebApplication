@@ -10,6 +10,7 @@ import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -19,12 +20,16 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 /*
  *  @author cuongvm-55
  */
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
-public class OrderInfoView extends VerticalLayout{
+public class OrderInfoView extends Window{
     final int TABLE_NUMBER_OF_ROWS = 4;
     /*
      * This is a vertical layout contains list of orders 
@@ -40,53 +45,53 @@ public class OrderInfoView extends VerticalLayout{
 
     private float totalAmount;
     private float paidAmount;
+    private VerticalLayout container;
+    private com.luvsoft.entities.Table tableEntity;
 
     private TextField textFieldpaidAmount;
-    public OrderInfoView(){
+    public OrderInfoView(com.luvsoft.entities.Table tableEntity){
         super();
+        this.tableEntity = tableEntity;
         totalAmount = 0.00f;
         paidAmount = 0.00f;
         init();
-        //populate();
+        populate();
     }
 
     public void init(){
+        setModal(true);
+        setClosable(true);
+        setResizable(false);
+        setDraggable(false);
+        setSizeFull();
+
+        container = new VerticalLayout();
+
         lbTableName = new Label();
-        lbTableName.setStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_CENTER customizationButton");
+        lbTableName.setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.setWidth("100%");
+        lbTableName.setValue(Language.TABLE + " " + tableEntity.getNumber());
         // Set table properties
         tbOrderDetails = new Table("");
+        tbOrderDetails.addStyleName("bold large FONT_TAHOMA");
+        tbOrderDetails.setSizeFull();
         tbOrderDetails.addContainerProperty(Language.SEQUENCE, Integer.class, null);
         tbOrderDetails.addContainerProperty(Language.FOOD_NAME, String.class, null);
         tbOrderDetails.addContainerProperty(Language.STATUS, Component.class, null);
         tbOrderDetails.addContainerProperty(Language.QUANTITY, Integer.class, null);
         tbOrderDetails.addContainerProperty(Language.PRICE, Float.class, null);
-        tbOrderDetails.addContainerProperty(Language.NOTE, String.class, null);
+        // tbOrderDetails.addContainerProperty(Language.NOTE, String.class, null);
         //tbOrderDetails.setHeight("100%");
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
     }
 
-    public void populate() {
+    protected void populate() {
         // Fill data
         List<Order> orderList = new ArrayList<Order >();
-        // find order correspond to current selected table
-        for( Order order: MainView.getInstance().getOrderList() ){
-            if( order.getTableId() == MainView.getInstance().getCurrentTable().getId() ){
-                orderList.add(order);
-            }
-        }
-
-        if( orderList.isEmpty() ){
-            System.out.println("No order's created for current table, create a new order");
-            Order order = new Order();
-            order.setTableId(MainView.getInstance().getCurrentTable().getId());
-            if( Adapter.addNewOrder(order) ){
-                orderList.add(order);
-            }
-        }
-
+        //orderIdList.add("560d579cb4f3a8129ce0f386");
+        
         List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
-        if( orderInfoList.isEmpty() ){
+        if( orderInfoList.size() <= 0 ){
             System.out.println("Invalid orderId ");
             //return;
         }else{
@@ -131,23 +136,24 @@ public class OrderInfoView extends VerticalLayout{
                 new Label("edit"), 3, 50.0f, null},
                       new Integer(0)); */
 
-        // add food button
-        Button btnAddFood = new Button(Language.ADD_FOOD);
-        btnAddFood.setStyleName("customizationButton");
-        btnAddFood.addClickListener(new MenuButtonListener(CoffeeshopUI.ADD_FOOD_VIEW));
+        // Note text field
+        TextField txtNote = new TextField(Language.NOTE);
+        txtNote.addStyleName("bold large FONT_TAHOMA");
+        txtNote.setSizeFull();
 
         // total amount label
         lbTotalAmount = new Label();
         lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " " + Language.CURRENCY_SYMBOL);
-        lbTotalAmount.setStyleName("bold");
+        lbTotalAmount.addStyleName("bold large FONT_TAHOMA");
 
         // paid amount label
         HorizontalLayout layout = new HorizontalLayout();
         lbPaidAmount = new Label();
         lbPaidAmount.setValue(Language.PAID_AMOUNT);
-        lbPaidAmount.setStyleName("bold");
+        lbPaidAmount.addStyleName("bold large FONT_TAHOMA");
         paidAmount = totalAmount; // default value of paid amount is equal total amount
         Label lbCurrencySymbol = new Label( " " + Language.CURRENCY_SYMBOL);
+        lbCurrencySymbol.addStyleName("bold large FONT_TAHOMA");
 
         // editable paid amount textfield
         textFieldpaidAmount = new TextField();
@@ -155,31 +161,25 @@ public class OrderInfoView extends VerticalLayout{
         textFieldpaidAmount.setWidth("100");
         textFieldpaidAmount.setMaxLength(15);
         textFieldpaidAmount.setValue(paidAmount+"");
-        textFieldpaidAmount.setStyleName("v-textfield-dashing");
+        textFieldpaidAmount.addStyleName("v-textfield-dashing bold TEXT_RED FONT_TAHOMA");
         layout.addComponents(lbPaidAmount, textFieldpaidAmount, lbCurrencySymbol);
         layout.setSpacing(true);
-        // confirm button
-        Button btnConfirmPaid = new Button(Language.CONFIRM_PAID);
-        btnConfirmPaid.setStyleName("customizationButton");
-        
-        Button btnConfirmOrder = new Button(Language.CONFIRM_ORDER);
-        btnConfirmOrder.setStyleName("customizationButton");
-        
-        HorizontalLayout confirmLayout = new HorizontalLayout();
-        confirmLayout.addComponents(btnConfirmPaid, btnConfirmOrder);
-        confirmLayout.setSpacing(true);
-        layoutOrderHandling = new VerticalLayout();
-        layoutOrderHandling.addComponents(btnAddFood, lbTotalAmount, layout, confirmLayout);
-        layoutOrderHandling.setComponentAlignment(btnAddFood, Alignment.MIDDLE_CENTER);
-        layoutOrderHandling.setComponentAlignment(confirmLayout, Alignment.MIDDLE_CENTER);
-        this.addComponents(lbTableName, tbOrderDetails, layoutOrderHandling);
-        this.setExpandRatio(lbTableName, 1.0f);
-        this.setExpandRatio(tbOrderDetails, 6.0f);
-        this.setExpandRatio(layoutOrderHandling, 3.0f);
-        this.setSpacing(true);
-        this.setResponsive(true);
-        this.setSizeFull();
-        this.setComponentAlignment(lbTableName, Alignment.TOP_CENTER);
+
+//        HorizontalLayout confirmLayout = new HorizontalLayout();
+//        confirmLayout.addComponents(btnConfirmPaid, btnConfirmOrder);
+//        confirmLayout.setSpacing(true);
+//        layoutOrderHandling = new VerticalLayout();
+//        layoutOrderHandling.addComponents(btnAddFood, lbTotalAmount, layout, confirmLayout);
+//        layoutOrderHandling.setComponentAlignment(btnAddFood, Alignment.MIDDLE_CENTER);
+//        layoutOrderHandling.setComponentAlignment(confirmLayout, Alignment.MIDDLE_CENTER);
+        container.addComponents(lbTableName, txtNote, tbOrderDetails, layout, buildFooter());
+        container.setExpandRatio(lbTableName, 0.7f);
+        container.setExpandRatio(txtNote, 1.0f);
+        container.setExpandRatio(tbOrderDetails, 7.0f);
+        //container.setExpandRatio(layoutOrderHandling, 3.0f);
+        container.setResponsive(true);
+        container.setSizeFull();
+        container.setComponentAlignment(lbTableName, Alignment.TOP_CENTER);
 //        // Click listener
 //        layout.addLayoutClickListener(new LayoutClickListener() {
 //            @Override
@@ -206,12 +206,37 @@ public class OrderInfoView extends VerticalLayout{
                 }
             }
         });
+
+        this.setContent(container);
     }
 
-    public static OrderInfoView getInstance(){
-        if( instance == null ){
-            instance = new OrderInfoView();
-        }
-        return instance;
+    private Component buildFooter() {
+        VerticalLayout footer = new VerticalLayout();
+        footer.setWidth("100%");;
+        footer.setHeightUndefined();
+        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+
+        // add food button
+        Button btnAddFood = new Button(Language.ADD_FOOD);
+        btnAddFood.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnAddFood.addStyleName("customizationButton");
+        btnAddFood.addClickListener(new MenuButtonListener(CoffeeshopUI.ADD_FOOD_VIEW));
+
+        HorizontalLayout confirmButtonsContainer = new HorizontalLayout();
+        // confirm button
+        Button btnConfirmPaid = new Button(Language.CONFIRM_PAID);
+        btnConfirmPaid.addStyleName("customizationButton");
+        btnConfirmPaid.addStyleName(ValoTheme.BUTTON_HUGE);
+
+        Button btnConfirmOrder = new Button(Language.CONFIRM_ORDER);
+        btnConfirmOrder.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnConfirmOrder.addStyleName("customizationButton");
+
+        confirmButtonsContainer.addComponents(btnConfirmPaid, btnConfirmOrder);
+
+        footer.addComponents(btnAddFood, confirmButtonsContainer);
+        footer.setComponentAlignment(btnAddFood, Alignment.MIDDLE_CENTER);
+        footer.setComponentAlignment(confirmButtonsContainer, Alignment.MIDDLE_CENTER);
+        return footer;
     }
 }

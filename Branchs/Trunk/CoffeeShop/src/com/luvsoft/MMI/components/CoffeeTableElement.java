@@ -1,6 +1,5 @@
 package com.luvsoft.MMI.components;
 
-import com.luvsoft.MMI.MainView;
 import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Table;
@@ -67,7 +66,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         this.lblTableNumber.setStyleName("huge bold TEXT_BLUE");
         this.lblTableNumber.setSizeUndefined();
 
-        changeTableStatePopup = new ChangeTableStatePopup(this, table);
+        changeTableStatePopup = new ChangeTableStatePopup(this, tableListView, table);
 
         this.addComponents(btnTableState, lblWaitingTime, lblTableNumber);
         this.setComponentAlignment(btnTableState, Alignment.MIDDLE_CENTER);

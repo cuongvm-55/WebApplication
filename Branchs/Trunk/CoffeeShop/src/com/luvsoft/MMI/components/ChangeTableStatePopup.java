@@ -1,10 +1,11 @@
 package com.luvsoft.MMI.components;
 
-import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.CoffeeshopUI;
+import com.luvsoft.MMI.OrderInfoView;
+import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
+import com.luvsoft.entities.Types.State;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -25,8 +26,11 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
     private OptionGroup optionState;
     private Button btnAddOrder;
     private Button btnConfirm;
+    private TableListView parentView;
+    private OrderInfoView orderInforView;
 
-    public ChangeTableStatePopup(CoffeeTableElement coffeTableContainer, Table table) {
+    public ChangeTableStatePopup(CoffeeTableElement coffeTableContainer, TableListView tableListView, Table table) {
+        parentView = tableListView;
         this.coffeTableContainer = coffeTableContainer;
         this.table = table;
         initView();
@@ -35,10 +39,13 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
     private void initView() {
         setCaption(Language.TABLE + " " + table.getNumber());
         setModal(true);
-        setClosable(false);
+        setClosable(true);
         setResizable(false);
+        setDraggable(false);
         setHeight("45%");
         setWidth("100%");
+
+        orderInforView = new OrderInfoView(table);
 
         VerticalLayout vtcPopupContainer = new VerticalLayout();
         vtcPopupContainer.setSizeFull();
@@ -58,37 +65,21 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
     @Override
     public void buttonClick(ClickEvent event) {
         if(event.getComponent() == btnAddOrder) {
-            //popupChangeTableState.setPopupVisible(false);
             close();
-            CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + CoffeeshopUI.ORDER_INFO_VIEW);
+            // CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + CoffeeshopUI.ORDER_INFO_VIEW);
+            parentView.getUI().addWindow(orderInforView);
         } else if(event.getComponent() == btnConfirm){
-            //popupChangeTableState.setPopupVisible(false);
             close();
-            
-            // Save to db, change the displayed state upon success
-            Types.State tableState = Types.StringToState(optionState.getValue().toString());
-            if( Adapter.changeTableState(table.getId(), tableState) ){
-                coffeTableContainer.changeTableState(tableState, 0);
-            }
+            Types.State tableState = StringToTableState(optionState.getValue().toString());
+            coffeTableContainer.changeTableState(tableState, 0);
         }
     }
 
     private Component buildFooter() {
         HorizontalLayout footer = new HorizontalLayout();
-        footer.setWidth("100%");;
+        footer.setWidth("100%");
         footer.setHeightUndefined();
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-
-        Button cancel = new Button(Language.CANCEL);
-        cancel.addStyleName(ValoTheme.BUTTON_HUGE);
-        cancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        cancel.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(final ClickEvent event) {
-                close();
-            }
-        });
-        cancel.setClickShortcut(KeyCode.ESCAPE, null);
 
         btnConfirm = new Button(Language.CONFIRM);
         btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
@@ -99,12 +90,24 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
         btnAddOrder.addStyleName(ValoTheme.BUTTON_HUGE);
         btnAddOrder.addStyleName("customizationButton");
 
-        footer.addComponents(cancel, btnAddOrder, btnConfirm);
-        footer.setExpandRatio(cancel, 1);
-        footer.setComponentAlignment(cancel, Alignment.MIDDLE_CENTER);
+        footer.addComponents(btnAddOrder, btnConfirm);
+        footer.setComponentAlignment(btnAddOrder, Alignment.MIDDLE_CENTER);
         return footer;
     }
 
+    private Types.State StringToTableState(String str) {
+        Types.State state = State.EMPTY;
+
+        if(str.equals(Language.PAID)) {
+            state = State.PAID;
+        } else if(str.equals(Language.UNPAID)) {
+            state = State.UNPAID;
+        } else if(str.equals(Language.WAITING)) {
+            state = State.WAITING;
+        }
+
+        return state;
+    }
     private void selectOptionState(Types.State tableState) {
         switch (tableState) {
             case PAID:
