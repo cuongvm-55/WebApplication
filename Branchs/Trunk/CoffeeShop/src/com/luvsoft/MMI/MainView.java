@@ -6,6 +6,7 @@ import java.util.List;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.MenuButtonListener;
 import com.luvsoft.entities.Order;
+import com.luvsoft.entities.Table;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
@@ -18,7 +19,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.PopupView.PopupVisibilityEvent;
 import com.vaadin.ui.PopupView.PopupVisibilityListener;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 

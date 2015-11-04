@@ -6,7 +6,6 @@ import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
-import com.luvsoft.entities.Types.State;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -46,8 +45,6 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
         setHeight("45%");
         setWidth("100%");
 
-        orderInforView = new OrderInfoView(table);
-
         Label lblTableNumber = new Label(Language.TABLE + " " + table.getNumber());
         lblTableNumber.addStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lblTableNumber.setWidth("100%");
@@ -71,7 +68,8 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
     public void buttonClick(ClickEvent event) {
         if(event.getComponent() == btnAddOrder) {
             close();
-            // CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + CoffeeshopUI.ORDER_INFO_VIEW);
+            orderInforView = new OrderInfoView();
+            orderInforView.populate();
             parentView.getUI().addWindow(orderInforView);
         } else if(event.getComponent() == btnConfirm){
             close();

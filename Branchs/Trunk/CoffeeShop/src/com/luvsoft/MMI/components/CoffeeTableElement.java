@@ -1,5 +1,6 @@
 package com.luvsoft.MMI.components;
 
+import com.luvsoft.MMI.MainView;
 import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Table;
@@ -162,6 +163,8 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         if (event.getComponent() == btnTableState) {
             // CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + CoffeeshopUI.ORDER_INFO_VIEW);
             // TODO changeTableStatePopup.setPopup
+            MainView.getInstance().setCurrentTable(table);
+            System.out.println("curTblId: " + table.getId());
             tableListView.getUI().addWindow(changeTableStatePopup);
         }
     }

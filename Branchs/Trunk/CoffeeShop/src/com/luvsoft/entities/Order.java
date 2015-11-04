@@ -53,7 +53,7 @@ public class Order extends AbstractEntity{
     public HashMap<String, String> toHashMap()
     {
         HashMap<String, String> map = new HashMap<String, String>();
-        map.put(DB_FIELD_TABLE_ID, id);
+        map.put(DB_FIELD_TABLE_ID, tableId);
         map.put(DB_FIELD_NAME_NOTE, note);
         map.put(DB_FIELD_NAME_PAID_MONEY, "" + paidMoney);
         map.put(DB_FIELD_NAME_PAID_TIME, paidTime.toString());

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.luvsoft.MMI.utils.Language;
-import com.luvsoft.MMI.utils.MenuButtonListener;
 import com.luvsoft.entities.Order;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
@@ -43,12 +42,10 @@ public class OrderInfoView extends Window{
     private float totalAmount;
     private float paidAmount;
     private VerticalLayout container;
-    private com.luvsoft.entities.Table tableEntity;
 
     private TextField textFieldpaidAmount;
-    public OrderInfoView(com.luvsoft.entities.Table tableEntity){
+    public OrderInfoView(){
         super();
-        this.tableEntity = tableEntity;
         totalAmount = 0.00f;
         paidAmount = 0.00f;
         init();
@@ -67,7 +64,7 @@ public class OrderInfoView extends Window{
         lbTableName = new Label();
         lbTableName.setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.setWidth("100%");
-        lbTableName.setValue(Language.TABLE + " " + tableEntity.getNumber());
+        lbTableName.setValue(Language.TABLE + " " + MainView.getInstance().getCurrentTable().getNumber());
         // Set table properties
         tbOrderDetails = new Table("");
         tbOrderDetails.addStyleName("bold large FONT_TAHOMA");
@@ -80,6 +77,8 @@ public class OrderInfoView extends Window{
         // tbOrderDetails.addContainerProperty(Language.NOTE, String.class, null);
         //tbOrderDetails.setHeight("100%");
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
+
+        setupUI();
     }
 
     public void populate() {
@@ -96,45 +95,23 @@ public class OrderInfoView extends Window{
             System.out.println("No order's created for current table, create a new order");
             Order order = new Order();
             order.setTableId(MainView.getInstance().getCurrentTable().getId());
-            if( Adapter.addNewOrder(order) ){
-                orderList.add(order);
-            }
+            ///if( Adapter.addNewOrder(order) ){
+            orderList.add(order);
+            //}
+            return;
         }
 
         List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
         if( orderInfoList.isEmpty() ){
-            System.out.println("Invalid orderId ");
+            System.out.println("orderId is not exist!");
             //return;
         }else{
             lbTableName.setValue(orderInfoList.get(0).getTableName());
             // It's should be the first element
             List<OrderDetailRecord> recordList = orderInfoList.get(0).getOrderDetailList();
-            //tbOrderDetails.setContainerDataSource(new BeanItemContainer<OrderInfo>(orderInfoList));
-            //tbOrderDetails.setVisibleColumns(new Object[] { "name", "description" });
             for(int i = 0; i < recordList.size(); i++){
                 Integer itemId = new Integer(i);
                 OrderDetailRecord record = recordList.get(i);
-                //OrderDetailRecord orderInfo = new OrderDetailRecord();//orderInfoList.get(i);
-                //orderInfo.setFoodName("Cà phê đen đádffffffffffffffd<br/>sdsdsdsd");
-                //orderInfo.setQuantity(5);
-                //orderInfo.setPrice(50.00f);
-    
-                /*Button detailsField = new Button("show details");
-                detailsField.setData(itemId);
-                detailsField.addClickListener(new Button.ClickListener() {
-                    public void buttonClick(ClickEvent event) {
-                        // Get the item identifier from the user-defined data.
-                        Integer iid = (Integer)event.getButton().getData();
-                        Notification.show("Link " +
-                                          iid.intValue() + " clicked.");
-                    } 
-                });
-                detailsField.addStyleName("link");
-                
-                ComboBox select = new ComboBox();
-                select.addItem("DONE");
-                select.addItem("Out of stock");
-                */
                 // Create the table row.
                 tbOrderDetails.addItem(new Object[] {new Integer(i), record.getFoodName(),
                         record.getIconFromStatus(record.getStatus()), record.getQuantity(), record.getPrice(), null},
@@ -146,8 +123,12 @@ public class OrderInfoView extends Window{
         /*tbOrderDetails.addItem(new Object[] {new Integer(1), "Food name 1",
                 new Label("edit"), 3, 50.0f, null},
                       new Integer(0)); */
-
-        // Note text field
+        paidAmount = totalAmount; // default value of paid amount is equal total amount
+        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " " + Language.CURRENCY_SYMBOL);
+        textFieldpaidAmount.setValue(paidAmount+"");
+    }
+    private void setupUI(){
+     // Note text field
         TextField txtNote = new TextField(Language.NOTE);
         txtNote.addStyleName("bold large FONT_TAHOMA");
         txtNote.setSizeFull();
@@ -162,7 +143,6 @@ public class OrderInfoView extends Window{
         lbPaidAmount = new Label();
         lbPaidAmount.setValue(Language.PAID_AMOUNT);
         lbPaidAmount.addStyleName("bold large FONT_TAHOMA");
-        paidAmount = totalAmount; // default value of paid amount is equal total amount
         Label lbCurrencySymbol = new Label( " " + Language.CURRENCY_SYMBOL);
         lbCurrencySymbol.addStyleName("bold large FONT_TAHOMA");
 
@@ -175,15 +155,8 @@ public class OrderInfoView extends Window{
         textFieldpaidAmount.addStyleName("v-textfield-dashing bold TEXT_RED FONT_TAHOMA");
         layout.addComponents(lbPaidAmount, textFieldpaidAmount, lbCurrencySymbol);
         layout.setSpacing(true);
-
-//        HorizontalLayout confirmLayout = new HorizontalLayout();
-//        confirmLayout.addComponents(btnConfirmPaid, btnConfirmOrder);
-//        confirmLayout.setSpacing(true);
-//        layoutOrderHandling = new VerticalLayout();
-//        layoutOrderHandling.addComponents(btnAddFood, lbTotalAmount, layout, confirmLayout);
-//        layoutOrderHandling.setComponentAlignment(btnAddFood, Alignment.MIDDLE_CENTER);
-//        layoutOrderHandling.setComponentAlignment(confirmLayout, Alignment.MIDDLE_CENTER);
-        container.addComponents(lbTableName, txtNote, tbOrderDetails, layout, buildFooter());
+        
+        container.addComponents(lbTableName, txtNote, tbOrderDetails, lbTotalAmount, layout, buildFooter());
         container.setExpandRatio(lbTableName, 0.7f);
         container.setExpandRatio(txtNote, 1.0f);
         container.setExpandRatio(tbOrderDetails, 7.0f);
@@ -220,7 +193,6 @@ public class OrderInfoView extends Window{
 
         this.setContent(container);
     }
-
     private Component buildFooter() {
         VerticalLayout footer = new VerticalLayout();
         footer.setWidth("100%");;
