@@ -10,7 +10,6 @@ import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -21,12 +20,10 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 /*
  *  @author cuongvm-55
  */
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class OrderInfoView extends Window{
@@ -55,7 +52,7 @@ public class OrderInfoView extends Window{
         totalAmount = 0.00f;
         paidAmount = 0.00f;
         init();
-        populate();
+        //populate();
     }
 
     public void init(){
@@ -85,13 +82,27 @@ public class OrderInfoView extends Window{
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
     }
 
-    protected void populate() {
+    public void populate() {
         // Fill data
         List<Order> orderList = new ArrayList<Order >();
-        //orderIdList.add("560d579cb4f3a8129ce0f386");
-        
+        // find order correspond to current selected table
+        for( Order order: MainView.getInstance().getOrderList() ){
+            if( order.getTableId() == MainView.getInstance().getCurrentTable().getId() ){
+                orderList.add(order);
+            }
+        }
+
+        if( orderList.isEmpty() ){
+            System.out.println("No order's created for current table, create a new order");
+            Order order = new Order();
+            order.setTableId(MainView.getInstance().getCurrentTable().getId());
+            if( Adapter.addNewOrder(order) ){
+                orderList.add(order);
+            }
+        }
+
         List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
-        if( orderInfoList.size() <= 0 ){
+        if( orderInfoList.isEmpty() ){
             System.out.println("Invalid orderId ");
             //return;
         }else{
@@ -220,7 +231,7 @@ public class OrderInfoView extends Window{
         Button btnAddFood = new Button(Language.ADD_FOOD);
         btnAddFood.addStyleName(ValoTheme.BUTTON_HUGE);
         btnAddFood.addStyleName("customizationButton");
-        btnAddFood.addClickListener(new MenuButtonListener(CoffeeshopUI.ADD_FOOD_VIEW));
+        // TODO btnAddFood.addClickListener(new MenuButtonListener(CoffeeshopUI.ADD_FOOD_VIEW));
 
         HorizontalLayout confirmButtonsContainer = new HorizontalLayout();
         // confirm button

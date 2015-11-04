@@ -1,5 +1,6 @@
 package com.luvsoft.MMI.components;
 
+import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.OrderInfoView;
 import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
@@ -13,6 +14,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -37,7 +39,6 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
     }
 
     private void initView() {
-        setCaption(Language.TABLE + " " + table.getNumber());
         setModal(true);
         setClosable(true);
         setResizable(false);
@@ -47,6 +48,10 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
 
         orderInforView = new OrderInfoView(table);
 
+        Label lblTableNumber = new Label(Language.TABLE + " " + table.getNumber());
+        lblTableNumber.addStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+        lblTableNumber.setWidth("100%");
+        
         VerticalLayout vtcPopupContainer = new VerticalLayout();
         vtcPopupContainer.setSizeFull();
 
@@ -54,7 +59,7 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
         optionState.addItems(Language.PAID, Language.UNPAID, Language.EMPTY, Language.WAITING);
         selectOptionState(table.getState());
 
-        vtcPopupContainer.addComponents(optionState, buildFooter());
+        vtcPopupContainer.addComponents(lblTableNumber, optionState, buildFooter());
 
         setContent(vtcPopupContainer);
         // Add click listeners
@@ -70,8 +75,11 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
             parentView.getUI().addWindow(orderInforView);
         } else if(event.getComponent() == btnConfirm){
             close();
-            Types.State tableState = StringToTableState(optionState.getValue().toString());
-            coffeTableContainer.changeTableState(tableState, 0);
+         // Save to db, change the displayed state upon success
+            Types.State tableState = Types.StringToState(optionState.getValue().toString());
+            if( Adapter.changeTableState(table.getId(), tableState) ){
+                coffeTableContainer.changeTableState(tableState, 0);
+            }
         }
     }
 
@@ -95,19 +103,6 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
         return footer;
     }
 
-    private Types.State StringToTableState(String str) {
-        Types.State state = State.EMPTY;
-
-        if(str.equals(Language.PAID)) {
-            state = State.PAID;
-        } else if(str.equals(Language.UNPAID)) {
-            state = State.UNPAID;
-        } else if(str.equals(Language.WAITING)) {
-            state = State.WAITING;
-        }
-
-        return state;
-    }
     private void selectOptionState(Types.State tableState) {
         switch (tableState) {
             case PAID:

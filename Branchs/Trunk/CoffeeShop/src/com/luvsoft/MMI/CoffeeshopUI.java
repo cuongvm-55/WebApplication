@@ -19,8 +19,6 @@ public class CoffeeshopUI extends UI {
     public static final String TABLE_LIST_VIEW = "tablelist";
     public static final String ORDER_LIST_VIEW = "orderlist";
     public static final String MANAGEMENT_VIEW = "management";
-    public static final String ORDER_INFO_VIEW = "orderinfo";
-    public static final String ADD_FOOD_VIEW   = "addfood";
     public static Navigator navigator;
 
     @WebServlet(value = "/*", asyncSupported = true)
