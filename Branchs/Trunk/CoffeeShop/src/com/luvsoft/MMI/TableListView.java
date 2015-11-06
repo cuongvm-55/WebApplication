@@ -15,7 +15,6 @@ import com.vaadin.ui.VerticalLayout;
 public class TableListView extends Panel{
     private List<Floor> floorList;
     private List<Table> tableList;
-
     public TableListView(){
         super();
         init();

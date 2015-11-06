@@ -1,12 +1,7 @@
 package com.luvsoft.MMI;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.MenuButtonListener;
-import com.luvsoft.entities.Order;
-import com.luvsoft.entities.Table;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
@@ -24,10 +19,6 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class MainView extends VerticalLayout implements View {
-    public static MainView instance;
-    private List<Order> orderList; // Current order list
-    private Table currentTable; // Current selected table (use for OrderInfoView)
-
     /*
      * UIs
      */
@@ -46,16 +37,6 @@ public class MainView extends VerticalLayout implements View {
     public MainView() {
         super();
         initView();
-
-        orderList = new ArrayList<Order>();
-        currentTable = new Table();
-    }
-
-    public static MainView getInstance(){
-        if( instance == null ){
-            instance = new MainView();
-        }
-        return instance;
     }
 
     /*
@@ -170,12 +151,10 @@ public class MainView extends VerticalLayout implements View {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(new TableListView());
             popLeftMenu.setPopupVisible(false);
-            loadOrderList();
         } else if(event.getParameters().equals(CoffeeshopUI.TABLE_LIST_VIEW)) {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(new TableListView());
             popLeftMenu.setPopupVisible(false);
-            loadOrderList();
         } else if(event.getParameters().equals(CoffeeshopUI.ORDER_LIST_VIEW)) {
             mainLayout.removeAllComponents();
             mainLayout.addComponent(new OrderListView());
@@ -261,40 +240,6 @@ public class MainView extends VerticalLayout implements View {
                 popEditName.setPopupVisible(false);
             }
         });
-    }
-
-    /*
-     * At a particular moment, there's only 1 Order corresponding to a Table
-     * In DB, we should have two types of Orders:
-     *  1. Saved orders - could not be modified anymore, that's all complete orders
-     *     - Order state must be "COMPLETE"
-     *  2. Current orders - user are working with these orders, add food, confirm paid,...
-     *     - Order state < "COMPLETE"
-     * - When a table changes state from EMPTY-->WAITING, a temporary Order will be created in MMI layer
-     * - When user add food to a temporary order, it will be saved to DB as a new "current orders" for a table
-     *      After that, we consider temporary as a "current orders" --> set state ...
-     * - When a table changes state from other states to EMPTY, the associated Order in MMI layer will be deleted,
-     *      "current orders" now is considered as a "saved orders" --> set state "COMPLETE"
-     * 
-     * This function loads all "current orders"
-     */
-    public void loadOrderList(){
-        orderList = Adapter.getCurrentOrderList();
-    }
-    public List<Order> getOrderList() {
-        return orderList;
-    }
-
-    public void setOrderList(List<Order> orderList) {
-        this.orderList = orderList;
-    }
-
-    public Table getCurrentTable() {
-        return currentTable;
-    }
-
-    public void setCurrentTable(Table currentTable) {
-        this.currentTable = currentTable;
     }
 
     public VerticalLayout getMainLayout() {

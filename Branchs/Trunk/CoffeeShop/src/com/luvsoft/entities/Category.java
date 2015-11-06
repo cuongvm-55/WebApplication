@@ -40,15 +40,7 @@ public class Category extends AbstractEntity{
         map.put(DB_FIELD_NAME_NAME, name);
         //map.put(DB_FIELD_NAME_FOOD_LIST, foodIdList.toString());
         // Map list
-        String str="";
-        for(int i=0;i<foodIdList.size()-1;i++)
-        {
-            str += foodIdList.get(i) + ",";
-        }
-        if( foodIdList.size() > 0 ){
-            str += foodIdList.get(foodIdList.size()-1);
-        }
-        map.put(DB_FIELD_NAME_FOOD_LIST, str);
+        map.put(DB_FIELD_NAME_FOOD_LIST, Types.formatListToString(foodIdList));
 
         return map;
     }

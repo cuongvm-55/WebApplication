@@ -1,8 +1,11 @@
 package com.luvsoft.MMI.components;
 
-import com.luvsoft.MMI.MainView;
+import java.util.List;
+
+import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
+import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
 import com.vaadin.event.MouseEvents.ClickEvent;
@@ -21,18 +24,21 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 public class CoffeeTableElement extends VerticalLayout implements ClickListener {
     private TableListView tableListView;
-    private Table table;
     private Image btnTableState;
     private Label lblWaitingTime;
     private Label lblTableNumber;
-    private String tableId;
     private ChangeTableStatePopup changeTableStatePopup;
 
+    // data
+    private Table table; // table info
+    private Order order; // the current Order of this table
+    
     public CoffeeTableElement(Table table, TableListView tableListView) {
         super();
         this.table = table;
         this.tableListView = tableListView;
         initCoffeeTableElement();
+        loadOrder();
     }
 
     /*
@@ -67,7 +73,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         this.lblTableNumber.setStyleName("huge bold TEXT_BLUE");
         this.lblTableNumber.setSizeUndefined();
 
-        changeTableStatePopup = new ChangeTableStatePopup(this, tableListView, table);
+        changeTableStatePopup = new ChangeTableStatePopup(this, table);
 
         this.addComponents(btnTableState, lblWaitingTime, lblTableNumber);
         this.setComponentAlignment(btnTableState, Alignment.MIDDLE_CENTER);
@@ -161,9 +167,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     @Override
     public void click(ClickEvent event) {
         if (event.getComponent() == btnTableState) {
-            // CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + CoffeeshopUI.ORDER_INFO_VIEW);
             // TODO changeTableStatePopup.setPopup
-            MainView.getInstance().setCurrentTable(table);
             System.out.println("curTblId: " + table.getId());
             tableListView.getUI().addWindow(changeTableStatePopup);
         }
@@ -187,11 +191,36 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         return ret;
     }
     
-    public String getTableId() {
-        return tableId;
+    /*
+     * Get order from db
+     * return NULL if no order for this table
+     */
+    private Order loadOrder(){
+        System.out.println("loadOrder...");
+        List<Order> orderList = Adapter.getCurrentOrderList();
+        for( Order order : orderList ){
+            if( order.getTableId() == this.table.getId() ){
+                System.out.println("OrderId: "+ order.getId());
+                return order;
+            }
+        }
+        System.out.println("No order for tableId: " + this.table.getId());
+        return null;
     }
 
-    public void setTableId(String tableId) {
-        this.tableId = tableId;
+    public Table getTable() {
+        return table;
+    }
+
+    public void setTable(Table table) {
+        this.table = table;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

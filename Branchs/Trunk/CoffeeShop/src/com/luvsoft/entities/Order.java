@@ -1,7 +1,6 @@
 package com.luvsoft.entities;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,9 +37,8 @@ public class Order extends AbstractEntity{
         orderDetailIdList = new ArrayList<String>();
         status = Types.State.UNDEFINED;
         paidMoney = 0;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Types.DATE_TIME_PARTTERN);
-        creatingTime = LocalDateTime.parse("01/01/2001 00:00:00", formatter);
-        paidTime = LocalDateTime.parse("01/01/2001 00:00:00", formatter);
+        creatingTime = LocalDateTime.now();
+        paidTime = LocalDateTime.now();
         waitingTime = 0;
         tableId = "";
         note = "";
@@ -64,17 +62,8 @@ public class Order extends AbstractEntity{
         map.put(DB_FIELD_NAME_STATUS, status.toString());
         map.put(DB_FIELD_NAME_STAFF_NAME, staffName);
         map.put(DB_FIELD_NAME_CREATING_TIME, ""+creatingTime);
-        // map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, orderDetailIdList.toString());
         // Map list
-        String str="";
-        for(int i=0;i<orderDetailIdList.size()-1;i++)
-        {
-            str += orderDetailIdList.get(i) + ",";
-        }
-        if( orderDetailIdList.size() > 0 ){
-            str += orderDetailIdList.get(orderDetailIdList.size()-1);
-        }
-        map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, str);
+        map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, Types.formatListToString(orderDetailIdList));
         return map;
     }
 
@@ -110,9 +99,8 @@ public class Order extends AbstractEntity{
             break;
         }
         paidMoney = Float.parseFloat(dbobject.get(DB_FIELD_NAME_PAID_MONEY).toString());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Types.DATE_TIME_PARTTERN);
-        creatingTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_WAITING_TIME).toString(), formatter);
-        paidTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_PAID_TIME).toString(), formatter);
+        creatingTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_WAITING_TIME).toString(), Types.DATE_TIME_FORMATTER);
+        paidTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_PAID_TIME).toString(), Types.DATE_TIME_FORMATTER);
         tableId = dbobject.get(DB_FIELD_TABLE_ID).toString();
         note = dbobject.get(DB_FIELD_NAME_NOTE).toString();
         staffName = dbobject.get(DB_FIELD_NAME_STAFF_NAME).toString();

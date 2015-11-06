@@ -1,8 +1,11 @@
 package com.luvsoft.entities;
 
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import com.luvsoft.MMI.utils.Language;
 public class Types {
-    public static final String DATE_TIME_PARTTERN = "dd/MM/yyyy HH:mm:ss";
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     
     public static enum State{
         UNDEFINED("UNDEFINED"),
@@ -60,5 +63,17 @@ public class Types {
             System.out.println("Invalid state string!");
         }
         return state;
+    }
+    
+    public static String formatListToString(List<String> list){
+        String str="";
+        for(int i=0;i<list.size()-1;i++)
+        {
+            str += list.get(i) + ",";
+        }
+        if( list.size() > 0 ){
+            str += list.get(list.size()-1);
+        }
+        return str;
     }
 }

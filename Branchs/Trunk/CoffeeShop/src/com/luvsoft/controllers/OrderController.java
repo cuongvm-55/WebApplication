@@ -16,6 +16,7 @@ import com.mongodb.BasicDBObject;
 
 public class OrderController extends AbstractController{
     private static OrderFacade orderFacade = new OrderFacade();
+    private static OrderDetailsFacade orderDetailFacade = new OrderDetailsFacade();
 
     public List<OrderDetail> getOrderDetails(String orderId){
         // get list of order detail Id
@@ -25,7 +26,6 @@ public class OrderController extends AbstractController{
         // get list of order detail object by list id
         List<OrderDetail> list = new ArrayList<OrderDetail>();
         OrderDetail orderDetail = new OrderDetail();
-        OrderDetailsFacade orderDetailFacade = new OrderDetailsFacade();
         for( String id : order.getOrderDetailIdList() ){
             if( orderDetailFacade.findById(id, orderDetail) ){
                 list.add(orderDetail);
@@ -65,5 +65,33 @@ public class OrderController extends AbstractController{
      */
     public boolean addNewOrder(Order order){
         return orderFacade.save(order);
+    }
+    
+    /*
+     * Remove an Order
+     */
+    public boolean removeOrder(String orderId){
+        return orderFacade.removeById(orderId);
+    }
+ 
+    /*
+     * Add new OrderDetail
+     */
+    public boolean addNewOrderDetail(OrderDetail orderDetail){
+        return orderDetailFacade.save(orderDetail);
+    }
+    
+    /*
+     * Remove an OrderDetail
+     */
+    public boolean removeOrderDetail(String orderDetailId){
+        return orderDetailFacade.removeById(orderDetailId);
+    }
+    
+    /*
+     * Update orderdetails list for order
+     */
+    public boolean updateOrderDetailList(Order order){
+        return orderFacade.updateFieldValue(order.getId(), Order.DB_FIELD_NAME_ORDER_DETAIL_LIST, Types.formatListToString(order.getOrderDetailIdList()));
     }
 }

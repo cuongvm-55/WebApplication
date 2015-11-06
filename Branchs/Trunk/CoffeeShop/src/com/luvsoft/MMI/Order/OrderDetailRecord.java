@@ -5,11 +5,22 @@ import com.luvsoft.entities.Types.State;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Image;
 public class OrderDetailRecord{
+    private String orderDetailId;
     private String foodName;
     private Types.State status;
     private int quantity;
     private float price;
     static Types.State[] states = {State.WAITING, State.COMPLETED, State.CANCELED};
+    
+    public OrderDetailRecord()
+    {
+        orderDetailId = "";
+        foodName = "";
+        status = State.WAITING;
+        quantity = 0;
+        price = 0.00f;
+    }
+
     public String getFoodName() {
         return foodName;
     }
@@ -60,4 +71,11 @@ public class OrderDetailRecord{
         }
         return states[(index + 1)%states.length];
     }
+    public String getOrderDetailId() {
+        return orderDetailId;
+    }
+    public void setOrderDetailId(String orderDetailId) {
+        this.orderDetailId = orderDetailId;
+    }
+    
 }

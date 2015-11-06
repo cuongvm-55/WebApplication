@@ -33,7 +33,9 @@ public class Floor extends AbstractEntity{
 
     @Override
     public void setObject(DBObject dbobject){
-        id = dbobject.get(DB_FIELD_NAME_ID).toString();
+        if( dbobject.get(DB_FIELD_NAME_ID) != null ){
+            id = dbobject.get(DB_FIELD_NAME_ID).toString();
+        }
         code = dbobject.get(DB_FIELD_NAME_CODE).toString();
         number = dbobject.get(DB_FIELD_NAME_NUMBER).toString();
         String str = dbobject.get(DB_FIELD_NAME_TABLE_LIST).toString();
@@ -56,15 +58,7 @@ public class Floor extends AbstractEntity{
         map.put(DB_FIELD_NAME_NUMBER, number);
         //map.put(DB_FIELD_NAME_TABLE_LIST, tableIdList.toString());
         // Map list
-        String str="";
-        for(int i=0;i<tableIdList.size()-1;i++)
-        {
-            str += tableIdList.get(i) + ",";
-        }
-        if( tableIdList.size() > 0 ){
-            str += tableIdList.get(tableIdList.size()-1);
-        }
-        map.put(DB_FIELD_NAME_TABLE_LIST, str);
+        map.put(DB_FIELD_NAME_TABLE_LIST, Types.formatListToString(tableIdList));
         return map;
     }
     

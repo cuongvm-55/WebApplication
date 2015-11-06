@@ -1,9 +1,10 @@
 package com.luvsoft.MMI;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.bson.types.ObjectId;
 
 import com.luvsoft.MMI.Order.OrderDetailRecord;
 import com.luvsoft.MMI.Order.OrderInfo;
@@ -44,6 +45,7 @@ public class Adapter {
             for( OrderDetail orderDetail : orderDetailList ){
                 OrderDetailRecord record = new OrderDetailRecord();
                 Food food = foodCtrl.getFoodById(orderDetail.getFoodId());
+                record.setOrderDetailId(orderDetail.getId());
                 record.setFoodName(food.getName());
                 record.setPrice(food.getPrice());
                 record.setQuantity(orderDetail.getQuantity());
@@ -84,14 +86,32 @@ public class Adapter {
         return orderCtrl.addNewOrder(order);
     }
 
+    public static boolean removeOrder(String orderId){
+        return orderCtrl.removeOrder(orderId);
+    }
+
+    public static boolean removeOrderDetail(String orderDetailId){
+        return orderCtrl.removeOrderDetail(orderDetailId);
+    }
+
+    public static boolean addNewOrderDetail(OrderDetail orderDetail){
+        return orderCtrl.addNewOrderDetail(orderDetail);
+    }
+    
+    public static boolean updateOrderDetailList(Order order){
+        return orderCtrl.updateOrderDetailList(order);
+    }
+    
     public static void createDataForMongoDB(){
         // Food list
         FoodFacade foodFacade = new FoodFacade();
+        //foodFacade.removeAll();
         List<Food> foodList = new ArrayList<Food>();
         List<String> foodIdList = new ArrayList<String>();
         for(int i=0; i<5;i++){
             Food food = new Food();
-            food.setId(""+i);
+            ObjectId id = new ObjectId();
+            food.setId(id.toString());
             food.setCode("FOOD " + i);
             food.setName("Food name " + i);
             food.setPrice(50.00f);
@@ -105,9 +125,11 @@ public class Adapter {
 
         // Category list
         CategoryFacade categoryFacade = new CategoryFacade();
+        //categoryFacade.removeAll();
         for(int i=0;i<3;i++){
             Category category = new Category();
-            category.setId(""+i);
+            ObjectId id = new ObjectId();
+            category.setId(id.toString());
             category.setCode("CODE " +i);
             category.setName("Category "+i);
             category.setFoodIdList(foodIdList);
@@ -117,12 +139,14 @@ public class Adapter {
         
         // OrderDetail List
         OrderDetailsFacade orderDetailFC = new OrderDetailsFacade();
+        //orderDetailFC.removeAll();
         List<OrderDetail> odDetailList = new ArrayList<OrderDetail>();
         List<String> odDetailIdList = new ArrayList<String>();
         int j=0;
         for(int i=0;i<10;i++){
             OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setId("" +i);
+            ObjectId id = new ObjectId();
+            orderDetail.setId(id.toString());
             orderDetail.setQuantity(i+1);
             if(i%4==0) orderDetail.setState(Types.State.CANCELED);
             else if(i%3==0) orderDetail.setState(Types.State.COMPLETED);
@@ -140,13 +164,15 @@ public class Adapter {
         
         // Table List
         TableFacade tbFc = new TableFacade();
+        //tbFc.removeAll();
         List<Table> tbList = new ArrayList<Table>();
         List<String> tbIdList_Fl1 = new ArrayList<String>();
         List<String> tbIdList_Fl2 = new ArrayList<String>();
         
         for(int i=0;i<10;i++){
             Table table = new Table();
-            table.setId(""+i);
+            ObjectId id = new ObjectId();
+            table.setId(id.toString());
             table.setNumber(""+i);
             table.setCode("TABLE "+i);
             if(i%4==0) table.setState(Types.State.PAID);
@@ -167,9 +193,11 @@ public class Adapter {
         
         // Floor List
         FloorFacade flFc = new FloorFacade();
+        //flFc.removeAll();
         for(int i=0;i<2;i++){
             Floor floor = new Floor();
-            floor.setId(""+i);
+            ObjectId id = new ObjectId();
+            floor.setId(id.toString());
             floor.setCode("FLOOR "+i);
             floor.setNumber(""+i);
             if(i==0) floor.setTableIdList(tbIdList_Fl1);
@@ -180,16 +208,17 @@ public class Adapter {
         
         // Order List
         OrderFacade orderFC = new OrderFacade();
+        //orderFC.removeAll();
         int i=0;
         for(Table table : tbList){
             if(table.getState() != Types.State.EMPTY){
                 Order order = new Order();
-                order.setId(""+i);
+                ObjectId id = new ObjectId();
+                order.setId(id.toString());
                 order.setNote("Note ..................." +i);
                 order.setOrderDetailIdList(odDetailIdList);
                 order.setPaidMoney(50.00f);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Types.DATE_TIME_PARTTERN);
-                LocalDateTime paidTime = LocalDateTime.parse("28/10/2015 01:51:01", formatter);
+                LocalDateTime paidTime = LocalDateTime.now();
                 order.setPaidTime(paidTime);
                 order.setStaffName("Staff name "+i);
                 if(i%4==0) order.setStatus(Types.State.CANCELED);

@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.MainView;
-import com.luvsoft.MMI.TableListView;
+import com.luvsoft.MMI.components.CoffeeTableElement;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
+import com.luvsoft.entities.OrderDetail;
 import com.luvsoft.entities.Types;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
@@ -37,8 +39,7 @@ public class OrderInfoView extends Window{
     /*
      * This is a vertical layout contains list of orders 
      */
-    public static OrderInfoView instance; //singleton
-    private TableListView parentView;
+    private CoffeeTableElement parentView;
     private Label lbTableName;
     private Label lbTotalAmount; // label of amount caculate automatically, the amount can not be modified
     private Label lbPaidAmount; // label real amount that customer pay for the bill, the amount can be modified
@@ -53,13 +54,22 @@ public class OrderInfoView extends Window{
 
     // Data
     private Order currentOrder;
+    
+    // current orderinfo
+    // it will be loaded form db
+    private OrderInfo orderInfo;
+    
+    // order detail list return from AddFood
+    private List<OrderDetail> orderDetailList;
 
-    public OrderInfoView(TableListView parentView){
+    public OrderInfoView(CoffeeTableElement parentView){
         super();
-        parentView = parentView;
+        this.parentView = parentView;
         totalAmount = 0.00f;
         paidAmount = 0.00f;
         currentOrder = null;
+        orderInfo = null;
+        orderDetailList = new ArrayList<OrderDetail>();
         init();
         //populate();
     }
@@ -76,7 +86,7 @@ public class OrderInfoView extends Window{
         lbTableName = new Label();
         lbTableName.setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.setWidth("100%");
-        lbTableName.setValue(Language.TABLE + " " + MainView.getInstance().getCurrentTable().getNumber());
+        lbTableName.setValue(Language.TABLE + " " + parentView.getTable().getNumber());
         // Set table properties
         tbOrderDetails = new Table("");
         tbOrderDetails.addStyleName("bold large FONT_TAHOMA");
@@ -90,45 +100,31 @@ public class OrderInfoView extends Window{
         //tbOrderDetails.setHeight("100%");
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
 
-        // find order correspond to current selected table
-        for( Order order: MainView.getInstance().getOrderList() ){
-            if( order.getTableId() == MainView.getInstance().getCurrentTable().getId() ){
-                currentOrder = order;
-                break;
-            }
-        }
-        
+        currentOrder = parentView.getOrder();
+        loadOrderInfo(); // load orderinfo from database
         setupUI();
     }
 
     public void populate() {
         // Fill data
-        if( currentOrder == null ){
-            System.out.println("No order's created for current table, create a new order");
+        if( orderInfo == null ){
+            System.out.println("No orderinfo, return!");
             return;
         }
-
-        List<Order> orderList = new ArrayList<Order >();
-        orderList.add(currentOrder);
-        List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
-        if( orderInfoList.isEmpty() ){
-            System.out.println("orderId is not exist!");
-            //return;
-        }else{
-            lbTableName.setValue(orderInfoList.get(0).getTableName());
-            // It's should be the first element
-            List<OrderDetailRecord> recordList = orderInfoList.get(0).getOrderDetailList();
-            for(int i = 0; i < recordList.size(); i++){
-                Integer itemId = new Integer(i);
-                OrderDetailRecord record = recordList.get(i);
-                // Create the table row.
-                tbOrderDetails.addItem(new Object[] {new Integer(i), record.getFoodName(),
-                        record.getIconFromStatus(record.getStatus()), record.getQuantity(), record.getPrice(), null},
-                              itemId);
-                // calculate totalAmount
-                totalAmount+= record.getPrice();
-            }
+        lbTableName.setValue(orderInfo.getTableName());
+        // It's should be the first element
+        List<OrderDetailRecord> recordList = orderInfo.getOrderDetailList();
+        for(int i = 0; i < recordList.size(); i++){
+            Integer itemId = new Integer(i);
+            OrderDetailRecord record = recordList.get(i);
+            // Create the table row.
+            tbOrderDetails.addItem(new Object[] {new Integer(i), record.getFoodName(),
+                    record.getIconFromStatus(record.getStatus()), record.getQuantity(), record.getPrice(), null},
+                          itemId);
+            // calculate totalAmount
+            totalAmount+= record.getPrice();
         }
+
         paidAmount = totalAmount; // default value of paid amount is equal total amount
         lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " " + Language.CURRENCY_SYMBOL);
         textFieldpaidAmount.setValue(paidAmount+"");
@@ -248,9 +244,47 @@ public class OrderInfoView extends Window{
                     currentOrder = new Order();
                     currentOrder.setStatus(Types.State.WAITING);
                     currentOrder.setNote(txtNote.getValue());
-                    currentOrder.setStaffName(MainView.getInstance().getLblStaffName().getValue());
-                    currentOrder.setTableId(MainView.getInstance().getCurrentTable().getId());
+                    //@ todo: Staffname should be editable
+                    currentOrder.setStaffName("");
+                    currentOrder.setTableId(parentView.getTable().getId());
                     currentOrder.setCreatingTime(LocalDateTime.now());
+                }
+                
+                // save all the data to database
+                // firstly, delete all old order details
+                List<OrderDetailRecord> oldRecordList = orderInfo.getOrderDetailList();
+                for( OrderDetailRecord record : oldRecordList ){
+                    if( Adapter.removeOrderDetail(record.getOrderDetailId()) ){
+                        System.out.println("removed orderdetailId: " + record.getOrderDetailId());
+                    }
+                    else{
+                        System.out.println("Fail to removed orderdetailId: " + record.getOrderDetailId());
+                    }
+                }
+
+                // second, add new order details
+                List<String> orderDetailIdList = new ArrayList<String>();
+                for( OrderDetail orderDetail : orderDetailList ){
+                    ObjectId obj = new ObjectId();
+                    orderDetail.setId(obj.toString());
+                    if( Adapter.addNewOrderDetail(orderDetail) ){
+                        orderDetailIdList.add(orderDetail.getId());
+                        System.out.println("Added orderdetail");
+                    }
+                    else{
+                        System.out.println("Fail to add orderdetail");
+                    }
+                }
+
+                // next, update order
+                currentOrder.getOrderDetailIdList().clear();
+                currentOrder.setOrderDetailIdList(orderDetailIdList);
+                if( Adapter.updateOrderDetailList( currentOrder ) ){
+                    System.out.println("Updated orderId: " + currentOrder.getId());
+                    System.out.println("\tUpdated orderDetailList: " + currentOrder.getOrderDetailIdList().toString());
+                }
+                else{
+                    System.out.println("Fail to update orderId: " + currentOrder.getId());
                 }
             }
         });
@@ -270,5 +304,41 @@ public class OrderInfoView extends Window{
         });
 
         return footer;
+    }
+
+    /*
+     * Load orderinfo of currentOrder from db
+     */
+    public void loadOrderInfo(){
+        if( currentOrder == null ){
+            System.out.println("There's no order for this table!");
+            return;
+        }
+
+        List<Order> orderList = new ArrayList<Order >();
+        orderList.add(currentOrder);
+        List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
+        if( orderInfoList.isEmpty() ){
+            System.out.println("orderId is not exist!");
+            return;
+        }
+        // It's should be the first element
+        orderInfo = orderInfoList.get(0);
+    }
+
+    public Order getCurrentOrder() {
+        return currentOrder;
+    }
+
+    public void setCurrentOrder(Order currentOrder) {
+        this.currentOrder = currentOrder;
+    }
+
+    public OrderInfo getOrderInfo() {
+        return orderInfo;
+    }
+
+    public void setOrderInfo(OrderInfo orderInfo) {
+        this.orderInfo = orderInfo;
     }
 }

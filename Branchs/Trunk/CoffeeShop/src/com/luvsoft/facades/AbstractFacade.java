@@ -85,8 +85,6 @@ public abstract class AbstractFacade {
     public <T extends AbstractEntity> boolean save(T entity) {
         DBCollection collection = getDBCollection();
         HashMap<String, String> map = entity.toHashMap();
-        map.remove(TAG_ID); // We don't need to specify the _id field, it'll be
-                            // generated automatically by MongoDB
         collection.insert(new BasicDBObject(map));
         return true;
     }
@@ -145,6 +143,16 @@ public abstract class AbstractFacade {
         return true;
     }
 
+    public boolean removeAll() throws MongoException{
+        try{
+            BasicDBObject query = new BasicDBObject("","{}");
+            DBCollection collection = getDBCollection();
+            collection.remove(query);
+            return true;
+        }catch(MongoException e){
+            return false;
+        }
+    }
     /*
      * Remove a document by query
      */

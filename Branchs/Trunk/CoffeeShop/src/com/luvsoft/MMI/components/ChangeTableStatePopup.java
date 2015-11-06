@@ -2,7 +2,6 @@ package com.luvsoft.MMI.components;
 
 import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.Order.OrderInfoView;
-import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
@@ -27,11 +26,9 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
     private OptionGroup optionState;
     private Button btnAddOrder;
     private Button btnConfirm;
-    private TableListView parentView;
     private OrderInfoView orderInforView;
 
-    public ChangeTableStatePopup(CoffeeTableElement coffeTableContainer, TableListView tableListView, Table table) {
-        parentView = tableListView;
+    public ChangeTableStatePopup(CoffeeTableElement coffeTableContainer, Table table) {
         this.coffeTableContainer = coffeTableContainer;
         this.table = table;
         initView();
@@ -67,17 +64,17 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
     @Override
     public void buttonClick(ClickEvent event) {
         if(event.getComponent() == btnAddOrder) {
-            close();
-            orderInforView = new OrderInfoView(parentView);
+            orderInforView = new OrderInfoView(coffeTableContainer);
             orderInforView.populate();
-            parentView.getUI().addWindow(orderInforView);
-        } else if(event.getComponent() == btnConfirm){
+            coffeTableContainer.getUI().addWindow(orderInforView);
             close();
+        } else if(event.getComponent() == btnConfirm){
             // Save to db, change the displayed state upon success
             Types.State tableState = Types.StringToState(optionState.getValue().toString());
             if( Adapter.changeTableState(table.getId(), tableState) ){
                 coffeTableContainer.changeTableState(tableState, 0);
             }
+            close();
         }
     }
 
