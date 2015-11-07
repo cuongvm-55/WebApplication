@@ -18,31 +18,36 @@ public class OrderController extends AbstractController{
     private static OrderFacade orderFacade = new OrderFacade();
     private static OrderDetailsFacade orderDetailFacade = new OrderDetailsFacade();
 
-    public List<OrderDetail> getOrderDetails(String orderId){
-        // get list of order detail Id
-        Order order = new Order();
-        orderFacade.findById(orderId, order);
-        
-        // get list of order detail object by list id
-        List<OrderDetail> list = new ArrayList<OrderDetail>();
-        OrderDetail orderDetail = new OrderDetail();
-        for( String id : order.getOrderDetailIdList() ){
-            if( orderDetailFacade.findById(id, orderDetail) ){
-                list.add(orderDetail);
-            }
-            else{
-                System.out.println("Can not get order detail id: " + id);
-            }
-        }
-        return list;
-    }
+//    public List<OrderDetail> getOrderDetails(String orderId){
+//        // get list of order detail Id
+//        Order order = new Order();
+//        orderFacade.findById(orderId, order);
+//        
+//        // get list of order detail object by list id
+//        List<OrderDetail> list = new ArrayList<OrderDetail>();
+//        OrderDetail orderDetail = new OrderDetail();
+//        for( String id : order.getOrderDetailIdList() ){
+//            if( orderDetailFacade.findById(id, orderDetail) ){
+//                list.add(orderDetail);
+//            }
+//            else{
+//                System.out.println("Can not get order detail id: " + id);
+//            }
+//        }
+//        return list;
+//    }
 
     public Order getOrderById(String orderId){
         Order order = new Order();
         orderFacade.findById(orderId, order);
         return order;
     }
-
+    
+    public OrderDetail getOrderDetailById(String orderDetailId){
+        OrderDetail orderDtl = new OrderDetail();
+        orderDetailFacade.findById(orderDetailId, orderDtl);
+        return orderDtl;
+    }
     /*
      * Get all order that has Status != COMPLETED
      */

@@ -51,7 +51,7 @@ public class OrderListView extends Panel{
             orderInfoList.add(order);
         } */
         for( OrderInfo orderInfo : orderInfoList ){
-            OrderElement orderElement = new OrderElement();
+            OrderElement orderElement = new OrderElement(orderInfo.getOrderId());
             orderElement.populate(orderInfo);
             HorizontalLayout topLine = new HorizontalLayout();
             topLine.setSizeFull();

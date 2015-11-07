@@ -32,6 +32,7 @@ public class Adapter {
     private static FoodController foodCtrl = new FoodController();
 
     public static List<OrderInfo> retrieveOrderInfoList(List<Order> orderList){
+        System.out.println("retrieveOrderInfoList, with inputted orderList: " + orderList.toString());
         List<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
         for( Order order : orderList ){
             Table table = floorCtrl.getTableById(order.getTableId());
@@ -41,8 +42,10 @@ public class Adapter {
 
             // OrderDetails
             List<OrderDetailRecord> orderDetailRecordList = new ArrayList<OrderDetailRecord>();
-            List<OrderDetail> orderDetailList = orderCtrl.getOrderDetails(order.getId());
-            for( OrderDetail orderDetail : orderDetailList ){
+            List<String> orderDetailIdList = order.getOrderDetailIdList();
+            for( String orderDetailId : orderDetailIdList ){
+                System.out.println(orderDetailId.toString());
+                OrderDetail orderDetail = orderCtrl.getOrderDetailById(orderDetailId);
                 OrderDetailRecord record = new OrderDetailRecord();
                 Food food = foodCtrl.getFoodById(orderDetail.getFoodId());
                 record.setOrderDetailId(orderDetail.getId());
@@ -53,11 +56,13 @@ public class Adapter {
                 orderDetailRecordList.add(record);
             }
             orderInfo.setOrderDetailList(orderDetailRecordList);
+            orderInfoList.add(orderInfo);
         }
         return orderInfoList;
     }
     
     public static List<Floor> retrieveFloorList(){
+        System.out.println("retrieveFloorList...");
         return floorCtrl.getAllFloor();
     }
 
@@ -71,10 +76,12 @@ public class Adapter {
     }
 
     public static boolean changeTableState(String tableId, Types.State state){
+        System.out.println("changeTableState tableId: " + tableId +", state: " + state);
         return floorCtrl.setTableStatus(tableId, state);
     }
 
     public static List<Order> getCurrentOrderList(){
+        System.out.println("Get current order list...");
         return orderCtrl.getCurrentOrderList();
     }
 

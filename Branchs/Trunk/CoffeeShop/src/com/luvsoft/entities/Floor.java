@@ -32,13 +32,11 @@ public class Floor extends AbstractEntity{
     }
 
     @Override
-    public void setObject(DBObject dbobject){
-        if( dbobject.get(DB_FIELD_NAME_ID) != null ){
-            id = dbobject.get(DB_FIELD_NAME_ID).toString();
-        }
-        code = dbobject.get(DB_FIELD_NAME_CODE).toString();
-        number = dbobject.get(DB_FIELD_NAME_NUMBER).toString();
-        String str = dbobject.get(DB_FIELD_NAME_TABLE_LIST).toString();
+    public void setObject(DBObject dbObject){
+        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
+        code = getFieldValue(DB_FIELD_NAME_CODE, dbObject);
+        number = getFieldValue(DB_FIELD_NAME_NUMBER, dbObject);
+        String str = getFieldValue(DB_FIELD_NAME_TABLE_LIST, dbObject);
         String[] list = str.split(",");
         tableIdList = Arrays.asList(list);
 //        BasicDBList  list = (BasicDBList)dbobject.get(DB_FIELD_NAME_TABLE_LIST);

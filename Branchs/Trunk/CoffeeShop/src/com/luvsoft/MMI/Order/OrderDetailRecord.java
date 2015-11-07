@@ -77,5 +77,11 @@ public class OrderDetailRecord{
     public void setOrderDetailId(String orderDetailId) {
         this.orderDetailId = orderDetailId;
     }
-    
+
+    @Override
+    public String toString() {
+        return "OrderDetailRecord [orderDetailId=" + orderDetailId
+                + ", foodName=" + foodName + ", status=" + status
+                + ", quantity=" + quantity + ", price=" + price + "]";
+    }
 }

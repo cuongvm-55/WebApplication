@@ -23,20 +23,6 @@ import com.vaadin.ui.VerticalLayout;
 public class OrderElement extends VerticalLayout{
     /*
      * This is a VerticalLayout contains info of an order
-     *       ________________________
-     *       |                       |
-     *       |lbTableName            |
-     *       |_______________________|
-     *       |                       |
-     *       |                       |
-     *       |                       |
-     *       |   tblOrderInfo        |
-     *       |                       |
-     *       |                       |
-     *       |                       |
-     *       |_______________________|
-     *       |    btnConfFinish      |
-     *       |_______________________|
      */
     private Label lbTableName;
     private Table tbOrderInfos;
@@ -44,16 +30,15 @@ public class OrderElement extends VerticalLayout{
     //OrderDetailRecord orderInfo;
     List<OrderDetailRecord> orderDetailList;
     
-    // Table header
-    
-    public OrderElement(){
+    // data
+    private String orderId;
+    public OrderElement(String _orderId){
         super();
         lbTableName = new Label();
         tbOrderInfos = new Table();
         btnConfFinish = new Button(Language.ALL_DONE);
         orderDetailList = new ArrayList<OrderDetailRecord>();
-
-        lbTableName.setStyleName("bold FONT_TAHOMA table-name-orderList TEXT_CENTER");
+        lbTableName.setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.setWidth("100%");
 
         tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
@@ -61,23 +46,22 @@ public class OrderElement extends VerticalLayout{
         tbOrderInfos.addContainerProperty(Language.QUANTITY, Integer.class, null);
         tbOrderInfos.addContainerProperty(Language.STATUS, Component.class, null);
         tbOrderInfos.setPageLength(5);
+        tbOrderInfos.setSizeFull();
         btnConfFinish.setStyleName("customizationButton text-align-left");
         btnConfFinish.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 // Set status of order to be finish
-                System.out.println("Finish click!");
+                // Adapter.changeOrderState(order.getId(), Types.State.UNPAID);
+                System.out.println("Finish click!, OrderId: " + orderId);
             }
         });
 
         this.addComponents(lbTableName, tbOrderInfos, btnConfFinish);
         this.setComponentAlignment(tbOrderInfos, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(btnConfFinish, Alignment.MIDDLE_CENTER);
-        // this.setSizeUndefined();
-        //this.setSpacing(true);
-        //this.setExpandRatio(lbTableName, 1f);
-        //this.setExpandRatio(tbOrderInfos, 8f);
-        //this.setExpandRatio(btnConfFinish, 1f);
+        
+        this.orderId = _orderId;
     }
     
     public void populate(OrderInfo orderInfo){

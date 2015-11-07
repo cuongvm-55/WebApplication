@@ -40,11 +40,11 @@ public class Food extends AbstractEntity{
     }
 
     @Override
-    public void setObject(DBObject dbobject){
-        id = dbobject.get(DB_FIELD_NAME_ID).toString();
-        code = dbobject.get(DB_FIELD_NAME_CODE).toString();
-        name = dbobject.get(DB_FIELD_NAME_NAME).toString();
-        price = Float.parseFloat(dbobject.get(DB_FIELD_NAME_PRICE).toString());
+    public void setObject(DBObject dbObject){
+        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
+        code = getFieldValue(DB_FIELD_NAME_CODE, dbObject);
+        name = getFieldValue(DB_FIELD_NAME_NAME, dbObject);
+        price = Float.parseFloat(getFieldValue(DB_FIELD_NAME_PRICE, dbObject));
     }
 
     public String getId() {

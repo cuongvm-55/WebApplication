@@ -7,7 +7,6 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.components.CoffeeTableElement;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.OrderDetail;
@@ -24,7 +23,6 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -39,13 +37,12 @@ public class OrderInfoView extends Window{
     /*
      * This is a vertical layout contains list of orders 
      */
-    private CoffeeTableElement parentView;
     private Label lbTableName;
     private Label lbTotalAmount; // label of amount caculate automatically, the amount can not be modified
     private Label lbPaidAmount; // label real amount that customer pay for the bill, the amount can be modified
 
     //private Panel panelContentContainer;
-    private Table tbOrderDetails;
+    private com.vaadin.ui.Table tbOrderDetails;
     private float totalAmount;
     private float paidAmount;
     private VerticalLayout container;
@@ -54,6 +51,7 @@ public class OrderInfoView extends Window{
 
     // Data
     private Order currentOrder;
+    private com.luvsoft.entities.Table table; 
     
     // current orderinfo
     // it will be loaded form db
@@ -62,9 +60,9 @@ public class OrderInfoView extends Window{
     // order detail list return from AddFood
     private List<OrderDetail> orderDetailList;
 
-    public OrderInfoView(CoffeeTableElement parentView){
+    public OrderInfoView(com.luvsoft.entities.Table table){
         super();
-        this.parentView = parentView;
+        this.table = table;
         totalAmount = 0.00f;
         paidAmount = 0.00f;
         currentOrder = null;
@@ -86,21 +84,21 @@ public class OrderInfoView extends Window{
         lbTableName = new Label();
         lbTableName.setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.setWidth("100%");
-        lbTableName.setValue(Language.TABLE + " " + parentView.getTable().getNumber());
+        lbTableName.setValue(Language.TABLE + " " + table.getNumber());
         // Set table properties
-        tbOrderDetails = new Table("");
+        tbOrderDetails = new com.vaadin.ui.Table("");
         tbOrderDetails.addStyleName("bold large FONT_TAHOMA");
         tbOrderDetails.setSizeFull();
         tbOrderDetails.addContainerProperty(Language.SEQUENCE, Integer.class, null);
         tbOrderDetails.addContainerProperty(Language.FOOD_NAME, String.class, null);
-        tbOrderDetails.addContainerProperty(Language.STATUS, Component.class, null);
+        tbOrderDetails.addContainerProperty(Language.STATUS, String.class, null);
         tbOrderDetails.addContainerProperty(Language.QUANTITY, Integer.class, null);
         tbOrderDetails.addContainerProperty(Language.PRICE, Float.class, null);
         // tbOrderDetails.addContainerProperty(Language.NOTE, String.class, null);
         //tbOrderDetails.setHeight("100%");
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
-
-        currentOrder = parentView.getOrder();
+        
+        currentOrder = retrieveOrder();
         loadOrderInfo(); // load orderinfo from database
         setupUI();
     }
@@ -114,12 +112,14 @@ public class OrderInfoView extends Window{
         lbTableName.setValue(orderInfo.getTableName());
         // It's should be the first element
         List<OrderDetailRecord> recordList = orderInfo.getOrderDetailList();
+        orderInfo.toString();
         for(int i = 0; i < recordList.size(); i++){
             Integer itemId = new Integer(i);
             OrderDetailRecord record = recordList.get(i);
+            System.out.println(record.toString() );
             // Create the table row.
-            tbOrderDetails.addItem(new Object[] {new Integer(i), record.getFoodName(),
-                    record.getIconFromStatus(record.getStatus()), record.getQuantity(), record.getPrice(), null},
+            tbOrderDetails.addItem(new Object[] {new Integer(i), new String(record.getFoodName()), new String(record.getStatus().toString())
+                    /*record.getIconFromStatus(record.getStatus())*/, new Integer(record.getQuantity()), new Float(record.getPrice())},
                           itemId);
             // calculate totalAmount
             totalAmount+= record.getPrice();
@@ -246,7 +246,7 @@ public class OrderInfoView extends Window{
                     currentOrder.setNote(txtNote.getValue());
                     //@ todo: Staffname should be editable
                     currentOrder.setStaffName("");
-                    currentOrder.setTableId(parentView.getTable().getId());
+                    currentOrder.setTableId(table.getId());
                     currentOrder.setCreatingTime(LocalDateTime.now());
                 }
                 
@@ -325,7 +325,25 @@ public class OrderInfoView extends Window{
         // It's should be the first element
         orderInfo = orderInfoList.get(0);
     }
-
+    
+    /*
+     * Get order from db
+     * return NULL if no order for this table
+     */
+    private Order retrieveOrder(){
+        System.out.println("loadOrder...");
+        List<Order> orderList = Adapter.getCurrentOrderList();
+        System.out.println(orderList.toString());
+        for( Order order : orderList ){
+            if( order.getTableId().equals(this.table.getId()) ){
+                System.out.println("OrderId: "+ order.getId());
+                return order;
+            }
+        }
+        System.out.println("No order for tableId: " + this.table.getId());
+        return null;
+    }
+    
     public Order getCurrentOrder() {
         return currentOrder;
     }

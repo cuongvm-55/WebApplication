@@ -46,11 +46,11 @@ public class Category extends AbstractEntity{
     }
 
     @Override
-    public void setObject(DBObject dbobject){
-        id = dbobject.get(DB_FIELD_NAME_ID).toString();
-        code = dbobject.get(DB_FIELD_NAME_CODE).toString();
-        name = dbobject.get(DB_FIELD_NAME_NAME).toString();
-        String str = dbobject.get(DB_FIELD_NAME_FOOD_LIST).toString();
+    public void setObject(DBObject dbObject){
+        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
+        code = getFieldValue(DB_FIELD_NAME_CODE, dbObject);
+        name = getFieldValue(DB_FIELD_NAME_NAME, dbObject);
+        String str = getFieldValue(DB_FIELD_NAME_FOOD_LIST, dbObject);
         String[] list = str.split(",");
         foodIdList = Arrays.asList(list);
 //        BasicDBList  list = (BasicDBList)dbobject.get(DB_FIELD_NAME_FOOD_LIST);

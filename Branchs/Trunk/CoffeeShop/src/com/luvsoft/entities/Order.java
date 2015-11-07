@@ -15,7 +15,7 @@ public class Order extends AbstractEntity{
     public static final String DB_FIELD_NAME_PAID_MONEY = "PaidMoney";
     public static final String DB_FIELD_NAME_WAITING_TIME = "WaitingTime";
     public static final String DB_FIELD_NAME_PAID_TIME = "PaidTime";
-    public static final String DB_FIELD_TABLE_ID = "TableId";
+    public static final String DB_FIELD_NAME_TABLE_ID = "TableId";
     public static final String DB_FIELD_NAME_NOTE = "Note";
     public static final String DB_FIELD_NAME_STAFF_NAME = "StaffName";
     public static final String DB_FIELD_NAME_CREATING_TIME = "CreatingTime";
@@ -54,7 +54,8 @@ public class Order extends AbstractEntity{
     public HashMap<String, String> toHashMap()
     {
         HashMap<String, String> map = new HashMap<String, String>();
-        map.put(DB_FIELD_TABLE_ID, tableId);
+        map.put(DB_FIELD_NAME_ID, id);
+        map.put(DB_FIELD_NAME_TABLE_ID, tableId);
         map.put(DB_FIELD_NAME_NOTE, note);
         map.put(DB_FIELD_NAME_PAID_MONEY, "" + paidMoney);
         map.put(DB_FIELD_NAME_PAID_TIME, paidTime.toString());
@@ -68,10 +69,10 @@ public class Order extends AbstractEntity{
     }
 
     @Override
-    public void setObject(DBObject dbobject)
+    public void setObject(DBObject dbObject)
     {
-        id = dbobject.get(DB_FIELD_NAME_ID).toString();
-        String str = dbobject.get(DB_FIELD_NAME_ORDER_DETAIL_LIST).toString();
+        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
+        String str =getFieldValue(DB_FIELD_NAME_ORDER_DETAIL_LIST, dbObject);
         String[] list = str.split(",");
         orderDetailIdList = Arrays.asList(list);
 //        BasicDBList orderDetailList = (BasicDBList)dbobject.get(DB_FIELD_NAME_ORDER_DETAIL_LIST);
@@ -80,7 +81,7 @@ public class Order extends AbstractEntity{
 //        {
 //            orderDetailIdList.add((String)item);
 //        }
-        switch( dbobject.get(DB_FIELD_NAME_STATUS).toString() )
+        switch( getFieldValue(DB_FIELD_NAME_STATUS, dbObject) )
         {
         case "WAITING":
             status = Types.State.WAITING;
@@ -98,13 +99,25 @@ public class Order extends AbstractEntity{
             status = Types.State.UNDEFINED;
             break;
         }
-        paidMoney = Float.parseFloat(dbobject.get(DB_FIELD_NAME_PAID_MONEY).toString());
-        creatingTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_WAITING_TIME).toString(), Types.DATE_TIME_FORMATTER);
-        paidTime = LocalDateTime.parse(dbobject.get(DB_FIELD_NAME_PAID_TIME).toString(), Types.DATE_TIME_FORMATTER);
-        tableId = dbobject.get(DB_FIELD_TABLE_ID).toString();
-        note = dbobject.get(DB_FIELD_NAME_NOTE).toString();
-        staffName = dbobject.get(DB_FIELD_NAME_STAFF_NAME).toString();
-        waitingTime = Integer.parseInt(dbobject.get(DB_FIELD_NAME_WAITING_TIME).toString());
+        paidMoney = Float.parseFloat(getFieldValue(DB_FIELD_NAME_PAID_MONEY, dbObject));
+        try{
+            creatingTime = LocalDateTime.parse(getFieldValue(DB_FIELD_NAME_CREATING_TIME, dbObject));
+        }catch(Exception e){
+            System.out.println("Fail to parse creating time");
+        }
+        try{
+            paidTime = LocalDateTime.parse(getFieldValue(DB_FIELD_NAME_PAID_TIME, dbObject));
+        }catch( Exception e ){
+            System.out.println("Fail to parse paid time");
+        }
+        tableId = getFieldValue(DB_FIELD_NAME_TABLE_ID, dbObject);
+        note = getFieldValue(DB_FIELD_NAME_NOTE, dbObject);
+        staffName = getFieldValue(DB_FIELD_NAME_STAFF_NAME, dbObject);
+        try{
+            waitingTime = Integer.parseInt(getFieldValue(DB_FIELD_NAME_WAITING_TIME, dbObject));
+        }catch( Exception e ){
+            waitingTime = 0;
+        }
     }
 
     public String getId() {

@@ -41,12 +41,12 @@ public class Table extends AbstractEntity{
     }
 
     @Override
-    public void setObject(DBObject dbobject){
-        id = dbobject.get(DB_FIELD_NAME_ID).toString();
-        code = dbobject.get(DB_FIELD_NAME_CODE).toString();
-        number = dbobject.get(DB_FIELD_NAME_NUMBER).toString();
+    public void setObject(DBObject dbObject){
+        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
+        code = getFieldValue(DB_FIELD_NAME_CODE, dbObject);
+        number = getFieldValue(DB_FIELD_NAME_NUMBER, dbObject);
         // extract state
-        switch( dbobject.get(DB_FIELD_NAME_STATE).toString() )
+        switch( getFieldValue(DB_FIELD_NAME_STATE, dbObject) )
         {
             case "WAITING":
                 state = Types.State.WAITING;

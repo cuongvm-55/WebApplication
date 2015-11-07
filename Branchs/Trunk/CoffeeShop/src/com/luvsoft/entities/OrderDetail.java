@@ -42,11 +42,11 @@ public class OrderDetail extends AbstractEntity{
     @Override
     public void setObject(DBObject dbObject)
     {
-        id = dbObject.get(DB_FIELD_NAME_ID).toString();
-        foodId = dbObject.get(DB_FIELD_NAME_FOOD_ID).toString();
-        quantity = Integer.parseInt( dbObject.get(DB_FIELD_NAME_QUANTITY).toString() );
+        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
+        foodId = getFieldValue(DB_FIELD_NAME_FOOD_ID, dbObject);
+        quantity = Integer.parseInt(getFieldValue(DB_FIELD_NAME_QUANTITY, dbObject));
 
-        switch( dbObject.get(DB_FIELD_NAME_STATE).toString() )
+        switch( getFieldValue(DB_FIELD_NAME_STATE, dbObject) )
         {
         case "WAITING":
             state = Types.State.WAITING;

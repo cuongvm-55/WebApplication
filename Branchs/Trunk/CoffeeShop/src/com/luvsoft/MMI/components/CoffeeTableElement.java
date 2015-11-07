@@ -1,8 +1,5 @@
 package com.luvsoft.MMI.components;
 
-import java.util.List;
-
-import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
@@ -37,8 +34,8 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         super();
         this.table = table;
         this.tableListView = tableListView;
+        System.out.println("Created CoffeeTableElement for tblId: " + table.getId());
         initCoffeeTableElement();
-        loadOrder();
     }
 
     /*
@@ -189,23 +186,6 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
                 break;
         }
         return ret;
-    }
-    
-    /*
-     * Get order from db
-     * return NULL if no order for this table
-     */
-    private Order loadOrder(){
-        System.out.println("loadOrder...");
-        List<Order> orderList = Adapter.getCurrentOrderList();
-        for( Order order : orderList ){
-            if( order.getTableId() == this.table.getId() ){
-                System.out.println("OrderId: "+ order.getId());
-                return order;
-            }
-        }
-        System.out.println("No order for tableId: " + this.table.getId());
-        return null;
     }
 
     public Table getTable() {

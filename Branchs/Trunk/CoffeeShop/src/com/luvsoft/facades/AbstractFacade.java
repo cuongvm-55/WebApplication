@@ -85,7 +85,11 @@ public abstract class AbstractFacade {
     public <T extends AbstractEntity> boolean save(T entity) {
         DBCollection collection = getDBCollection();
         HashMap<String, String> map = entity.toHashMap();
-        collection.insert(new BasicDBObject(map));
+        String id = map.get(TAG_ID);
+        map.remove(TAG_ID);
+        BasicDBObject object = new BasicDBObject(map);
+        object.append(TAG_ID, new ObjectId(id)); // we need to save _id as a ObjectId
+        collection.insert(object);
         return true;
     }
 
@@ -145,7 +149,7 @@ public abstract class AbstractFacade {
 
     public boolean removeAll() throws MongoException{
         try{
-            BasicDBObject query = new BasicDBObject("","{}");
+            BasicDBObject query = new BasicDBObject("","");
             DBCollection collection = getDBCollection();
             collection.remove(query);
             return true;

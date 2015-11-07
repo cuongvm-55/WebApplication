@@ -64,7 +64,7 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
     @Override
     public void buttonClick(ClickEvent event) {
         if(event.getComponent() == btnAddOrder) {
-            orderInforView = new OrderInfoView(coffeTableContainer);
+            orderInforView = new OrderInfoView(table);
             orderInforView.populate();
             coffeTableContainer.getUI().addWindow(orderInforView);
             close();

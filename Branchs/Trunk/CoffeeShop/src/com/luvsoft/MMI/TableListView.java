@@ -28,11 +28,12 @@ public class TableListView extends Panel{
             GridLayout gridElementContent = new GridLayout();
             gridElementContent.setColumns(3);
             gridElementContent.setWidth("100%");
-    
+            System.out.println("FloorId: " + floorList.get(j).getId());
             tableList = Adapter.retrieveTableList(floorList.get(j).getTableIdList());
             // Add components to grid layout
             for (int i = 0; i < tableList.size(); i++) {
                 Table table = tableList.get(i);
+                System.out.println("TableId: " + table.getId());
                 table.setWaitingTime(i);
                 CoffeeTableElement tableElement = new CoffeeTableElement(table, this);
                 gridElementContent.addComponent(tableElement);

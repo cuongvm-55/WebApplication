@@ -16,4 +16,11 @@ public abstract class AbstractEntity {
     public abstract void setObject(DBObject dbobject);
 
     public abstract HashMap<String, String> toHashMap();
+    
+    public String getFieldValue(String fieldName, DBObject dbObject){
+        if( dbObject.get(fieldName) != null ){
+            return dbObject.get(fieldName).toString();
+        }
+        return "";
+    }
 }
