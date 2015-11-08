@@ -39,8 +39,7 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
         setClosable(true);
         setResizable(false);
         setDraggable(false);
-        setHeight("45%");
-        setWidth("100%");
+        setSizeFull();
 
         Label lblTableNumber = new Label(Language.TABLE + " " + table.getNumber());
         lblTableNumber.addStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");

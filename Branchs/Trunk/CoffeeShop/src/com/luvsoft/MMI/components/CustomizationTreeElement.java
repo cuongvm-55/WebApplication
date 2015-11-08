@@ -5,11 +5,13 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+@SuppressWarnings("serial")
 public class CustomizationTreeElement extends VerticalLayout implements ClickListener{
 
     /**
@@ -19,17 +21,25 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
      * Tip: CustomizationTreeElement yourElement 
      *        = new CustomizationTreeElement(yourGridContentLayout, yourTitleOfThisElement)
      */
-    private static final long serialVersionUID = 1L;
+
     private Button btnExpandElement;
     private HorizontalLayout horzFloorTitleContainer;
     private Label lblFloorName;
-    private Button btnAddTable;
-    private GridLayout gridContent;
+    private Component btnAddTable;
+    private Component content;
 
-    public CustomizationTreeElement(GridLayout gridContent, String title) {
+    public CustomizationTreeElement(Component content, String title, boolean hasAddTableBtn) {
         super();
+        initView(content, title, hasAddTableBtn);
+    }
 
-        this.gridContent = gridContent;
+    public CustomizationTreeElement(Component content, String title) {
+        super();
+        initView(content, title, true);
+    }
+
+    public void initView(Component content, String title, boolean hasAddTableBtn) {
+        this.content = content;
         this.setStyleName("elementContainerStyle");
 
         this.horzFloorTitleContainer = new HorizontalLayout();
@@ -47,10 +57,15 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.lblFloorName.setStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_CENTER");
         this.lblFloorName.setWidth("100%");
 
-        this.btnAddTable = new Button();
-        this.btnAddTable.setHeight("100%");
-        btnAddTable.setIcon(FontAwesome.PLUS_CIRCLE);
-        btnAddTable.setStyleName("icon-only primary TEXT_WHITE");
+        if(hasAddTableBtn == true) {
+            this.btnAddTable = new Button();
+            this.btnAddTable.setHeight("100%");
+            btnAddTable.setIcon(FontAwesome.PLUS_CIRCLE);
+            btnAddTable.setStyleName("icon-only primary TEXT_WHITE");
+        } else {
+            this.btnAddTable = new Label("");
+            this.btnAddTable.setHeight("100%");
+        }
 
         // Add label and button to element container
         this.horzFloorTitleContainer.addComponents(this.btnExpandElement, this.lblFloorName, this.btnAddTable);
@@ -59,7 +74,7 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.horzFloorTitleContainer.setExpandRatio(this.btnAddTable, 1.0f);
         this.horzFloorTitleContainer.setComponentAlignment(btnAddTable, Alignment.MIDDLE_RIGHT);
 
-        this.addComponents(this.horzFloorTitleContainer, gridContent);
+        this.addComponents(this.horzFloorTitleContainer, content);
 
         // Add event listener
         this.btnExpandElement.addClickListener(this);
@@ -68,12 +83,12 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
     @Override
     public void buttonClick(ClickEvent event) {
         if(event.getButton() == this.btnExpandElement) {
-            if(this.gridContent.isVisible()) {
+            if(this.content.isVisible()) {
                 this.btnExpandElement.setIcon(FontAwesome.CHEVRON_RIGHT);
-                this.gridContent.setVisible(false);
+                this.content.setVisible(false);
             } else {
                 this.btnExpandElement.setIcon(FontAwesome.CHEVRON_DOWN);
-                this.gridContent.setVisible(true);
+                this.content.setVisible(true);
             }
         }
         

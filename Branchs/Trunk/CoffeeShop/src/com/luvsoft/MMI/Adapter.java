@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import com.luvsoft.MMI.Order.OrderDetailRecord;
 import com.luvsoft.MMI.Order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
+import com.luvsoft.controllers.CategoryController;
 import com.luvsoft.controllers.FloorController;
 import com.luvsoft.controllers.FoodController;
 import com.luvsoft.controllers.OrderController;
@@ -30,6 +31,7 @@ public class Adapter {
     private static FloorController floorCtrl = new FloorController();
     private static OrderController orderCtrl = new OrderController();
     private static FoodController foodCtrl = new FoodController();
+    private static CategoryController categoryCtrl = new CategoryController();
 
     public static List<OrderInfo> retrieveOrderInfoList(List<Order> orderList){
         System.out.println("retrieveOrderInfoList, with inputted orderList: " + orderList.toString());
@@ -74,6 +76,24 @@ public class Adapter {
         }
         return list;
     }
+
+    public static List<Category> retrieveCategoryList() {
+        List<Category> list = categoryCtrl.getAllCategory();
+
+        for (Category category : list) {
+            List<Food> listOfFood = new ArrayList<Food>();
+            for (String foodId : category.getFoodIdList()) {
+                Food food = foodCtrl.getFoodById(foodId);
+ 
+                // If food is not empty
+                if(!food.getId().equals("")) {
+                            listOfFood.add(food);
+                }
+            }
+                    category.setListOfFoodByCategory(listOfFood);
+         } 
+         return list;
+}
 
     public static boolean changeTableState(String tableId, Types.State state){
         System.out.println("changeTableState tableId: " + tableId +", state: " + state);
