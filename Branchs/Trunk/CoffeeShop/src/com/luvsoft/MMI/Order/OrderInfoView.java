@@ -101,14 +101,16 @@ public class OrderInfoView extends Window{
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
         
         currentOrder = retrieveOrder();
-        loadOrderInfo(); // load orderinfo from database
+        if( currentOrder != null ){
+            orderInfo = Adapter.retrieveOrderInfo(currentOrder);
+        }
         setupUI();
     }
 
     public void populate() {
         // Fill data
         if( orderInfo == null ){
-            System.out.println("No orderinfo, return!");
+            System.out.println("No orderinfo for this table!");
             return;
         }
         lbTableName.setValue(orderInfo.getTableName());
@@ -242,6 +244,10 @@ public class OrderInfoView extends Window{
         btnConfirmOrder.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                // Save the note
+                if( currentOrder != null && !currentOrder.getNote().equals(txtNote.getValue()) ){
+                    currentOrder.setNote(txtNote.getValue());
+                }
                 // If there's no new food was selected, return
                 if( !isOrderDetailListChanged )
                 {
@@ -301,6 +307,8 @@ public class OrderInfoView extends Window{
                     System.out.println("Fail to update orderId: " + currentOrder.getId());
                 }
 
+                // set table state to WAITING
+                Adapter.changeTableState(currentOrder.getTableId(), Types.State.WAITING);
                 close();
             }
         });
@@ -337,34 +345,12 @@ public class OrderInfoView extends Window{
     }
 
     /*
-     * Load orderinfo of currentOrder from db
-     */
-    public void loadOrderInfo(){
-        if( currentOrder == null ){
-            System.out.println("There's no order for this table!");
-            return;
-        }
-
-        List<Order> orderList = new ArrayList<Order >();
-        orderList.add(currentOrder);
-        List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
-        if( orderInfoList.isEmpty() ){
-            System.out.println("There's an order, but no order details, delete this order");
-            Adapter.removeOrder(currentOrder.getId());
-            currentOrder = null;
-            return;
-        }
-        // It's should be the first element
-        orderInfo = orderInfoList.get(0);
-    }
-    
-    /*
      * Get order from db
      * return NULL if no order for this table
      */
     private Order retrieveOrder(){
         System.out.println("loadOrder...");
-        List<Order> orderList = Adapter.getCurrentOrderList();
+        List<Order> orderList = Adapter.getOrderListIgnoreState(Types.State.COMPLETED);
         System.out.println(orderList.toString());
         for( Order order : orderList ){
             if( order.getTableId().equals(this.table.getId()) ){

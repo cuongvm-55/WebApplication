@@ -33,42 +33,37 @@ public class Adapter {
     private static FoodController foodCtrl = new FoodController();
     private static CategoryController categoryCtrl = new CategoryController();
 
-    public static List<OrderInfo> retrieveOrderInfoList(List<Order> orderList){
-        System.out.println("retrieveOrderInfoList, with inputted orderList: " + orderList.toString());
-        List<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
-        for( Order order : orderList ){
-            Table table = floorCtrl.getTableById(order.getTableId());
-            OrderInfo orderInfo = new OrderInfo();
-            orderInfo.setOrderId(order.getId());
-            orderInfo.setTableName(Language.TABLE + " " + table.getNumber());
-
-            // OrderDetails
-            List<OrderDetailRecord> orderDetailRecordList = new ArrayList<OrderDetailRecord>();
-            List<String> orderDetailIdList = order.getOrderDetailIdList();
-            for( String orderDetailId : orderDetailIdList ){
-                System.out.println(orderDetailId.toString());
-                OrderDetail orderDetail = new OrderDetail();
-                if( !orderCtrl.getOrderDetailById(orderDetailId, orderDetail)){
-                    System.out.println("Fail to get orderdetail id: " + orderDetailId);
-                    continue; // set next index
-                }
-                OrderDetailRecord record = new OrderDetailRecord();
-                Food food = foodCtrl.getFoodById(orderDetail.getFoodId());
-                record.setFoodId(food.getId());
-                record.setOrderDetailId(orderDetail.getId());
-                record.setFoodName(food.getName());
-                record.setPrice(food.getPrice());
-                record.setQuantity(orderDetail.getQuantity());
-                record.setStatus(orderDetail.getState());
-                orderDetailRecordList.add(record);
-
-                orderInfo.setOrderDetailList(orderDetailRecordList);
-                orderInfoList.add(orderInfo);
+    public static OrderInfo retrieveOrderInfo(Order order){
+        System.out.println("retrieveOrderInfo, orderId: " + order.getId());
+        Table table = floorCtrl.getTableById(order.getTableId());
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setOrderId(order.getId());
+        orderInfo.setTableName(Language.TABLE + " " + table.getNumber());
+        
+        // OrderDetails
+        List<OrderDetailRecord> orderDetailRecordList = new ArrayList<OrderDetailRecord>();
+        List<String> orderDetailIdList = order.getOrderDetailIdList();
+        for( String orderDetailId : orderDetailIdList ){
+            OrderDetail orderDetail = new OrderDetail();
+            if( !orderCtrl.getOrderDetailById(orderDetailId, orderDetail)){
+                System.out.println("Fail to get orderdetail id: " + orderDetailId);
+                continue; // set next index
             }
+            OrderDetailRecord record = new OrderDetailRecord();
+            Food food = foodCtrl.getFoodById(orderDetail.getFoodId());
+            record.setFoodId(food.getId());
+            record.setOrderDetailId(orderDetail.getId());
+            record.setFoodName(food.getName());
+            record.setPrice(food.getPrice());
+            record.setQuantity(orderDetail.getQuantity());
+            record.setStatus(orderDetail.getState());
+            orderDetailRecordList.add(record);
+
+            orderInfo.setOrderDetailList(orderDetailRecordList);
         }
-        return orderInfoList;
+        return orderInfo;
     }
-    
+
     public static List<Floor> retrieveFloorList(){
         System.out.println("retrieveFloorList...");
         return floorCtrl.getAllFloor();
@@ -106,19 +101,23 @@ public class Adapter {
         return floorCtrl.setTableStatus(tableId, state);
     }
 
-    public static List<Order> getCurrentOrderList(){
-        System.out.println("Get current order list...");
-        return orderCtrl.getCurrentOrderList();
+    public static List<Order> getOrderListWithState(Types.State state){
+        System.out.println("Get order list with state: " + state.toString());
+        return orderCtrl.getOrderListWithState(state);
     }
 
-    public static boolean changeOrderState(String orderId, Types.State state){
-        return orderCtrl.setOrderStatus(orderId, state);
+    public static List<Order> getOrderListIgnoreState(Types.State state){
+        System.out.println("Get order list with state different to: " + state.toString());
+        return orderCtrl.getOrderListIgnoreState(state);
     }
-
     public static boolean updateFieldValueOfOrder(String orderId, String fieldName, String fieldVale){
         return orderCtrl.updateFieldValueOfOrder(orderId, fieldName, fieldVale);
     }
 
+    public static boolean updateFieldValueOfOrderDetail(String orderId, String fieldName, String fieldVale){
+        return orderCtrl.updateFieldValueOfOrderDetail(orderId, fieldName, fieldVale);
+    }
+    
     public static boolean addNewOrder(Order order){
         return orderCtrl.addNewOrder(order);
     }
@@ -136,9 +135,19 @@ public class Adapter {
     }
     
     public static boolean updateOrderDetailList(Order order){
-        return orderCtrl.updateOrderDetailList(order);
+        return orderCtrl.updateFieldValueOfOrder(order.getId(),
+                Order.DB_FIELD_NAME_ORDER_DETAIL_LIST,
+                Types.formatListToString(order.getOrderDetailIdList()));
     }
     
+    public static boolean changeOrderState(String orderId, Types.State state){
+        return orderCtrl.updateFieldValueOfOrder(orderId, Order.DB_FIELD_NAME_STATUS, state.toString());
+    }
+
+    public static boolean changeOrderDetailState(String orderDetailId, Types.State state){
+        return orderCtrl.updateFieldValueOfOrderDetail(orderDetailId, Order.DB_FIELD_NAME_STATUS, state.toString());
+    }
+
     public static void createDataForMongoDB(){
         // Food list
         FoodFacade foodFacade = new FoodFacade();

@@ -6,6 +6,7 @@ import com.luvsoft.MMI.Order.OrderInfo;
 import com.luvsoft.MMI.components.OrderElement;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
+import com.luvsoft.entities.Types;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -37,16 +38,16 @@ public class OrderListView extends Panel{
         panel.setSizeFull();
         panel.setStyleName("scrollable");
         loadOrderList();
-        List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
-        if( orderInfoList.isEmpty() ){
+        if( orderList.isEmpty() ){
             // No Order in orderlist
             Label lbl = new Label(Language.NO_ORDER_IN_ORDER_LIST);
             vtcLayout.addComponent(lbl);
             this.setContent(vtcLayout);
             return;
         }
-        for( OrderInfo orderInfo : orderInfoList ){
-            OrderElement orderElement = new OrderElement(orderInfo.getOrderId());
+        for( Order order : orderList ){
+            OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+            OrderElement orderElement = new OrderElement(order);
             orderElement.populate(orderInfo);
             HorizontalLayout topLine = new HorizontalLayout();
             topLine.setSizeFull();
@@ -56,11 +57,7 @@ public class OrderListView extends Panel{
             bottomLine.setStyleName("bottom-line");
             vtcLayout.addComponents(topLine, orderElement, bottomLine);
         }
-        //vtcLayout.setStyleName("scrollable");
-        //vtcLayout.setSizeUndefined();
         this.setContent(vtcLayout);
-        //panel.getContent().setSizeUndefined();
-        //this.addComponent(panel);
     }
     
     /*
@@ -74,10 +71,10 @@ public class OrderListView extends Panel{
      * - When a table changes state from other states to EMPTY, the associated Order will be set to "COMPLETED" 
      *   and can't be modified anymore
      * 
-     * This function loads all "current orders"
+     * This function loads all "current orders" that has state WAITING
      */
     public void loadOrderList(){
-        orderList = Adapter.getCurrentOrderList();
+        orderList = Adapter.getOrderListWithState(Types.State.WAITING);
     }
     public List<Order> getOrderList() {
         return orderList;

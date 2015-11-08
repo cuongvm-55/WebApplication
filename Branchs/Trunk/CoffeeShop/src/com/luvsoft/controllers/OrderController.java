@@ -18,25 +18,6 @@ public class OrderController extends AbstractController{
     private static OrderFacade orderFacade = new OrderFacade();
     private static OrderDetailsFacade orderDetailFacade = new OrderDetailsFacade();
 
-//    public List<OrderDetail> getOrderDetails(String orderId){
-//        // get list of order detail Id
-//        Order order = new Order();
-//        orderFacade.findById(orderId, order);
-//        
-//        // get list of order detail object by list id
-//        List<OrderDetail> list = new ArrayList<OrderDetail>();
-//        OrderDetail orderDetail = new OrderDetail();
-//        for( String id : order.getOrderDetailIdList() ){
-//            if( orderDetailFacade.findById(id, orderDetail) ){
-//                list.add(orderDetail);
-//            }
-//            else{
-//                System.out.println("Can not get order detail id: " + id);
-//            }
-//        }
-//        return list;
-//    }
-
     public boolean getOrderById(String orderId, Order order){
         return orderFacade.findById(orderId, order);
     }
@@ -45,11 +26,21 @@ public class OrderController extends AbstractController{
         return orderDetailFacade.findById(orderDetailId, orderDtl);
     }
     /*
-     * Get all order that has Status != COMPLETED
+     * Get all order that has Status = state
      */
-    public List<Order> getCurrentOrderList(){
+    public List<Order> getOrderListWithState(Types.State state){
         List<Order> list = new ArrayList<Order>();
-        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$ne", Types.State.COMPLETED.toString())); 
+        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$eq", state.toString())); 
+        orderFacade.findByQuery(query, list);
+        return list;
+    }
+
+    /*
+     * Get all order that has Status different from state
+     */
+    public List<Order> getOrderListIgnoreState(Types.State state){
+        List<Order> list = new ArrayList<Order>();
+        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$ne", state.toString())); 
         orderFacade.findByQuery(query, list);
         return list;
     }
@@ -88,18 +79,19 @@ public class OrderController extends AbstractController{
     public boolean removeOrderDetail(String orderDetailId){
         return orderDetailFacade.removeById(orderDetailId);
     }
-    
+
     /*
-     * Update orderdetails list for order
-     */
-    public boolean updateOrderDetailList(Order order){
-        return orderFacade.updateFieldValue(order.getId(), Order.DB_FIELD_NAME_ORDER_DETAIL_LIST, Types.formatListToString(order.getOrderDetailIdList()));
-    }
-    
-    /*
-     * Update fieldValue (do not applicable for list)
+     * Update fieldValue
      */
     public boolean updateFieldValueOfOrder(String orderId, String fieldName, String fieldVale){
         return orderFacade.updateFieldValue(orderId, fieldName, fieldVale);
     }
+
+    /*
+     * Update fieldValue
+     */
+    public boolean updateFieldValueOfOrderDetail(String orderId, String fieldName, String fieldVale){
+        return orderDetailFacade.updateFieldValue(orderId, fieldName, fieldVale);
+    }
+
 }

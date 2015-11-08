@@ -6,7 +6,7 @@ import java.util.List;
 import com.luvsoft.MMI.utils.Language;
 public class Types {
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    
+
     public static enum State{
         UNDEFINED("UNDEFINED"),
         // Table

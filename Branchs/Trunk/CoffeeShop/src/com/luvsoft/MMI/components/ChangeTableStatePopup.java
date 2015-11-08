@@ -1,8 +1,11 @@
 package com.luvsoft.MMI.components;
 
+import java.util.List;
+
 import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.Order.OrderInfoView;
 import com.luvsoft.MMI.utils.Language;
+import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -22,6 +25,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class ChangeTableStatePopup extends Window implements ClickListener{
     private CoffeeTableElement coffeTableContainer;
     private Table table;
+    
     // private PopupView popupChangeTableState;
     private OptionGroup optionState;
     private Button btnAddOrder;
@@ -69,9 +73,29 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
             close();
         } else if(event.getComponent() == btnConfirm){
             // Save to db, change the displayed state upon success
-            Types.State tableState = Types.StringToState(optionState.getValue().toString());
-            if( Adapter.changeTableState(table.getId(), tableState) ){
-                coffeTableContainer.changeTableState(tableState, 0);
+            Types.State newState = Types.StringToState(optionState.getValue().toString());
+            
+            // Cannot change from UNPAID to EMPTY if current order is not PAID
+            List<Order> orderList = Adapter.getOrderListIgnoreState(Types.State.COMPLETED);
+            Order currentOrder = null;
+            for( Order order : orderList ){
+                if( order.getTableId().equals(table.getId()) ){
+                    currentOrder = order;
+                    break;
+                }
+            }
+
+            if( table.getState() == Types.State.UNPAID && newState == Types.State.EMPTY 
+                    && currentOrder != null && currentOrder.getStatus() != Types.State.PAID){
+                System.out.println("Cannot change from UNPAID to EMPTY when current order's not PAID");
+                // notify message
+            }
+            else if( Adapter.changeTableState(table.getId(), newState) ){
+                coffeTableContainer.changeTableState(newState, 0);
+                // if table is change to empty, set currentOrder to COMPLETED if it exist
+                if( newState == Types.State.EMPTY && currentOrder != null ){
+                    Adapter.changeOrderState(currentOrder.getId(), Types.State.COMPLETED);
+                }
             }
             close();
         }
