@@ -9,6 +9,8 @@ import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.server.Page;
+import com.vaadin.shared.ui.ui.NotificationRole;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -16,6 +18,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -74,8 +77,7 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
         } else if(event.getComponent() == btnConfirm){
             // Save to db, change the displayed state upon success
             Types.State newState = Types.StringToState(optionState.getValue().toString());
-            
-            // Cannot change from UNPAID to EMPTY if current order is not PAID
+
             List<Order> orderList = Adapter.getOrderListIgnoreState(Types.State.COMPLETED);
             Order currentOrder = null;
             for( Order order : orderList ){
@@ -85,10 +87,15 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
                 }
             }
 
+         // Cannot change from UNPAID to EMPTY if current order is not PAID
             if( table.getState() == Types.State.UNPAID && newState == Types.State.EMPTY 
                     && currentOrder != null && currentOrder.getStatus() != Types.State.PAID){
                 System.out.println("Cannot change from UNPAID to EMPTY when current order's not PAID");
                 // notify message
+                new Notification("<b>Error</b>",
+                        "<i>" + Language.CANNOT_CHANGE_TABLE_STATE+"</i>",
+                        Notification.TYPE_TRAY_NOTIFICATION , true)
+                        .show(Page.getCurrent());
             }
             else if( Adapter.changeTableState(table.getId(), newState) ){
                 coffeTableContainer.changeTableState(newState, 0);

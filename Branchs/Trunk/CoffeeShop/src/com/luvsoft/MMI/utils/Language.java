@@ -51,6 +51,12 @@ public class Language {
                 CANCEL = "Cancel";
                 
                 NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
+                
+                // Errors
+                ERROR = "Error";
+                CANNOT_CHANGE_TABLE_STATE = "Cannot change table state to Empty, curent Order is not Paid!";
+                // Warnings
+                WARNING = "Warning";
             }
                 break;
             case VIETNAMESE:
@@ -89,6 +95,12 @@ public class Language {
                 CANCEL = "Thoát";
 
                 NO_ORDER_IN_ORDER_LIST = "Hiện tại chưa có bàn nào đặt món!";
+                
+                // Errors
+                ERROR = "Lỗi";
+                CANNOT_CHANGE_TABLE_STATE = "Không thể chuyển trạng thái Trống, hóa đơn chưa Thanh toán!";
+                // Warnings
+                WARNING = "Cảnh báo";
             }
                 break;
             case JAPANESE:
@@ -135,4 +147,10 @@ public class Language {
     public static String CANCEL;
 
     public static String NO_ORDER_IN_ORDER_LIST;
+    
+    // Errors
+    public static String ERROR;
+    public static String CANNOT_CHANGE_TABLE_STATE;
+    // Warnings
+    public static String WARNING;
 }
