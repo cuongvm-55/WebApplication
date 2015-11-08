@@ -49,6 +49,8 @@ public class Language {
                 NOTE = "Note";
                 ALL_DONE = "All Done";
                 CANCEL = "Cancel";
+                
+                NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
             }
                 break;
             case VIETNAMESE:
@@ -85,6 +87,8 @@ public class Language {
                 NOTE = "Ghi chú";
                 ALL_DONE = "Xong Hết";
                 CANCEL = "Thoát";
+
+                NO_ORDER_IN_ORDER_LIST = "Hiện tại chưa có bàn nào đặt món!";
             }
                 break;
             case JAPANESE:
@@ -129,4 +133,6 @@ public class Language {
 
     public static String ALL_DONE;
     public static String CANCEL;
+
+    public static String NO_ORDER_IN_ORDER_LIST;
 }

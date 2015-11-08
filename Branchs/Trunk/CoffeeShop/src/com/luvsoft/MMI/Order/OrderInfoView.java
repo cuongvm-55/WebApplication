@@ -59,6 +59,7 @@ public class OrderInfoView extends Window{
     
     // order detail list return from AddFood
     private List<OrderDetail> orderDetailList;
+    private boolean isOrderDetailListChanged;
 
     public OrderInfoView(com.luvsoft.entities.Table table){
         super();
@@ -67,7 +68,8 @@ public class OrderInfoView extends Window{
         paidAmount = 0.00f;
         currentOrder = null;
         orderInfo = null;
-        orderDetailList = new ArrayList<OrderDetail>();
+        orderDetailList = null;
+        isOrderDetailListChanged = false;
         init();
         //populate();
     }
@@ -180,6 +182,9 @@ public class OrderInfoView extends Window{
                 // TODO Auto-generated method stub
                 //layout.replaceComponent(textFieldpaidAmount, lbPaidAmount);
                 paidAmount = Float.parseFloat(event.getText());
+                
+                // save the amount to db
+                Adapter.updateFieldValueOfOrder(currentOrder.getId(), Order.DB_FIELD_NAME_PAID_MONEY, ""+paidAmount);
             }
         });
 
@@ -221,7 +226,7 @@ public class OrderInfoView extends Window{
         Button btnConfirmOrder = new Button(Language.CONFIRM_ORDER);
         btnConfirmOrder.addStyleName(ValoTheme.BUTTON_HUGE);
         btnConfirmOrder.addStyleName("customizationButton");
-     // Don't allow some button when no order exist
+        // Don't allow some button when no order exist
         if( currentOrder == null )
         {
             btnConfirmOrder.setEnabled(false);
@@ -238,7 +243,13 @@ public class OrderInfoView extends Window{
             @Override
             public void buttonClick(ClickEvent event) {
                 // If there's no new food was selected, return
-                // close();
+                if( !isOrderDetailListChanged )
+                {
+                    System.out.println("No changes, return");
+                    close();
+                    return;
+                }
+
                 // If there's no order corresponding to current table, create new one
                 if( currentOrder == null ){
                     currentOrder = new Order();
@@ -249,7 +260,7 @@ public class OrderInfoView extends Window{
                     currentOrder.setTableId(table.getId());
                     currentOrder.setCreatingTime(LocalDateTime.now());
                 }
-                
+
                 // save all the data to database
                 // firstly, delete all old order details
                 List<OrderDetailRecord> oldRecordList = orderInfo.getOrderDetailList();
@@ -273,6 +284,9 @@ public class OrderInfoView extends Window{
                     }
                     else{
                         System.out.println("Fail to add orderdetail");
+                        // revert the deleted items
+                        rewindOrderDetailList(oldRecordList);
+                        return; // finish here
                     }
                 }
 
@@ -286,6 +300,8 @@ public class OrderInfoView extends Window{
                 else{
                     System.out.println("Fail to update orderId: " + currentOrder.getId());
                 }
+
+                close();
             }
         });
         
@@ -307,6 +323,20 @@ public class OrderInfoView extends Window{
     }
 
     /*
+     * Rewind the deleted order details
+     */
+    public void rewindOrderDetailList(List<OrderDetailRecord> oldRecordList){
+        for( OrderDetailRecord record : oldRecordList ){
+            OrderDetail odDetail = new OrderDetail();
+            odDetail.setId(record.getOrderDetailId());
+            odDetail.setFoodId(record.getFoodId());
+            odDetail.setQuantity(record.getQuantity());
+            odDetail.setState(record.getStatus());
+            Adapter.addNewOrderDetail(odDetail);
+        }
+    }
+
+    /*
      * Load orderinfo of currentOrder from db
      */
     public void loadOrderInfo(){
@@ -319,7 +349,9 @@ public class OrderInfoView extends Window{
         orderList.add(currentOrder);
         List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
         if( orderInfoList.isEmpty() ){
-            System.out.println("orderId is not exist!");
+            System.out.println("There's an order, but no order details, delete this order");
+            Adapter.removeOrder(currentOrder.getId());
+            currentOrder = null;
             return;
         }
         // It's should be the first element

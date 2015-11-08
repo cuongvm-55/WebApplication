@@ -37,16 +37,12 @@ public class OrderController extends AbstractController{
 //        return list;
 //    }
 
-    public Order getOrderById(String orderId){
-        Order order = new Order();
-        orderFacade.findById(orderId, order);
-        return order;
+    public boolean getOrderById(String orderId, Order order){
+        return orderFacade.findById(orderId, order);
     }
     
-    public OrderDetail getOrderDetailById(String orderDetailId){
-        OrderDetail orderDtl = new OrderDetail();
-        orderDetailFacade.findById(orderDetailId, orderDtl);
-        return orderDtl;
+    public boolean getOrderDetailById(String orderDetailId, OrderDetail orderDtl){
+        return orderDetailFacade.findById(orderDetailId, orderDtl);
     }
     /*
      * Get all order that has Status != COMPLETED
@@ -98,5 +94,12 @@ public class OrderController extends AbstractController{
      */
     public boolean updateOrderDetailList(Order order){
         return orderFacade.updateFieldValue(order.getId(), Order.DB_FIELD_NAME_ORDER_DETAIL_LIST, Types.formatListToString(order.getOrderDetailIdList()));
+    }
+    
+    /*
+     * Update fieldValue (do not applicable for list)
+     */
+    public boolean updateFieldValueOfOrder(String orderId, String fieldName, String fieldVale){
+        return orderFacade.updateFieldValue(orderId, fieldName, fieldVale);
     }
 }

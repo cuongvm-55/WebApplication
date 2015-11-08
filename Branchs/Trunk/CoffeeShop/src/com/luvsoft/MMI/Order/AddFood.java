@@ -188,6 +188,13 @@ public class AddFood extends Window {
         btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
         btnConfirm.addStyleName("customizationButton");
 
+        btnConfirm.addClickListener(new ClickListener() {
+            
+            @Override
+            public void buttonClick(ClickEvent event) {
+                // TODO Auto-generated method stub
+            }
+        });
         footer.addComponents(btnConfirm);
         footer.setComponentAlignment(btnConfirm, Alignment.MIDDLE_CENTER);
 

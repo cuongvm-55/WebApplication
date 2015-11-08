@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.luvsoft.MMI.Order.OrderInfo;
 import com.luvsoft.MMI.components.OrderElement;
+import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
@@ -36,20 +38,13 @@ public class OrderListView extends Panel{
         panel.setStyleName("scrollable");
         loadOrderList();
         List<OrderInfo> orderInfoList = Adapter.retrieveOrderInfoList(orderList);
-        /* for(int i=0;i<10;i++){
-            OrderInfo order = new OrderInfo();
-            order.setOrderId("12345");
-            order.setTableName("Bàn 1");
-            OrderDetailRecord record = new OrderDetailRecord();
-            record.setFoodName("Cà phê đen đá");
-            record.setPrice(50.00f);
-            record.setQuantity(2);
-            record.setStatus("WAITING");
-            List<OrderDetailRecord> list = new ArrayList<OrderDetailRecord>();
-            list.add(record);
-            order.setOrderDetailList(list);
-            orderInfoList.add(order);
-        } */
+        if( orderInfoList.isEmpty() ){
+            // No Order in orderlist
+            Label lbl = new Label(Language.NO_ORDER_IN_ORDER_LIST);
+            vtcLayout.addComponent(lbl);
+            this.setContent(vtcLayout);
+            return;
+        }
         for( OrderInfo orderInfo : orderInfoList ){
             OrderElement orderElement = new OrderElement(orderInfo.getOrderId());
             orderElement.populate(orderInfo);
@@ -75,11 +70,9 @@ public class OrderListView extends Panel{
      *     - Order state must be "COMPLETE"
      *  2. Current orders - user are working with these orders, add food, confirm paid,...
      *     - Order state < "COMPLETE"
-     * - When a table changes state from EMPTY-->WAITING, a temporary Order will be created in MMI layer
-     * - When user add food to a temporary order, it will be saved to DB as a new "current orders" for a table
-     *      After that, we consider temporary as a "current orders" --> set state ...
-     * - When a table changes state from other states to EMPTY, the associated Order in MMI layer will be deleted,
-     *      "current orders" now is considered as a "saved orders" --> set state "COMPLETE"
+     * - When user confirm order foods for the first time, an Order will be added to db as a new "current orders" for a table
+     * - When a table changes state from other states to EMPTY, the associated Order will be set to "COMPLETED" 
+     *   and can't be modified anymore
      * 
      * This function loads all "current orders"
      */

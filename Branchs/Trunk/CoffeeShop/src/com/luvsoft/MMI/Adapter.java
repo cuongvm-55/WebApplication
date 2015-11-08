@@ -47,18 +47,24 @@ public class Adapter {
             List<String> orderDetailIdList = order.getOrderDetailIdList();
             for( String orderDetailId : orderDetailIdList ){
                 System.out.println(orderDetailId.toString());
-                OrderDetail orderDetail = orderCtrl.getOrderDetailById(orderDetailId);
+                OrderDetail orderDetail = new OrderDetail();
+                if( !orderCtrl.getOrderDetailById(orderDetailId, orderDetail)){
+                    System.out.println("Fail to get orderdetail id: " + orderDetailId);
+                    continue; // set next index
+                }
                 OrderDetailRecord record = new OrderDetailRecord();
                 Food food = foodCtrl.getFoodById(orderDetail.getFoodId());
+                record.setFoodId(food.getId());
                 record.setOrderDetailId(orderDetail.getId());
                 record.setFoodName(food.getName());
                 record.setPrice(food.getPrice());
                 record.setQuantity(orderDetail.getQuantity());
                 record.setStatus(orderDetail.getState());
                 orderDetailRecordList.add(record);
+
+                orderInfo.setOrderDetailList(orderDetailRecordList);
+                orderInfoList.add(orderInfo);
             }
-            orderInfo.setOrderDetailList(orderDetailRecordList);
-            orderInfoList.add(orderInfo);
         }
         return orderInfoList;
     }
@@ -107,6 +113,10 @@ public class Adapter {
 
     public static boolean changeOrderState(String orderId, Types.State state){
         return orderCtrl.setOrderStatus(orderId, state);
+    }
+
+    public static boolean updateFieldValueOfOrder(String orderId, String fieldName, String fieldVale){
+        return orderCtrl.updateFieldValueOfOrder(orderId, fieldName, fieldVale);
     }
 
     public static boolean addNewOrder(Order order){

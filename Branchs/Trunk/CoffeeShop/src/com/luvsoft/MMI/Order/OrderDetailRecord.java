@@ -7,6 +7,7 @@ import com.vaadin.ui.Image;
 public class OrderDetailRecord{
     private String orderDetailId;
     private String foodName;
+    private String foodId;
     private Types.State status;
     private int quantity;
     private float price;
@@ -78,10 +79,18 @@ public class OrderDetailRecord{
         this.orderDetailId = orderDetailId;
     }
 
+    public String getFoodId() {
+        return foodId;
+    }
+
+    public void setFoodId(String foodId) {
+        this.foodId = foodId;
+    }
+
     @Override
     public String toString() {
         return "OrderDetailRecord [orderDetailId=" + orderDetailId
-                + ", foodName=" + foodName + ", status=" + status
-                + ", quantity=" + quantity + ", price=" + price + "]";
+                + ", foodName=" + foodName + ", foodId=" + foodId + ", status="
+                + status + ", quantity=" + quantity + ", price=" + price + "]";
     }
 }
