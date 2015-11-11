@@ -8,15 +8,26 @@ import com.luvsoft.MMI.Order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;
+import com.vaadin.data.Container;
+import com.vaadin.data.Item;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.server.Page;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.DefaultFieldFactory;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
@@ -43,8 +54,10 @@ public class OrderElement extends VerticalLayout{
         tbOrderInfos.addContainerProperty(Language.FOOD_NAME, String.class, null);
         tbOrderInfos.addContainerProperty(Language.QUANTITY, Integer.class, null);
         tbOrderInfos.addContainerProperty(Language.STATUS, String.class, null);
-        tbOrderInfos.setPageLength(5);
+        tbOrderInfos.addContainerProperty(new String("orderdetailId"), String.class, null);
+        tbOrderInfos.setPageLength(tbOrderInfos.size());
         tbOrderInfos.setSizeFull();
+
         btnConfFinish.setStyleName("customizationButton text-align-left");
         btnConfFinish.addClickListener(new ClickListener() {
             @Override
@@ -56,6 +69,13 @@ public class OrderElement extends VerticalLayout{
                     for( String orderDetailId : order.getOrderDetailIdList() ){
                         Adapter.changeOrderDetailState(orderDetailId, Types.State.COMPLETED);
                         // @todo: send notification about the finish of making foods
+                        OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+                        // notify message
+                        Notification notify = new Notification("<b>Alert</b>",
+                                "<i>Đồ uống bàn" + orderInfo.getTableName() +" đã xong!</i>",
+                                Notification.Type.TRAY_NOTIFICATION  , true);
+                        notify.setPosition(Position.BOTTOM_RIGHT);
+                        notify.show(Page.getCurrent());
                     }
 
                     // Set table status to be UNPAID
@@ -67,7 +87,7 @@ public class OrderElement extends VerticalLayout{
         this.addComponents(lbTableName, tbOrderInfos, btnConfFinish);
         this.setComponentAlignment(tbOrderInfos, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(btnConfFinish, Alignment.MIDDLE_CENTER);
-        
+
         this.order = _order;
     }
     
@@ -77,8 +97,44 @@ public class OrderElement extends VerticalLayout{
         for( int i = 0; i < orderDetailList.size(); i++ ){
             Integer itemId = new Integer(i);
             OrderDetailRecord orderDetail = orderDetailList.get(i);
-            tbOrderInfos.addItem(new Object[]{new Integer(i), orderDetail.getFoodName(), orderDetail.getQuantity(), /*orderDetail.getIconFromStatus(orderDetail.getStatus())*/orderDetail.getStatus().toString()}, itemId);
+            tbOrderInfos.addItem(new Object[]{new Integer(i), orderDetail.getFoodName(),
+                    orderDetail.getQuantity(),
+                    /*orderDetail.getIconFromStatus(orderDetail.getStatus())*/orderDetail.getStatus().toString(),
+                    orderDetail.getOrderDetailId()}, itemId);
         }
+        tbOrderInfos.setVisibleColumns(Language.SEQUENCE,Language.FOOD_NAME,Language.QUANTITY,Language.STATUS);
+        tbOrderInfos.setTableFieldFactory(new DefaultFieldFactory(){
+            @Override
+            public Field createField(Container container, Object itemId,
+                    Object propertyId, Component uiContext) {
+                if (Language.STATUS.equals(propertyId)) {
+                    ComboBox select = new ComboBox();
+                    select.addItem(Types.State.CANCELED.toString());
+                    select.addItem(Types.State.WAITING.toString());
+                    select.addItem(Types.State.COMPLETED.toString());
+                    select.setRequired(true);
+
+                    select.addValueChangeListener(new ValueChangeListener() {
+                        @Override
+                        public void valueChange(ValueChangeEvent event) {
+                            // Set order detail status
+                            Item item = tbOrderInfos.getItem(itemId);
+                            String orderDetailId = item.getItemProperty("orderdetailId").getValue().toString();
+                            String state = event.getProperty().getValue().toString();
+                            System.out.println("Switch orderDetailId: " +orderDetailId+" to state: " + event.getProperty().getValue());
+                            if( !Adapter.changeOrderDetailState(orderDetailId, Types.StringToState(state)) ){
+                                System.out.println("Cannot change order detail state");
+                            }
+                        }
+                    });
+                    return select;
+                }
+                return null;
+                //return super.createField(container, itemId, propertyId, uiContext);
+            }
+        });
+
+        tbOrderInfos.setEditable(true);
         // Click listener
         tbOrderInfos.addItemClickListener(new ItemClickListener() {
             @SuppressWarnings("unchecked")

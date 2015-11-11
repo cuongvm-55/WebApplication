@@ -20,7 +20,6 @@ import com.vaadin.ui.VerticalLayout;
  */
 @SuppressWarnings("serial")
 public class OrderListView extends Panel{
-    private Panel panel;
     private VerticalLayout vtcLayout;
     
     // data
@@ -32,11 +31,8 @@ public class OrderListView extends Panel{
     }
 
     public void init(){
-        panel = new Panel();
         vtcLayout = new VerticalLayout();
         //vtcLayout.setSizeFull();
-        panel.setSizeFull();
-        panel.setStyleName("scrollable");
         loadOrderList();
         if( orderList.isEmpty() ){
             // No Order in orderlist
@@ -58,6 +54,7 @@ public class OrderListView extends Panel{
             vtcLayout.addComponents(topLine, orderElement, bottomLine);
         }
         this.setContent(vtcLayout);
+        this.setSizeFull();
     }
     
     /*

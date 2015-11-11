@@ -10,7 +10,7 @@ import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Page;
-import com.vaadin.shared.ui.ui.NotificationRole;
+import com.vaadin.shared.Position;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -92,10 +92,11 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
                     && currentOrder != null && currentOrder.getStatus() != Types.State.PAID){
                 System.out.println("Cannot change from UNPAID to EMPTY when current order's not PAID");
                 // notify message
-                new Notification("<b>Error</b>",
+                Notification notify = new Notification("<b>Error</b>",
                         "<i>" + Language.CANNOT_CHANGE_TABLE_STATE+"</i>",
-                        Notification.TYPE_TRAY_NOTIFICATION , true)
-                        .show(Page.getCurrent());
+                        Notification.Type.TRAY_NOTIFICATION  , true);
+                notify.setPosition(Position.BOTTOM_RIGHT);
+                notify.show(Page.getCurrent());
             }
             else if( Adapter.changeTableState(table.getId(), newState) ){
                 coffeTableContainer.changeTableState(newState, 0);

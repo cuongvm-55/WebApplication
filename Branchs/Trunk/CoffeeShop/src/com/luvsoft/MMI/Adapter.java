@@ -145,7 +145,7 @@ public class Adapter {
     }
 
     public static boolean changeOrderDetailState(String orderDetailId, Types.State state){
-        return orderCtrl.updateFieldValueOfOrderDetail(orderDetailId, Order.DB_FIELD_NAME_STATUS, state.toString());
+        return orderCtrl.updateFieldValueOfOrderDetail(orderDetailId, OrderDetail.DB_FIELD_NAME_STATE, state.toString());
     }
 
     public static void createDataForMongoDB(){

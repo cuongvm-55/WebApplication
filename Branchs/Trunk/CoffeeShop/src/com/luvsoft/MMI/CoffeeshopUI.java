@@ -35,7 +35,7 @@ public class CoffeeshopUI extends UI {
         // Create a navigator to control the view
         navigator = new Navigator(this, this);
 
-        // Adapter.createDataForMongoDB(); // just for test
+        //Adapter.createDataForMongoDB(); // just for test
         
         // Create and register the view
         navigator.addView("", new MainView());

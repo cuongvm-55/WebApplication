@@ -38,25 +38,25 @@ public class Types {
 
     public static State StringToState(String str){
         State state = State.UNDEFINED;
-        if( str.equals(Language.EMPTY)){
+        if( str.equals("EMPTY") || str.equals(Language.EMPTY)){
             state = State.EMPTY;
         }
-        else if( str.equals(Language.WAITING) ){
+        else if( str.equals("WAITING") || str.equals(Language.WAITING)){
             state = State.WAITING;
         }
-        else if( str.equals(Language.FULL)){
+        else if( str.equals("FULL") || str.equals(Language.FULL)){
             state = State.FULL;
         }
-        else if( str.equals(Language.PAID)){
+        else if( str.equals("PAID") || str.equals(Language.PAID)){
             state = State.PAID;
         }
-        else if( str.equals(Language.UNPAID)){
+        else if( str.equals("UNPAID") || str.equals(Language.UNPAID)){
             state = State.UNPAID;
         }
-        else if( str.equals(Language.COMPLETED)){
+        else if( str.equals("COMPLETED") || str.equals(Language.COMPLETED)){
             state = State.COMPLETED;
         }
-        else if( str.equals(Language.CANCELED)){
+        else if( str.equals("CANCELED") || str.equals(Language.CANCEL)){
             state = State.CANCELED;
         }
         else{
