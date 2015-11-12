@@ -3,6 +3,7 @@ package com.luvsoft.facades;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bson.types.ObjectId;
 
@@ -131,7 +132,26 @@ public abstract class AbstractFacade {
         }
         return true;
     }
+    
+    /*
+     * Update field value, SET field="value" WHERE objectId="ObjectId"
+     */
+    public <T extends AbstractEntity> boolean update(String objectId, T entity) {
+        try {
+            Map<String, String> map = entity.toHashMap();
+            map.remove(TAG_ID);
+            BasicDBObject newDocument = new BasicDBObject();
+            newDocument.append("$set", new BasicDBObject(map));
 
+            BasicDBObject searchQuery = new BasicDBObject().append(TAG_ID,
+                    new ObjectId(objectId));
+            getDBCollection().update(searchQuery, newDocument);
+        } catch (MongoException mge) {
+            return false;
+        }
+        return true;
+    }
+    
     /*
      * Remove a document by its _id
      * Note: remove all uses "db.messages.remove({})"

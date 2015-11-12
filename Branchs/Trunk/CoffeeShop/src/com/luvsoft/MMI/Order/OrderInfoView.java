@@ -11,6 +11,10 @@ import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.OrderDetail;
 import com.luvsoft.entities.Types;
+import com.vaadin.data.Container;
+import com.vaadin.data.Item;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -20,7 +24,10 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.DefaultFieldFactory;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -57,8 +64,8 @@ public class OrderInfoView extends Window{
     // it will be loaded form db
     private OrderInfo orderInfo;
     
-    // order detail list return from AddFood
-    private List<OrderDetail> orderDetailList;
+    // order detail record list, which is updated by Addfood...
+    private List<OrderDetailRecord> orderDetailRecordList;
     private boolean isOrderDetailListChanged;
 
     public OrderInfoView(com.luvsoft.entities.Table table){
@@ -68,7 +75,7 @@ public class OrderInfoView extends Window{
         paidAmount = 0.00f;
         currentOrder = null;
         orderInfo = null;
-        orderDetailList = null;
+        orderDetailRecordList = null;
         isOrderDetailListChanged = false;
         init();
         //populate();
@@ -96,13 +103,15 @@ public class OrderInfoView extends Window{
         tbOrderDetails.addContainerProperty(Language.STATUS, String.class, null);
         tbOrderDetails.addContainerProperty(Language.QUANTITY, Integer.class, null);
         tbOrderDetails.addContainerProperty(Language.PRICE, Float.class, null);
-        // tbOrderDetails.addContainerProperty(Language.NOTE, String.class, null);
+        tbOrderDetails.addContainerProperty("orderdetailId", String.class, null);
         //tbOrderDetails.setHeight("100%");
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
-        
         currentOrder = retrieveOrder();
         if( currentOrder != null ){
             orderInfo = Adapter.retrieveOrderInfo(currentOrder);
+        }
+        if( orderInfo != null ){
+            orderDetailRecordList = orderInfo.getOrderDetailRecordList();
         }
         setupUI();
     }
@@ -114,21 +123,87 @@ public class OrderInfoView extends Window{
             return;
         }
         lbTableName.setValue(orderInfo.getTableName());
-        // It's should be the first element
-        List<OrderDetailRecord> recordList = orderInfo.getOrderDetailList();
-        orderInfo.toString();
-        for(int i = 0; i < recordList.size(); i++){
+        txtNote.setValue(orderInfo.getNote());
+        if( orderDetailRecordList == null )
+        {
+            // just return if no record
+            return;
+        }
+        for(int i = 0; i < orderDetailRecordList.size(); i++){
             Integer itemId = new Integer(i);
-            OrderDetailRecord record = recordList.get(i);
+            OrderDetailRecord record = orderDetailRecordList.get(i);
             System.out.println(record.toString() );
             // Create the table row.
-            tbOrderDetails.addItem(new Object[] {new Integer(i), new String(record.getFoodName()), new String(record.getStatus().toString())
-                    /*record.getIconFromStatus(record.getStatus())*/, new Integer(record.getQuantity()), new Float(record.getPrice())},
+            tbOrderDetails.addItem(new Object[] {new Integer(i),
+                    record.getFoodName(),
+                    Types.StateToLanguageString(record.getStatus())
+                    /*record.getIconFromStatus(record.getStatus())*/,
+                    new Integer(record.getQuantity()),
+                    new Float(record.getPrice()),
+                    record.getOrderDetailId()},
                           itemId);
             // calculate totalAmount
             totalAmount+= record.getPrice();
         }
 
+        tbOrderDetails.setVisibleColumns(Language.SEQUENCE,Language.FOOD_NAME,Language.QUANTITY,Language.STATUS);
+        tbOrderDetails.setTableFieldFactory(new DefaultFieldFactory(){
+            @Override
+            public Field createField(Container container, Object itemId,
+                    Object propertyId, Component uiContext) {
+                if (Language.STATUS.equals(propertyId)) {
+                    ComboBox select = new ComboBox();
+                    select.addItem(Language.CANCELED/*Types.State.CANCELED.toString()*/);
+                    select.addItem(Language.WAITING/*Types.State.WAITING.toString()*/);
+                    select.addItem(Language.COMPLETED/*Types.State.COMPLETED.toString()*/);
+                    select.setRequired(true);
+
+                    select.addValueChangeListener(new ValueChangeListener() {
+                        @Override
+                        public void valueChange(ValueChangeEvent event) {
+                            // Set order detail status
+                            Item item = tbOrderDetails.getItem(itemId);
+                            String orderDetailId = item.getItemProperty("orderdetailId").getValue().toString();
+                            String state = event.getProperty().getValue().toString();
+                            for( OrderDetailRecord record : orderDetailRecordList ){
+                                if( record.getOrderDetailId().equals(orderDetailId) ){
+                                    record.setStatus(Types.StringToState(state));
+                                    isOrderDetailListChanged = true;
+                                    break;
+                                }
+                            }
+                            //System.out.println("Switch orderDetailId: " +orderDetailId+" to state: " + event.getProperty().getValue());
+                            //if( !Adapter.changeOrderDetailState(orderDetailId, Types.StringToState(state)) ){
+                            //    System.out.println("Cannot change order detail state");
+                            //}
+                        }
+                    });
+                    return select;
+                }
+                else if( propertyId.equals(Language.QUANTITY) ){
+                    Item item = tbOrderDetails.getItem(itemId);
+                    String orderDetailId = item.getItemProperty("orderdetailId").getValue().toString();
+                    String quantity =  item.getItemProperty(Language.QUANTITY).getValue().toString();
+                    TextField textField = new TextField();
+                    textField.setValue(quantity);
+                    textField.addTextChangeListener(new TextChangeListener() {
+                        @Override
+                        public void textChange(TextChangeEvent event) {
+                            for( OrderDetailRecord record : orderDetailRecordList ){
+                                if( record.getOrderDetailId().equals(orderDetailId) ){
+                                    record.setQuantity(Integer.parseInt(event.getText()));
+                                    isOrderDetailListChanged = true;
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                    return textField;
+                }
+                return null;
+            }
+        });
+        tbOrderDetails.setEditable(true);
         paidAmount = totalAmount; // default value of paid amount is equal total amount
         lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " " + Language.CURRENCY_SYMBOL);
         textFieldpaidAmount.setValue(paidAmount+"");
@@ -170,23 +245,16 @@ public class OrderInfoView extends Window{
         container.setResponsive(true);
         container.setSizeFull();
         container.setComponentAlignment(lbTableName, Alignment.TOP_CENTER);
-//        // Click listener
-//        layout.addLayoutClickListener(new LayoutClickListener() {
-//            @Override
-//            public void layoutClick(LayoutClickEvent event) {
-//                // TODO Auto-generated method stub
-//                layout.replaceComponent(lbPaidAmount, textFieldpaidAmount);
-//            }
-//        });
+
         textFieldpaidAmount.addTextChangeListener(new TextChangeListener() {
             @Override
             public void textChange(TextChangeEvent event) {
                 // TODO Auto-generated method stub
                 //layout.replaceComponent(textFieldpaidAmount, lbPaidAmount);
-                paidAmount = Float.parseFloat(event.getText());
+                //paidAmount = Float.parseFloat(event.getText());
                 
                 // save the amount to db
-                Adapter.updateFieldValueOfOrder(currentOrder.getId(), Order.DB_FIELD_NAME_PAID_MONEY, ""+paidAmount);
+                //Adapter.updateFieldValueOfOrder(currentOrder.getId(), Order.DB_FIELD_NAME_PAID_MONEY, ""+paidAmount);
             }
         });
 
@@ -247,6 +315,8 @@ public class OrderInfoView extends Window{
                 // Save the note
                 if( currentOrder != null && !currentOrder.getNote().equals(txtNote.getValue()) ){
                     currentOrder.setNote(txtNote.getValue());
+                    Adapter.updateFieldValueOfOrder(currentOrder.getId(),
+                                                Order.DB_FIELD_NAME_NOTE, txtNote.getValue());
                 }
                 // If there's no new food was selected, return
                 if( !isOrderDetailListChanged )
@@ -266,38 +336,56 @@ public class OrderInfoView extends Window{
                     currentOrder.setTableId(table.getId());
                     currentOrder.setCreatingTime(LocalDateTime.now());
                 }
+                List<String> orderDetailIdList = currentOrder.getOrderDetailIdList();
+                for( OrderDetailRecord record : orderDetailRecordList ){
+                    OrderDetail odDetail = new OrderDetail();
+                    String id = record.getOrderDetailId();
+                    if( id.equals("") ){
+                        id = new ObjectId().toString();
+                    }
+                    odDetail.setId(id);
+                    odDetail.setFoodId(record.getFoodId());
+                    odDetail.setQuantity(record.getQuantity());
+                    odDetail.setState(record.getStatus());
 
-                // save all the data to database
-                // firstly, delete all old order details
-                List<OrderDetailRecord> oldRecordList = orderInfo.getOrderDetailList();
-                for( OrderDetailRecord record : oldRecordList ){
-                    if( Adapter.removeOrderDetail(record.getOrderDetailId()) ){
-                        System.out.println("removed orderdetailId: " + record.getOrderDetailId());
-                    }
-                    else{
-                        System.out.println("Fail to removed orderdetailId: " + record.getOrderDetailId());
-                    }
-                }
-
-                // second, add new order details
-                List<String> orderDetailIdList = new ArrayList<String>();
-                for( OrderDetail orderDetail : orderDetailList ){
-                    ObjectId obj = new ObjectId();
-                    orderDetail.setId(obj.toString());
-                    if( Adapter.addNewOrderDetail(orderDetail) ){
-                        orderDetailIdList.add(orderDetail.getId());
-                        System.out.println("Added orderdetail");
-                    }
-                    else{
-                        System.out.println("Fail to add orderdetail");
-                        // revert the deleted items
-                        rewindOrderDetailList(oldRecordList);
-                        return; // finish here
+                    switch( record.getChangeFlag() ){
+                    case MODIFIED:
+                        // update MODIFIED records
+                        if( !Adapter.updateOrderDetail(odDetail.getId(), odDetail) ){
+                            System.out.println("Fail to update order detail, Id: " + odDetail.getId());
+                        }
+                        else{
+                            // set table state to WAITING
+                            Adapter.changeTableState(currentOrder.getTableId(), Types.State.WAITING);
+                        }
+                        break;
+                    case ADDNEW:
+                        // create ADDNEW records
+                        if( !Adapter.addNewOrderDetail(odDetail) ){
+                            System.out.println("Fail to add new order detail, Id: " + odDetail.getId());
+                        }
+                        else{
+                            orderDetailIdList.add(odDetail.getId());
+                            // set table state to WAITING
+                            Adapter.changeTableState(currentOrder.getTableId(), Types.State.WAITING);
+                        }
+                        break;
+                    case DELETED:
+                        // delete DELETED records
+                        if( !Adapter.removeOrderDetail(odDetail.getId()) ){
+                            System.out.println("Fail to delete order detail, Id: " + odDetail.getId());
+                        }
+                        else{
+                            orderDetailIdList.remove(odDetail.getId());
+                        }
+                        break;
+                    default:
+                        break;
                     }
                 }
 
                 // next, update order
-                currentOrder.getOrderDetailIdList().clear();
+                //currentOrder.getOrderDetailIdList().clear();
                 currentOrder.setOrderDetailIdList(orderDetailIdList);
                 if( Adapter.updateOrderDetailList( currentOrder ) ){
                     System.out.println("Updated orderId: " + currentOrder.getId());
@@ -307,8 +395,6 @@ public class OrderInfoView extends Window{
                     System.out.println("Fail to update orderId: " + currentOrder.getId());
                 }
 
-                // set table state to WAITING
-                Adapter.changeTableState(currentOrder.getTableId(), Types.State.WAITING);
                 close();
             }
         });
@@ -318,10 +404,13 @@ public class OrderInfoView extends Window{
             @Override
             public void buttonClick(ClickEvent event) {
                 if( currentOrder != null ){
-                    // Change order status to PAID
-                    Adapter.changeOrderState(currentOrder.getId(), Types.State.PAID);
-                    // Change table status to PAID
-                    Adapter.changeTableState(currentOrder.getTableId(), Types.State.PAID);
+                    currentOrder.setPaidMoney(Float.parseFloat(textFieldpaidAmount.getValue()));
+                    currentOrder.setPaidTime(LocalDateTime.now());
+                    currentOrder.setStatus(Types.State.PAID);
+                    if( Adapter.updateOrder(currentOrder.getId(), currentOrder) ){
+                        // Change table status to PAID
+                        Adapter.changeTableState(currentOrder.getTableId(), Types.State.PAID);
+                    }
                     close();// close the window
                 }
             }

@@ -92,7 +92,12 @@ public class OrderElement extends VerticalLayout{
     }
     
     public void populate(OrderInfo orderInfo){
-        orderDetailList = orderInfo.getOrderDetailList();
+        orderDetailList = orderInfo.getOrderDetailRecordList();
+        if( orderDetailList == null )
+        {
+            // just return
+            return;
+        }
         lbTableName.setValue(orderInfo.getTableName());
         for( int i = 0; i < orderDetailList.size(); i++ ){
             Integer itemId = new Integer(i);
@@ -109,9 +114,9 @@ public class OrderElement extends VerticalLayout{
                     Object propertyId, Component uiContext) {
                 if (Language.STATUS.equals(propertyId)) {
                     ComboBox select = new ComboBox();
-                    select.addItem(Types.State.CANCELED.toString());
-                    select.addItem(Types.State.WAITING.toString());
-                    select.addItem(Types.State.COMPLETED.toString());
+                    select.addItem(Language.CANCELED/*Types.State.CANCELED.toString()*/);
+                    select.addItem(Language.WAITING/*Types.State.WAITING.toString()*/);
+                    select.addItem(Language.COMPLETED/*Types.State.COMPLETED.toString()*/);
                     select.setRequired(true);
 
                     select.addValueChangeListener(new ValueChangeListener() {

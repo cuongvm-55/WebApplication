@@ -94,4 +94,18 @@ public class OrderController extends AbstractController{
         return orderDetailFacade.updateFieldValue(orderId, fieldName, fieldVale);
     }
 
+    /*
+     * Update order
+     */
+    public boolean updateOrder(String orderId, Order order){
+        return orderFacade.update(orderId, order);
+    }
+    
+    /*
+     * Update order detail
+     */
+    public boolean updateOrderDetail(String orderDetailId, OrderDetail orderDetail){
+        return orderDetailFacade.update(orderDetailId, orderDetail);
+    }
+
 }

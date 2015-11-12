@@ -11,6 +11,14 @@ public class OrderDetailRecord{
     private Types.State status;
     private int quantity;
     private float price;
+    static enum ChangedFlag{
+        UNMODIFIED,
+        MODIFIED,
+        ADDNEW,
+        DELETED
+    };
+    private ChangedFlag changeFlag; 
+
     static Types.State[] states = {State.WAITING, State.COMPLETED, State.CANCELED};
     
     public OrderDetailRecord()
@@ -20,6 +28,7 @@ public class OrderDetailRecord{
         status = State.WAITING;
         quantity = 0;
         price = 0.00f;
+        changeFlag = ChangedFlag.UNMODIFIED;
     }
 
     public String getFoodName() {
@@ -85,6 +94,14 @@ public class OrderDetailRecord{
 
     public void setFoodId(String foodId) {
         this.foodId = foodId;
+    }
+
+    public ChangedFlag getChangeFlag() {
+        return changeFlag;
+    }
+
+    public void setChangeFlag(ChangedFlag changeFlag) {
+        this.changeFlag = changeFlag;
     }
 
     @Override

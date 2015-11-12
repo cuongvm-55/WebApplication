@@ -39,7 +39,7 @@ public class Adapter {
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setOrderId(order.getId());
         orderInfo.setTableName(Language.TABLE + " " + table.getNumber());
-        
+        orderInfo.setNote(order.getNote());
         // OrderDetails
         List<OrderDetailRecord> orderDetailRecordList = new ArrayList<OrderDetailRecord>();
         List<String> orderDetailIdList = order.getOrderDetailIdList();
@@ -58,9 +58,8 @@ public class Adapter {
             record.setQuantity(orderDetail.getQuantity());
             record.setStatus(orderDetail.getState());
             orderDetailRecordList.add(record);
-
-            orderInfo.setOrderDetailList(orderDetailRecordList);
         }
+        orderInfo.setOrderDetailRecordList(orderDetailRecordList);
         return orderInfo;
     }
 
@@ -114,6 +113,14 @@ public class Adapter {
         return orderCtrl.updateFieldValueOfOrder(orderId, fieldName, fieldVale);
     }
 
+    public static boolean updateOrder(String orderId, Order order){
+        return orderCtrl.updateOrder(orderId, order);
+    }
+    
+    public static boolean updateOrderDetail(String orderDetailId, OrderDetail orderDetail){
+        return orderCtrl.updateOrderDetail(orderDetailId, orderDetail);
+    }
+    
     public static boolean updateFieldValueOfOrderDetail(String orderId, String fieldName, String fieldVale){
         return orderCtrl.updateFieldValueOfOrderDetail(orderId, fieldName, fieldVale);
     }

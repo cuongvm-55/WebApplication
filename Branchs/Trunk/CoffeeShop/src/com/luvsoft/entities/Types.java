@@ -36,6 +36,37 @@ public class Types {
         }
     }
 
+    public static String StateToLanguageString(State state){
+        String str = "UNDEFINED";
+        switch( state){
+        case EMPTY:
+            str = Language.EMPTY;
+            break;
+        case WAITING:
+            str = Language.WAITING;
+            break;
+        case FULL:
+            str = Language.FULL;
+            break;
+        case PAID:
+            str = Language.PAID;
+            break;
+        case UNPAID:
+            str = Language.UNPAID;
+            break;
+        case COMPLETED:
+            str = Language.COMPLETED;
+            break;
+        case CANCELED:
+            str = Language.CANCELED;
+            break;
+        default:
+            System.out.println("Undefined state!");
+            break;
+        }
+        return str;
+    }
+
     public static State StringToState(String str){
         State state = State.UNDEFINED;
         if( str.equals("EMPTY") || str.equals(Language.EMPTY)){
