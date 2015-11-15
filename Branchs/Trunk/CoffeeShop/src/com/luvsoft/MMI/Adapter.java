@@ -1,7 +1,7 @@
 package com.luvsoft.MMI;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -271,7 +271,7 @@ public class Adapter {
                 order.setNote("Note ..................." +i);
                 order.setOrderDetailIdList(odDetailIdList);
                 order.setPaidMoney(50.00f);
-                LocalDateTime paidTime = LocalDateTime.now();
+                Date paidTime = new Date();
                 order.setPaidTime(paidTime);
                 order.setStaffName("Staff name "+i);
                 if(i%4==0) order.setStatus(Types.State.CANCELED);

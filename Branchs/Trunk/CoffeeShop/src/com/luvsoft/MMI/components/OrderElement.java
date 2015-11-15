@@ -104,7 +104,7 @@ public class OrderElement extends VerticalLayout{
             OrderDetailRecord orderDetail = orderDetailList.get(i);
             tbOrderInfos.addItem(new Object[]{new Integer(i), orderDetail.getFoodName(),
                     orderDetail.getQuantity(),
-                    /*orderDetail.getIconFromStatus(orderDetail.getStatus())*/orderDetail.getStatus().toString(),
+                    /*orderDetail.getIconFromStatus(orderDetail.getStatus())*/Types.StateToLanguageString(orderDetail.getStatus()),
                     orderDetail.getOrderDetailId()}, itemId);
         }
         tbOrderInfos.setVisibleColumns(Language.SEQUENCE,Language.FOOD_NAME,Language.QUANTITY,Language.STATUS);

@@ -24,6 +24,11 @@ public class TableListView extends Panel{
         this.setSizeFull();
         VerticalLayout vtcContentContainer = new VerticalLayout();
         floorList = Adapter.retrieveFloorList();
+        if( floorList == null ){
+            System.out.println("There's no floor!");
+            return;
+        }
+
         for (int j = 0; j < floorList.size(); j++) {
             GridLayout gridElementContent = new GridLayout();
             gridElementContent.setColumns(3);

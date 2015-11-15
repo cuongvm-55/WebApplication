@@ -1,12 +1,13 @@
 package com.luvsoft.entities;
 
-import java.time.format.DateTimeFormatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import com.luvsoft.MMI.utils.Language;
 public class Types {
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-
+    public static final String DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";;
     public static enum State{
         UNDEFINED("UNDEFINED"),
         // Table
@@ -87,7 +88,7 @@ public class Types {
         else if( str.equals("COMPLETED") || str.equals(Language.COMPLETED)){
             state = State.COMPLETED;
         }
-        else if( str.equals("CANCELED") || str.equals(Language.CANCEL)){
+        else if( str.equals("CANCELED") || str.equals(Language.CANCELED)){
             state = State.CANCELED;
         }
         else{
@@ -106,5 +107,22 @@ public class Types {
             str += list.get(list.size()-1);
         }
         return str;
+    }
+    
+    public static Date StringToDate(String str){
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_FORMAT); // it's not depend on the current language
+        try {
+            return formatter.parse(str);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public static String DateToString(Date date)
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_FORMAT); // it's not depend on the current language
+        return formatter.format(date);
     }
 }

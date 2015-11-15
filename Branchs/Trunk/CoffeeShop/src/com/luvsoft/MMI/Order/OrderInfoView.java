@@ -1,7 +1,6 @@
 package com.luvsoft.MMI.Order;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -334,7 +333,7 @@ public class OrderInfoView extends Window{
                     //@ todo: Staffname should be editable
                     currentOrder.setStaffName("");
                     currentOrder.setTableId(table.getId());
-                    currentOrder.setCreatingTime(LocalDateTime.now());
+                    currentOrder.setCreatingTime(new Date());
                 }
                 List<String> orderDetailIdList = currentOrder.getOrderDetailIdList();
                 for( OrderDetailRecord record : orderDetailRecordList ){
@@ -405,7 +404,7 @@ public class OrderInfoView extends Window{
             public void buttonClick(ClickEvent event) {
                 if( currentOrder != null ){
                     currentOrder.setPaidMoney(Float.parseFloat(textFieldpaidAmount.getValue()));
-                    currentOrder.setPaidTime(LocalDateTime.now());
+                    currentOrder.setPaidTime(new Date());
                     currentOrder.setStatus(Types.State.PAID);
                     if( Adapter.updateOrder(currentOrder.getId(), currentOrder) ){
                         // Change table status to PAID

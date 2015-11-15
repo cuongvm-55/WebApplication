@@ -1,8 +1,8 @@
 package com.luvsoft.entities;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,9 +24,9 @@ public class Order extends AbstractEntity{
     private List<String> orderDetailIdList; // list of order detail object id
     private Types.State status;
     private float  paidMoney; // thousand vietnam dong
-    private LocalDateTime creatingTime;
+    private Date creatingTime;
     private int waitingTime; // in minutes
-    private LocalDateTime paidTime;
+    private Date paidTime;
     private String tableId;
     private String note;
     private String staffName;
@@ -37,8 +37,8 @@ public class Order extends AbstractEntity{
         orderDetailIdList = new ArrayList<String>();
         status = Types.State.UNDEFINED;
         paidMoney = 0;
-        creatingTime = LocalDateTime.now();
-        paidTime = LocalDateTime.now();
+        creatingTime = new Date();
+        paidTime = new Date();
         waitingTime = 0;
         tableId = "";
         note = "";
@@ -58,11 +58,11 @@ public class Order extends AbstractEntity{
         map.put(DB_FIELD_NAME_TABLE_ID, tableId);
         map.put(DB_FIELD_NAME_NOTE, note);
         map.put(DB_FIELD_NAME_PAID_MONEY, "" + paidMoney);
-        map.put(DB_FIELD_NAME_PAID_TIME, paidTime.toString());
-        map.put(DB_FIELD_NAME_WAITING_TIME, creatingTime.toString());
+        map.put(DB_FIELD_NAME_PAID_TIME, Types.DateToString(paidTime));
+        map.put(DB_FIELD_NAME_WAITING_TIME, waitingTime + "");
         map.put(DB_FIELD_NAME_STATUS, status.toString());
         map.put(DB_FIELD_NAME_STAFF_NAME, staffName);
-        map.put(DB_FIELD_NAME_CREATING_TIME, ""+creatingTime);
+        map.put(DB_FIELD_NAME_CREATING_TIME, Types.DateToString(creatingTime));
         // Map list
         map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, Types.formatListToString(orderDetailIdList));
         return map;
@@ -101,12 +101,12 @@ public class Order extends AbstractEntity{
         }
         paidMoney = Float.parseFloat(getFieldValue(DB_FIELD_NAME_PAID_MONEY, dbObject));
         try{
-            creatingTime = LocalDateTime.parse(getFieldValue(DB_FIELD_NAME_CREATING_TIME, dbObject));
+            creatingTime = Types.StringToDate(getFieldValue(DB_FIELD_NAME_CREATING_TIME, dbObject));
         }catch(Exception e){
             System.out.println("Fail to parse creating time");
         }
         try{
-            paidTime = LocalDateTime.parse(getFieldValue(DB_FIELD_NAME_PAID_TIME, dbObject));
+            paidTime = Types.StringToDate(getFieldValue(DB_FIELD_NAME_PAID_TIME, dbObject));
         }catch( Exception e ){
             System.out.println("Fail to parse paid time");
         }
@@ -152,11 +152,11 @@ public class Order extends AbstractEntity{
         this.paidMoney = paidMoney;
     }
     
-    public LocalDateTime getCreatingTime() {
+    public Date getCreatingTime() {
         return creatingTime;
     }
 
-    public void setCreatingTime(LocalDateTime creatingTime) {
+    public void setCreatingTime(Date creatingTime) {
         this.creatingTime = creatingTime;
     }
 
@@ -168,11 +168,11 @@ public class Order extends AbstractEntity{
         this.waitingTime = waitingTime;
     }
 
-    public LocalDateTime getPaidTime() {
+    public Date getPaidTime() {
         return paidTime;
     }
 
-    public void setPaidTime(LocalDateTime paidTime) {
+    public void setPaidTime(Date paidTime) {
         this.paidTime = paidTime;
     }
 

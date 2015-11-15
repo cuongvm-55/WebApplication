@@ -45,13 +45,13 @@ public class OrderListView extends Panel{
             OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
             OrderElement orderElement = new OrderElement(order);
             orderElement.populate(orderInfo);
-            HorizontalLayout topLine = new HorizontalLayout();
-            topLine.setSizeFull();
-            topLine.setStyleName("top-line");
+            //HorizontalLayout topLine = new HorizontalLayout();
+            //topLine.setSizeFull();
+            //topLine.setStyleName("top-line");
             HorizontalLayout bottomLine = new HorizontalLayout();
             bottomLine.setSizeFull();
             bottomLine.setStyleName("bottom-line");
-            vtcLayout.addComponents(topLine, orderElement, bottomLine);
+            vtcLayout.addComponents(/*topLine,*/ orderElement, bottomLine);
         }
         this.setContent(vtcLayout);
         this.setSizeFull();

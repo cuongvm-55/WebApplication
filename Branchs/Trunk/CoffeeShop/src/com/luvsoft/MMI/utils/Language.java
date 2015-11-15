@@ -9,11 +9,13 @@ package com.luvsoft.MMI.utils;
  *      lang.setLanguage(yourLanguage);
  */
 public class Language {
-    public enum LANGUAGE {
+    public static LANGUAGE currentLanguage;
+    public static enum LANGUAGE {
         ENGLISH, VIETNAMESE, JAPANESE
     }
 
     public void setLanguage(LANGUAGE lang) {
+        currentLanguage = lang;
         switch (lang) {
             case ENGLISH:
             {
@@ -49,7 +51,15 @@ public class Language {
                 NOTE = "Note";
                 ALL_DONE = "All Done";
                 CANCEL = "Cancel";
-                
+                STATISTIC = "Statistic";
+                FOOD_MANAGEMENT = "Food Management";
+                CONFIGURATION = "Configuration";
+                CHOOSE_DATE = "Choose the date range";
+                FROM_DATE = "From Date: ";
+                TO_DATE = "To Date: ";
+                CLEAR_DATA = "Clear Data";
+                CREATE_REPORT = "Create Report";
+
                 NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
                 
                 // Errors
@@ -57,6 +67,8 @@ public class Language {
                 CANNOT_CHANGE_TABLE_STATE = "Cannot change table state to Empty, curent Order is not Paid!";
                 // Warnings
                 WARNING = "Warning";
+                
+                DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
             }
                 break;
             case VIETNAMESE:
@@ -93,14 +105,23 @@ public class Language {
                 NOTE = "Ghi chú";
                 ALL_DONE = "Xong Hết";
                 CANCEL = "Thoát";
-
+                STATISTIC = "Thống Kê";
                 NO_ORDER_IN_ORDER_LIST = "Hiện tại chưa có bàn nào đặt món!";
-                
+                FOOD_MANAGEMENT = "Quản Lí Món";
+                CONFIGURATION = "Cấu Hình";
+                CHOOSE_DATE = "Chọn khoảng thời gian";
+                FROM_DATE = "Từ Ngày: ";
+                TO_DATE = "Đến ngày: ";
+                CLEAR_DATA = "Xóa Dữ Liệu";
+                CREATE_REPORT = "Tạo Báo Cáo";
+
                 // Errors
                 ERROR = "Lỗi";
                 CANNOT_CHANGE_TABLE_STATE = "Không thể chuyển trạng thái Trống, hóa đơn chưa Thanh toán!";
                 // Warnings
                 WARNING = "Cảnh báo";
+                
+                DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
             }
                 break;
             case JAPANESE:
@@ -140,6 +161,15 @@ public class Language {
     public static String TOTAL_AMOUNT;
     public static String PAID_AMOUNT;
     public static String NOTE;
+    public static String STATISTIC;
+    public static String FOOD_MANAGEMENT;
+    public static String CONFIGURATION;
+    public static String CHOOSE_DATE;
+    public static String FROM_DATE;
+    public static String TO_DATE;
+    public static String CLEAR_DATA;
+    public static String CREATE_REPORT;
+
     // Currency
     public static String CURRENCY_SYMBOL;
 
@@ -153,4 +183,8 @@ public class Language {
     public static String CANNOT_CHANGE_TABLE_STATE;
     // Warnings
     public static String WARNING;
+    
+    // Date time format
+    public static String DATE_TIME_FORMAT;
+ 
 }
