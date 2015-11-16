@@ -3,11 +3,15 @@ package com.luvsoft.MMI.Order;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.Order.OrderDetailRecord.ChangedFlag;
 import com.luvsoft.MMI.components.CustomizationTreeElement;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Category;
 import com.luvsoft.entities.Food;
+import com.luvsoft.entities.Types.State;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
@@ -33,12 +37,49 @@ import com.vaadin.data.Property.ValueChangeListener;
 @SuppressWarnings("serial")
 public class AddFood extends Window {
 
-    private List<Category> listOfCategory = new ArrayList<Category>();
+    private class OrderDetailRecordExtension {
+        private OrderDetailRecord orderDetailRecord;
+        private boolean enable;
 
-    public AddFood() {
+        public OrderDetailRecordExtension(OrderDetailRecord orderDetailRecord, boolean enable) {
+            this.orderDetailRecord = orderDetailRecord;
+            this.enable = enable;
+        }
+
+        public OrderDetailRecord getOrderDetailRecord() {
+            return orderDetailRecord;
+        }
+
+        public void setOrderDetailRecord(OrderDetailRecord orderDetailRecord) {
+            this.orderDetailRecord = orderDetailRecord;
+        }
+
+        public boolean isEnable() {
+            return enable;
+        }
+
+        public void setEnable(boolean enable) {
+            this.enable = enable;
+        }
+    }
+
+    private List<Category> listOfCategory = new ArrayList<Category>();
+    private OrderInfoView orderInforView;
+    private List<OrderDetailRecord> orderDetailRecordList;
+    private List<OrderDetailRecordExtension> orderDetailExtensionList;
+
+    public AddFood(OrderInfoView orderInfoView) {
         super();
         // Get all foods from database
         listOfCategory = Adapter.retrieveCategoryList();
+
+        this.orderInforView = orderInfoView;
+        this.orderDetailRecordList = this.orderInforView.getOrderDetailRecordList();
+        if (this.orderDetailRecordList == null) {
+            this.orderDetailRecordList = new ArrayList<OrderDetailRecord>();
+        }
+        orderDetailExtensionList = new ArrayList<OrderDetailRecordExtension>();
+
         initView();
     }
 
@@ -93,6 +134,17 @@ public class AddFood extends Window {
     }
 
     private Component buildChildElementContainer(Food food) {
+        // Create a temporary order detail
+        OrderDetailRecord orderDetail = new OrderDetailRecord();
+        orderDetail.setFoodId(food.getId());
+        orderDetail.setFoodName(food.getName());
+        orderDetail.setPrice(food.getPrice());
+        orderDetail.setChangeFlag(ChangedFlag.ADDNEW);
+        orderDetail.setStatus(State.WAITING);
+
+        OrderDetailRecordExtension orderDetailExtension = new OrderDetailRecordExtension(
+                orderDetail, false);
+
         HorizontalLayout hrzChildElementContainer = new HorizontalLayout();
         hrzChildElementContainer.setSizeFull();
         hrzChildElementContainer.addStyleName(ValoTheme.LAYOUT_CARD);
@@ -122,7 +174,6 @@ public class AddFood extends Window {
 
         Label foodNumber = new Label();
         foodNumber.addStyleName("TEXT_CENTER FONT_TAHOMA TEXT_BLUE");
-        foodNumber.setValue("4");
 
         hrzChildElementContainer.addComponents(foodName, checkBox, btnMinus,
                 foodNumber, btnPlus);
@@ -151,6 +202,11 @@ public class AddFood extends Window {
                 boolean value = (boolean) event.getProperty().getValue();
                 btnMinus.setEnabled(value);
                 btnPlus.setEnabled(value);
+                orderDetailExtension.setEnable(value);
+                if (value == true && foodNumber.getValue().equals("")) {
+                    foodNumber.setValue(1 + "");
+                    orderDetailExtension.getOrderDetailRecord().setQuantity(1);
+                }
             }
         });
 
@@ -158,9 +214,13 @@ public class AddFood extends Window {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                Integer number = Integer.parseInt(foodNumber.getValue());
-                if (number > 0) {
-                    foodNumber.setValue(number - 1 + "");
+                if (!foodNumber.getValue().equals("")) {
+                    Integer number = Integer.parseInt(foodNumber.getValue());
+                    if (number > 1) {
+                        foodNumber.setValue(number - 1 + "");
+                        orderDetailExtension.getOrderDetailRecord().setQuantity(
+                                number - 1);
+                    }
                 }
             }
         });
@@ -169,18 +229,26 @@ public class AddFood extends Window {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                foodNumber.setValue(Integer.parseInt(foodNumber.getValue()) + 1
-                        + "");
+                if (!foodNumber.getValue().equals("")) {
+                    Integer number = Integer.parseInt(foodNumber.getValue());
+                    foodNumber.setValue(1 + number + "");
+                    orderDetailExtension.getOrderDetailRecord().setQuantity(
+                            number + 1);
+                } else {
+                    foodNumber.setValue(1 + "");
+                    orderDetailExtension.getOrderDetailRecord().setQuantity(1);
+                }
             }
         });
 
+        orderDetailExtensionList.add(orderDetailExtension);
         return hrzChildElementContainer;
     }
 
     private Component buildFooter() {
         VerticalLayout footer = new VerticalLayout();
         footer.setWidth("100%");
-        ;
+
         footer.setHeightUndefined();
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
 
@@ -189,10 +257,52 @@ public class AddFood extends Window {
         btnConfirm.addStyleName("customizationButton");
 
         btnConfirm.addClickListener(new ClickListener() {
-            
+
             @Override
             public void buttonClick(ClickEvent event) {
-                // TODO Auto-generated method stub
+                for (OrderDetailRecordExtension orderDetailExtension : orderDetailExtensionList) {
+                    System.out.println(orderDetailExtension.isEnable()
+                            + " "
+                            + orderDetailExtension.getOrderDetailRecord().getFoodId()
+                            + " "
+                            + orderDetailExtension.getOrderDetailRecord().getOrderDetailId()
+                            + " "
+                            + orderDetailExtension.getOrderDetailRecord()
+                                    .getQuantity() + " ");
+
+                    if (orderDetailExtension.isEnable()) {
+                        // Merge new order details list to old order details list
+                        boolean isDuplicate = false;
+                        for (OrderDetailRecord record : orderDetailRecordList) {
+                            if (orderDetailExtension.getOrderDetailRecord().getFoodId().equals(record.getFoodId())) {
+                                isDuplicate = true;
+                                record.setQuantity(record
+                                        .getQuantity()
+                                        + orderDetailExtension.getOrderDetailRecord()
+                                                .getQuantity());
+                                record.setChangeFlag(ChangedFlag.MODIFIED);
+                                record.setStatus(State.WAITING);
+                                System.out.println("Merged " + record.getFoodId() + " " + record.getQuantity());
+                                break;
+                            }
+                        }
+                        if (!isDuplicate) {
+                            OrderDetailRecord record = orderDetailExtension.getOrderDetailRecord();
+                            record.setOrderDetailId(new ObjectId().toString());
+                            record.setChangeFlag(ChangedFlag.ADDNEW);
+                            record.setStatus(State.WAITING);
+                            orderDetailRecordList.add(record);
+                        }
+                    }
+                }
+
+                if(!orderDetailRecordList.isEmpty()) {
+                    System.out.println("orderDetailRecordList is not empty");
+                    orderInforView.setOrderDetailRecordList(orderDetailRecordList);
+                    orderInforView.setOrderDetailListChanged(true);
+                    orderInforView.populate();
+                }
+                close();
             }
         });
         footer.addComponents(btnConfirm);

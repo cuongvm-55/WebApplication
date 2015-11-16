@@ -1,19 +1,23 @@
 package com.luvsoft.MMI.Order;
 
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
 
 import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.Order.OrderDetailRecord.ChangedFlag;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.OrderDetail;
 import com.luvsoft.entities.Types;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -39,7 +43,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class OrderInfoView extends Window{
-    final int TABLE_NUMBER_OF_ROWS = 4;
+    final int TABLE_NUMBER_OF_ROWS = 6;
     /*
      * This is a vertical layout contains list of orders 
      */
@@ -67,6 +71,9 @@ public class OrderInfoView extends Window{
     private List<OrderDetailRecord> orderDetailRecordList;
     private boolean isOrderDetailListChanged;
 
+    // Flag: is new order?
+    private boolean isNewOrder;
+
     public OrderInfoView(com.luvsoft.entities.Table table){
         super();
         this.table = table;
@@ -76,6 +83,7 @@ public class OrderInfoView extends Window{
         orderInfo = null;
         orderDetailRecordList = null;
         isOrderDetailListChanged = false;
+        isNewOrder = false;
         init();
         //populate();
     }
@@ -93,25 +101,39 @@ public class OrderInfoView extends Window{
         lbTableName.setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.setWidth("100%");
         lbTableName.setValue(Language.TABLE + " " + table.getNumber());
-        // Set table properties
-        tbOrderDetails = new com.vaadin.ui.Table("");
-        tbOrderDetails.addStyleName("bold large FONT_TAHOMA");
-        tbOrderDetails.setSizeFull();
-        tbOrderDetails.addContainerProperty(Language.SEQUENCE, Integer.class, null);
-        tbOrderDetails.addContainerProperty(Language.FOOD_NAME, String.class, null);
-        tbOrderDetails.addContainerProperty(Language.STATUS, String.class, null);
-        tbOrderDetails.addContainerProperty(Language.QUANTITY, Integer.class, null);
-        tbOrderDetails.addContainerProperty(Language.PRICE, Float.class, null);
-        tbOrderDetails.addContainerProperty("orderdetailId", String.class, null);
-        //tbOrderDetails.setHeight("100%");
-        tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
+
+        buildTable();
+
         currentOrder = retrieveOrder();
         if( currentOrder != null ){
             orderInfo = Adapter.retrieveOrderInfo(currentOrder);
+            if( orderInfo != null ){
+                orderDetailRecordList = orderInfo.getOrderDetailRecordList();
+            }
+            isNewOrder = false;
+        } else {
+            // If there's no order corresponding to current table, create new one
+            currentOrder = new Order();
+            currentOrder.setId(new ObjectId().toString());
+            currentOrder.setStatus(Types.State.WAITING);
+            currentOrder.setNote("");
+            //@ todo: Staffname should be editable
+            currentOrder.setStaffName("");
+            currentOrder.setTableId(table.getId());
+            currentOrder.setCreatingTime(new Date());
+
+            // Create new order detail record list
+            orderDetailRecordList = new ArrayList<OrderDetailRecord>();
+
+            // Create new order info
+            orderInfo = new OrderInfo();
+            orderInfo.setTableName(Language.TABLE + " " + table.getNumber());
+            orderInfo.setOrderDetailRecordList(orderDetailRecordList);
+
+            // Change flag
+            isNewOrder = true;
         }
-        if( orderInfo != null ){
-            orderDetailRecordList = orderInfo.getOrderDetailRecordList();
-        }
+
         setupUI();
     }
 
@@ -128,85 +150,136 @@ public class OrderInfoView extends Window{
             // just return if no record
             return;
         }
-        for(int i = 0; i < orderDetailRecordList.size(); i++){
-            Integer itemId = new Integer(i);
-            OrderDetailRecord record = orderDetailRecordList.get(i);
-            System.out.println(record.toString() );
-            // Create the table row.
-            tbOrderDetails.addItem(new Object[] {new Integer(i),
-                    record.getFoodName(),
-                    Types.StateToLanguageString(record.getStatus())
-                    /*record.getIconFromStatus(record.getStatus())*/,
-                    new Integer(record.getQuantity()),
-                    new Float(record.getPrice()),
-                    record.getOrderDetailId()},
-                          itemId);
-            // calculate totalAmount
-            totalAmount+= record.getPrice();
-        }
 
-        tbOrderDetails.setVisibleColumns(Language.SEQUENCE,Language.FOOD_NAME,Language.QUANTITY,Language.STATUS);
+        updateTable();
+
         tbOrderDetails.setTableFieldFactory(new DefaultFieldFactory(){
+            @SuppressWarnings({ "unchecked", "rawtypes" })
             @Override
             public Field createField(Container container, Object itemId,
                     Object propertyId, Component uiContext) {
+
+                Item item = tbOrderDetails.getItem(itemId);
+                if(item.getItemProperty("orderdetailId").getValue() == null) {
+                    return null;
+                }
+
                 if (Language.STATUS.equals(propertyId)) {
                     ComboBox select = new ComboBox();
                     select.addItem(Language.CANCELED/*Types.State.CANCELED.toString()*/);
                     select.addItem(Language.WAITING/*Types.State.WAITING.toString()*/);
                     select.addItem(Language.COMPLETED/*Types.State.COMPLETED.toString()*/);
+                    select.setScrollToSelectedItem(true);
+                    select.setNullSelectionAllowed(false);
+                    select.setTextInputAllowed(false);
                     select.setRequired(true);
 
                     select.addValueChangeListener(new ValueChangeListener() {
                         @Override
                         public void valueChange(ValueChangeEvent event) {
                             // Set order detail status
-                            Item item = tbOrderDetails.getItem(itemId);
                             String orderDetailId = item.getItemProperty("orderdetailId").getValue().toString();
                             String state = event.getProperty().getValue().toString();
+                            System.out.println("State " + state);
                             for( OrderDetailRecord record : orderDetailRecordList ){
                                 if( record.getOrderDetailId().equals(orderDetailId) ){
+                                    record.setChangeFlag(ChangedFlag.MODIFIED);
                                     record.setStatus(Types.StringToState(state));
-                                    isOrderDetailListChanged = true;
                                     break;
                                 }
                             }
-                            //System.out.println("Switch orderDetailId: " +orderDetailId+" to state: " + event.getProperty().getValue());
-                            //if( !Adapter.changeOrderDetailState(orderDetailId, Types.StringToState(state)) ){
-                            //    System.out.println("Cannot change order detail state");
-                            //}
                         }
                     });
                     return select;
                 }
                 else if( propertyId.equals(Language.QUANTITY) ){
-                    Item item = tbOrderDetails.getItem(itemId);
-                    String orderDetailId = item.getItemProperty("orderdetailId").getValue().toString();
-                    String quantity =  item.getItemProperty(Language.QUANTITY).getValue().toString();
-                    TextField textField = new TextField();
-                    textField.setValue(quantity);
-                    textField.addTextChangeListener(new TextChangeListener() {
-                        @Override
-                        public void textChange(TextChangeEvent event) {
-                            for( OrderDetailRecord record : orderDetailRecordList ){
-                                if( record.getOrderDetailId().equals(orderDetailId) ){
-                                    record.setQuantity(Integer.parseInt(event.getText()));
-                                    isOrderDetailListChanged = true;
-                                    break;
+                    Property property = item.getItemProperty("orderdetailId");
+                        String orderDetailId = property.getValue().toString();
+                        String quantity =  item.getItemProperty(Language.QUANTITY).getValue().toString();
+                        TextField textField = new TextField();
+                        textField.setValue(quantity);
+                        System.out.println("ID " + orderDetailId + " QUANTITY " + quantity);
+                        textField.addTextChangeListener(new TextChangeListener() {
+                            @Override
+                            public void textChange(TextChangeEvent event) {
+                                for( OrderDetailRecord record : orderDetailRecordList ){
+                                    if( record.getOrderDetailId().equals(orderDetailId) ){
+                                        record.setChangeFlag(ChangedFlag.MODIFIED);
+                                        record.setQuantity(Integer.parseInt(event.getText()));
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                    });
-                    return textField;
-                }
+                        });
+                        return textField;
+                    }
                 return null;
             }
         });
-        tbOrderDetails.setEditable(true);
+
         paidAmount = totalAmount; // default value of paid amount is equal total amount
         lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " " + Language.CURRENCY_SYMBOL);
         textFieldpaidAmount.setValue(paidAmount+"");
     }
+
+    private void buildTable() {
+        // Set table properties
+        tbOrderDetails = new com.vaadin.ui.Table("");
+        tbOrderDetails.addStyleName("bold large FONT_TAHOMA");
+        tbOrderDetails.setSizeFull();
+        tbOrderDetails.addContainerProperty(Language.SEQUENCE, Integer.class, null);
+        tbOrderDetails.addContainerProperty(Language.FOOD_NAME, String.class, null);
+        tbOrderDetails.addContainerProperty(Language.STATUS, String.class, null);
+        tbOrderDetails.addContainerProperty(Language.QUANTITY, Integer.class, null);
+        tbOrderDetails.addContainerProperty(Language.PRICE, Float.class, null);
+        tbOrderDetails.addContainerProperty("orderdetailId", String.class, null);
+
+        tbOrderDetails.setColumnCollapsingAllowed(true);
+        tbOrderDetails.setColumnCollapsed("orderdetailId", true);
+        tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
+        tbOrderDetails.setEditable(true);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void updateTable() {
+        Container tableContainer = tbOrderDetails.getContainerDataSource();
+        if(tableContainer == null) {
+            tableContainer = new IndexedContainer();
+            tbOrderDetails.setContainerDataSource(tableContainer);
+        }
+
+        totalAmount = 0;
+        for (int i=0; i<orderDetailRecordList.size(); i++) {
+            OrderDetailRecord record = orderDetailRecordList.get(i);
+            Item item = tbOrderDetails.getItem(i);
+            if(item != null) {
+                Property property = item.getItemProperty(Language.FOOD_NAME);
+                property.setValue(record.getFoodName());
+                Property property1 = item.getItemProperty(Language.STATUS);
+                property1.setValue(Types.StateToLanguageString(record.getStatus()));
+                Property property2 = item.getItemProperty(Language.QUANTITY);
+                property2.setValue(record.getQuantity());
+                Property property3 = item.getItemProperty(Language.PRICE);
+                property3.setValue(record.getPrice());
+                Property property4 = item.getItemProperty("orderdetailId");
+                property4.setValue(record.getOrderDetailId());
+            } else {
+                System.out.println("Add new");
+                // If item is not available, we will add new one
+                if(tbOrderDetails.addItem(new Object[] {i,
+                        record.getFoodName(),
+                        Types.StateToLanguageString(record.getStatus()),
+                        new Integer(record.getQuantity()),
+                        new Float(record.getPrice()),
+                        record.getOrderDetailId()}, i) == null) {
+                    System.out.println("NULL roai");
+                }
+            }
+            totalAmount+= record.getPrice() * record.getQuantity();
+        }
+        tbOrderDetails.setImmediate(true);
+    }
+
     private void setupUI(){
      // Note text field
         txtNote = new TextField(Language.NOTE);
@@ -270,6 +343,8 @@ public class OrderInfoView extends Window{
         this.setContent(container);
     }
     private Component buildFooter() {
+        OrderInfoView orderInforView = this;
+
         VerticalLayout footer = new VerticalLayout();
         footer.setWidth("100%");;
         footer.setHeightUndefined();
@@ -282,7 +357,7 @@ public class OrderInfoView extends Window{
         btnAddFood.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                getUI().addWindow(new AddFood());
+                getUI().addWindow(new AddFood(orderInforView));
             }
         });
 
@@ -317,28 +392,16 @@ public class OrderInfoView extends Window{
                     Adapter.updateFieldValueOfOrder(currentOrder.getId(),
                                                 Order.DB_FIELD_NAME_NOTE, txtNote.getValue());
                 }
-                // If there's no new food was selected, return
-                if( !isOrderDetailListChanged )
-                {
-                    System.out.println("No changes, return");
-                    close();
-                    return;
-                }
 
-                // If there's no order corresponding to current table, create new one
-                if( currentOrder == null ){
-                    currentOrder = new Order();
-                    currentOrder.setStatus(Types.State.WAITING);
-                    currentOrder.setNote(txtNote.getValue());
-                    //@ todo: Staffname should be editable
-                    currentOrder.setStaffName("");
-                    currentOrder.setTableId(table.getId());
-                    currentOrder.setCreatingTime(new Date());
-                }
-                List<String> orderDetailIdList = currentOrder.getOrderDetailIdList();
+                isOrderDetailListChanged = false;
+
+                List<String> orderDetailIdList = new ArrayList<String>();
+                // orderDetailIdList = currentOrder.getOrderDetailIdList();
+
                 for( OrderDetailRecord record : orderDetailRecordList ){
                     OrderDetail odDetail = new OrderDetail();
                     String id = record.getOrderDetailId();
+                    orderDetailIdList.add(id);
                     if( id.equals("") ){
                         id = new ObjectId().toString();
                     }
@@ -357,6 +420,7 @@ public class OrderInfoView extends Window{
                             // set table state to WAITING
                             Adapter.changeTableState(currentOrder.getTableId(), Types.State.WAITING);
                         }
+                        isOrderDetailListChanged = true;
                         break;
                     case ADDNEW:
                         // create ADDNEW records
@@ -364,10 +428,11 @@ public class OrderInfoView extends Window{
                             System.out.println("Fail to add new order detail, Id: " + odDetail.getId());
                         }
                         else{
-                            orderDetailIdList.add(odDetail.getId());
+                            System.out.println("odDetail.getId() " + odDetail.getId());
                             // set table state to WAITING
                             Adapter.changeTableState(currentOrder.getTableId(), Types.State.WAITING);
                         }
+                        isOrderDetailListChanged = true;
                         break;
                     case DELETED:
                         // delete DELETED records
@@ -375,23 +440,40 @@ public class OrderInfoView extends Window{
                             System.out.println("Fail to delete order detail, Id: " + odDetail.getId());
                         }
                         else{
-                            orderDetailIdList.remove(odDetail.getId());
+                            orderDetailIdList.remove(orderDetailIdList.size()-1);
                         }
+                        isOrderDetailListChanged = true;
                         break;
                     default:
                         break;
                     }
                 }
 
+                // If there's no new food was selected, return
+                if( !isOrderDetailListChanged )
+                {
+                    System.out.println("No changes, return");
+                    close();
+                    return;
+                }
+
                 // next, update order
                 //currentOrder.getOrderDetailIdList().clear();
                 currentOrder.setOrderDetailIdList(orderDetailIdList);
-                if( Adapter.updateOrderDetailList( currentOrder ) ){
-                    System.out.println("Updated orderId: " + currentOrder.getId());
-                    System.out.println("\tUpdated orderDetailList: " + currentOrder.getOrderDetailIdList().toString());
-                }
-                else{
-                    System.out.println("Fail to update orderId: " + currentOrder.getId());
+                if( isNewOrder ) {
+                    if( Adapter.addNewOrder(currentOrder) ) {
+                        System.out.println("Updated orderId: " + currentOrder.getId());
+                        System.out.println("\tUpdated orderDetailList: " + currentOrder.getOrderDetailIdList().toString());
+                    } else {
+                        System.out.println("Fail to update orderId: " + currentOrder.getId());
+                    }
+                } else {
+                    if( Adapter.updateOrderDetailList( currentOrder ) ){
+                        System.out.println("Updated orderId: " + currentOrder.getId());
+                        System.out.println("\tUpdated orderDetailList: " + currentOrder.getOrderDetailIdList().toString());
+                    } else {
+                        System.out.println("Fail to update orderId: " + currentOrder.getId());
+                    }
                 }
 
                 close();
@@ -416,20 +498,6 @@ public class OrderInfoView extends Window{
         });
 
         return footer;
-    }
-
-    /*
-     * Rewind the deleted order details
-     */
-    public void rewindOrderDetailList(List<OrderDetailRecord> oldRecordList){
-        for( OrderDetailRecord record : oldRecordList ){
-            OrderDetail odDetail = new OrderDetail();
-            odDetail.setId(record.getOrderDetailId());
-            odDetail.setFoodId(record.getFoodId());
-            odDetail.setQuantity(record.getQuantity());
-            odDetail.setState(record.getStatus());
-            Adapter.addNewOrderDetail(odDetail);
-        }
     }
 
     /*
@@ -464,5 +532,22 @@ public class OrderInfoView extends Window{
 
     public void setOrderInfo(OrderInfo orderInfo) {
         this.orderInfo = orderInfo;
+    }
+
+    public List<OrderDetailRecord> getOrderDetailRecordList() {
+        return orderDetailRecordList;
+    }
+
+    public void setOrderDetailRecordList(
+            List<OrderDetailRecord> orderDetailRecordList) {
+        this.orderDetailRecordList = orderDetailRecordList;
+    }
+
+    public boolean isOrderDetailListChanged() {
+        return isOrderDetailListChanged;
+    }
+
+    public void setOrderDetailListChanged(boolean isOrderDetailListChanged) {
+        this.isOrderDetailListChanged = isOrderDetailListChanged;
     }
 }

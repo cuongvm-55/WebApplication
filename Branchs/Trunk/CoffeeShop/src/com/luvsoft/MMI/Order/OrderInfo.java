@@ -9,6 +9,10 @@ public class OrderInfo {
     private String note;
 
     public OrderInfo(){
+        note = "";
+        orderId = "";
+        tableName = "";
+        orderDetailList = null;
     }
 
     public String getTableName() {
