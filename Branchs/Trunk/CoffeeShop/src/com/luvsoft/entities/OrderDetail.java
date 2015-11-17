@@ -2,7 +2,7 @@ package com.luvsoft.entities;
 
 import java.util.HashMap;
 
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class OrderDetail extends AbstractEntity{
     public static final String DB_FIELD_NAME_ID = "_id";
@@ -23,30 +23,30 @@ public class OrderDetail extends AbstractEntity{
         state = Types.State.UNDEFINED;
     }
     
-    public OrderDetail(DBObject object)
+    public OrderDetail(BasicDBObject object)
     {
         super(object);
     }
 
     @Override
-    public HashMap<String, String> toHashMap()
+    public HashMap<String, Object> toHashMap()
     {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_FOOD_ID, foodId);
-        map.put(DB_FIELD_NAME_QUANTITY, quantity + "");
+        map.put(DB_FIELD_NAME_QUANTITY, quantity);
         map.put(DB_FIELD_NAME_STATE, state.toString());
         return map;
     }
 
     @Override
-    public void setObject(DBObject dbObject)
+    public void setObject(BasicDBObject dbObject)
     {
-        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
-        foodId = getFieldValue(DB_FIELD_NAME_FOOD_ID, dbObject);
-        quantity = Integer.parseInt(getFieldValue(DB_FIELD_NAME_QUANTITY, dbObject));
+        id = getString(DB_FIELD_NAME_ID, dbObject);
+        foodId = getString(DB_FIELD_NAME_FOOD_ID, dbObject);
+        quantity = getInt(DB_FIELD_NAME_QUANTITY, dbObject);
 
-        switch( getFieldValue(DB_FIELD_NAME_STATE, dbObject) )
+        switch( getString(DB_FIELD_NAME_STATE, dbObject) )
         {
         case "WAITING":
             state = Types.State.WAITING;

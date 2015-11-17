@@ -100,15 +100,16 @@ public class Adapter {
         return floorCtrl.setTableStatus(tableId, state);
     }
 
-    public static List<Order> getOrderListWithState(Types.State state){
+    public static List<Order> getOrderListWithState(Types.State state, Date begDate, Date endDate){
         System.out.println("Get order list with state: " + state.toString());
-        return orderCtrl.getOrderListWithState(state);
+        return orderCtrl.getOrderListWithState(state, begDate, endDate);
     }
 
-    public static List<Order> getOrderListIgnoreState(Types.State state){
-        System.out.println("Get order list with state different to: " + state.toString());
-        return orderCtrl.getOrderListIgnoreState(state);
+    public static List<Order> getOrderListIgnoreState(Types.State state, Date begDate, Date endDate){
+        System.out.println("Get order list ignore state: " + state.toString());
+        return orderCtrl.getOrderListIgnoreState(state, begDate, endDate);
     }
+
     public static boolean updateFieldValueOfOrder(String orderId, String fieldName, String fieldVale){
         return orderCtrl.updateFieldValueOfOrder(orderId, fieldName, fieldVale);
     }

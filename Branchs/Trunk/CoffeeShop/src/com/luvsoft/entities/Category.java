@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class Category extends AbstractEntity{
     public static final String DB_FIELD_NAME_ID = "_id";
@@ -27,19 +27,18 @@ public class Category extends AbstractEntity{
         foodIdList = new ArrayList<String>();
     }
 
-    public Category(DBObject object)
+    public Category(BasicDBObject object)
     {
         super(object);
     }
 
     @Override
-    public HashMap<String, String> toHashMap()
+    public HashMap<String, Object> toHashMap()
     {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_CODE, code);
         map.put(DB_FIELD_NAME_NAME, name);
-        //map.put(DB_FIELD_NAME_FOOD_LIST, foodIdList.toString());
         // Map list
         map.put(DB_FIELD_NAME_FOOD_LIST, Types.formatListToString(foodIdList));
 
@@ -47,19 +46,13 @@ public class Category extends AbstractEntity{
     }
 
     @Override
-    public void setObject(DBObject dbObject){
-        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
-        code = getFieldValue(DB_FIELD_NAME_CODE, dbObject);
-        name = getFieldValue(DB_FIELD_NAME_NAME, dbObject);
-        String str = getFieldValue(DB_FIELD_NAME_FOOD_LIST, dbObject);
+    public void setObject(BasicDBObject dbObject){
+        id = getString(DB_FIELD_NAME_ID, dbObject);
+        code = getString(DB_FIELD_NAME_CODE, dbObject);
+        name = getString(DB_FIELD_NAME_NAME, dbObject);
+        String str = getString(DB_FIELD_NAME_FOOD_LIST, dbObject);
         String[] list = str.split(",");
         foodIdList = Arrays.asList(list);
-//        BasicDBList  list = (BasicDBList)dbobject.get(DB_FIELD_NAME_FOOD_LIST);
-//        foodIdList = new ArrayList<String>(); 
-//        for(Object item : list)
-//        {
-//            foodIdList.add((String)item);
-//        }
     }
 
     public String getId() {

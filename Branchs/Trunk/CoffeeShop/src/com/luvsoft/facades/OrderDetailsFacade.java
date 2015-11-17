@@ -1,7 +1,7 @@
 package com.luvsoft.facades;
 
 import com.luvsoft.entities.OrderDetail;
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class OrderDetailsFacade extends AbstractFacade{
     public static final String DB_TABLE_NAME_ORDER_DETAIL = "OrderDetails";
@@ -11,7 +11,7 @@ public class OrderDetailsFacade extends AbstractFacade{
     }
 
     @Override
-    public OrderDetail mapObject(DBObject dbobject) {
+    public OrderDetail mapObject(BasicDBObject dbobject) {
         OrderDetail orderdetail = new OrderDetail(dbobject);
         return orderdetail;
     }

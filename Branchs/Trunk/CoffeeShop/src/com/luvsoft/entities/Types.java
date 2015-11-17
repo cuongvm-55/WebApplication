@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.luvsoft.MMI.utils.Language;
 public class Types {
-    public static final String DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";;
+    public static final String DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
     public static enum State{
         UNDEFINED("UNDEFINED"),
         // Table
@@ -124,5 +124,13 @@ public class Types {
     {
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_FORMAT); // it's not depend on the current language
         return formatter.format(date);
+    }
+    
+    public static String DateToTimeStampString(Date date){
+        return date.getTime() + "";
+    }
+    
+    public static Date TimeStampStringToDate(String timestamp){
+        return new Date(Long.parseLong(timestamp) );
     }
 }

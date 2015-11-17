@@ -2,7 +2,7 @@ package com.luvsoft.entities;
 
 import java.util.HashMap;
 
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class Table extends AbstractEntity{
     public static final String DB_FIELD_NAME_ID = "_id";
@@ -24,15 +24,15 @@ public class Table extends AbstractEntity{
         state = Types.State.EMPTY;
     }
 
-    public Table(DBObject object)
+    public Table(BasicDBObject object)
     {
         super(object);
     }
 
     @Override
-    public HashMap<String, String> toHashMap()
+    public HashMap<String, Object> toHashMap()
     {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_CODE, code);
         map.put(DB_FIELD_NAME_NUMBER, number);
@@ -41,12 +41,12 @@ public class Table extends AbstractEntity{
     }
 
     @Override
-    public void setObject(DBObject dbObject){
-        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
-        code = getFieldValue(DB_FIELD_NAME_CODE, dbObject);
-        number = getFieldValue(DB_FIELD_NAME_NUMBER, dbObject);
+    public void setObject(BasicDBObject dbObject){
+        id = getString(DB_FIELD_NAME_ID, dbObject);
+        code = getString(DB_FIELD_NAME_CODE, dbObject);
+        number = getString(DB_FIELD_NAME_NUMBER, dbObject);
         // extract state
-        switch( getFieldValue(DB_FIELD_NAME_STATE, dbObject) )
+        switch( getString(DB_FIELD_NAME_STATE, dbObject) )
         {
             case "WAITING":
                 state = Types.State.WAITING;

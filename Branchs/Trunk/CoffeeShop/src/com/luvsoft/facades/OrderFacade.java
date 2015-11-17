@@ -1,7 +1,7 @@
 package com.luvsoft.facades;
 
 import com.luvsoft.entities.Order;
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class OrderFacade extends AbstractFacade{
     public static final String DB_TABLE_NAME_ORDER = "Order";
@@ -11,7 +11,7 @@ public class OrderFacade extends AbstractFacade{
     }
 
     @Override
-    public Order mapObject(DBObject dbobject) {
+    public Order mapObject(BasicDBObject dbobject) {
         Order order = new Order(dbobject);
         return order;
     }

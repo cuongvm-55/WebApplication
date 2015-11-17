@@ -506,7 +506,7 @@ public class OrderInfoView extends Window{
      */
     private Order retrieveOrder(){
         System.out.println("loadOrder...");
-        List<Order> orderList = Adapter.getOrderListIgnoreState(Types.State.COMPLETED);
+        List<Order> orderList = Adapter.getOrderListIgnoreState(Types.State.PAID, null, null);
         System.out.println(orderList.toString());
         for( Order order : orderList ){
             if( order.getTableId().equals(this.table.getId()) ){

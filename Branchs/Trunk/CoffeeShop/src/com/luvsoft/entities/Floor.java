@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class Floor extends AbstractEntity{
     public static final String DB_FIELD_NAME_ID = "_id";
@@ -26,17 +26,17 @@ public class Floor extends AbstractEntity{
         tableIdList = new ArrayList<String>();
     }
     
-    public Floor(DBObject object)
+    public Floor(BasicDBObject object)
     {
         super(object);
     }
 
     @Override
-    public void setObject(DBObject dbObject){
-        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
-        code = getFieldValue(DB_FIELD_NAME_CODE, dbObject);
-        number = getFieldValue(DB_FIELD_NAME_NUMBER, dbObject);
-        String str = getFieldValue(DB_FIELD_NAME_TABLE_LIST, dbObject);
+    public void setObject(BasicDBObject dbObject){
+        id = getString(DB_FIELD_NAME_ID, dbObject);
+        code = getString(DB_FIELD_NAME_CODE, dbObject);
+        number = getString(DB_FIELD_NAME_NUMBER, dbObject);
+        String str = getString(DB_FIELD_NAME_TABLE_LIST, dbObject);
         String[] list = str.split(",");
         tableIdList = Arrays.asList(list);
 //        BasicDBList  list = (BasicDBList)dbobject.get(DB_FIELD_NAME_TABLE_LIST);
@@ -48,13 +48,12 @@ public class Floor extends AbstractEntity{
     }
 
     @Override
-    public HashMap<String, String> toHashMap()
+    public HashMap<String, Object> toHashMap()
     {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_CODE, code);
         map.put(DB_FIELD_NAME_NUMBER, number);
-        //map.put(DB_FIELD_NAME_TABLE_LIST, tableIdList.toString());
         // Map list
         map.put(DB_FIELD_NAME_TABLE_LIST, Types.formatListToString(tableIdList));
         return map;

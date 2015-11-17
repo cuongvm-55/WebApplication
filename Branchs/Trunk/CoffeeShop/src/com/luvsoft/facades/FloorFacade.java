@@ -1,7 +1,7 @@
 package com.luvsoft.facades;
 
 import com.luvsoft.entities.Floor;
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class FloorFacade extends AbstractFacade{
     public static final String DB_TABLE_NAME_FLOOR = "Floor";
@@ -11,7 +11,7 @@ public class FloorFacade extends AbstractFacade{
     }
 
     @Override
-    public Floor mapObject(DBObject dbobject) {
+    public Floor mapObject(BasicDBObject dbobject) {
         Floor floor = new Floor(dbobject);
         return floor;
     }

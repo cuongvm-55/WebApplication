@@ -1,6 +1,7 @@
 package com.luvsoft.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.luvsoft.entities.Order;
@@ -9,6 +10,7 @@ import com.luvsoft.entities.Types;
 import com.luvsoft.facades.OrderDetailsFacade;
 import com.luvsoft.facades.OrderFacade;
 import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
 
 /*
  * @author cuongvm-55
@@ -26,11 +28,15 @@ public class OrderController extends AbstractController{
         return orderDetailFacade.findById(orderDetailId, orderDtl);
     }
     /*
-     * Get all order that has Status = state
+     * Get all order that has Status = state in date range [begin, end]
+     * begin & end = null --> get all
      */
-    public List<Order> getOrderListWithState(Types.State state){
+    public List<Order> getOrderListWithState(Types.State state, Date begDate, Date endDate){
         List<Order> list = new ArrayList<Order>();
-        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$eq", state.toString())); 
+        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$eq", state.toString()));
+        if( begDate != null && endDate != null ){
+            query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", begDate).add("$lte", endDate).get());
+        }
         orderFacade.findByQuery(query, list);
         return list;
     }
@@ -38,9 +44,12 @@ public class OrderController extends AbstractController{
     /*
      * Get all order that has Status different from state
      */
-    public List<Order> getOrderListIgnoreState(Types.State state){
+    public List<Order> getOrderListIgnoreState(Types.State state, Date begDate, Date endDate){
         List<Order> list = new ArrayList<Order>();
         BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$ne", state.toString())); 
+        if( begDate != null && endDate != null ){
+            query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", begDate).add("$lte", endDate).get());
+        }
         orderFacade.findByQuery(query, list);
         return list;
     }
@@ -107,5 +116,4 @@ public class OrderController extends AbstractController{
     public boolean updateOrderDetail(String orderDetailId, OrderDetail orderDetail){
         return orderDetailFacade.update(orderDetailId, orderDetail);
     }
-
 }

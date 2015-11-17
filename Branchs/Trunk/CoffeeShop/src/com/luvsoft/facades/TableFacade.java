@@ -1,7 +1,7 @@
 package com.luvsoft.facades;
 
 import com.luvsoft.entities.Table;
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class TableFacade extends AbstractFacade{
     public static final String DB_TABLE_NAME_TABLE = "Table";
@@ -11,7 +11,7 @@ public class TableFacade extends AbstractFacade{
     }
 
     @Override
-    public Table mapObject(DBObject dbobject) {
+    public Table mapObject(BasicDBObject dbobject) {
         Table table = new Table(dbobject);
         return table;
     }

@@ -2,7 +2,7 @@ package com.luvsoft.entities;
 
 import java.util.HashMap;
 
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class Food extends AbstractEntity{
     public static final String DB_FIELD_NAME_ID = "_id";
@@ -13,7 +13,7 @@ public class Food extends AbstractEntity{
     private String id;
     private String code;
     private String name;
-    private float price;
+    private double price;
 
     public Food()
     {
@@ -23,28 +23,28 @@ public class Food extends AbstractEntity{
         price = 0;
     }
 
-    public Food(DBObject object)
+    public Food(BasicDBObject object)
     {
         super(object);
     }
 
     @Override
-    public HashMap<String, String> toHashMap()
+    public HashMap<String, Object> toHashMap()
     {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_CODE, code);
         map.put(DB_FIELD_NAME_NAME, name);
-        map.put(DB_FIELD_NAME_PRICE, "" + price);
+        map.put(DB_FIELD_NAME_PRICE, price);
         return map;
     }
 
     @Override
-    public void setObject(DBObject dbObject){
-        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
-        code = getFieldValue(DB_FIELD_NAME_CODE, dbObject);
-        name = getFieldValue(DB_FIELD_NAME_NAME, dbObject);
-        price = Float.parseFloat(getFieldValue(DB_FIELD_NAME_PRICE, dbObject));
+    public void setObject(BasicDBObject dbObject){
+        id = getString(DB_FIELD_NAME_ID, dbObject);
+        code = getString(DB_FIELD_NAME_CODE, dbObject);
+        name = getString(DB_FIELD_NAME_NAME, dbObject);
+        price = getDouble(DB_FIELD_NAME_PRICE, dbObject);
     }
 
     public String getId() {
@@ -71,11 +71,11 @@ public class Food extends AbstractEntity{
         this.name = name;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

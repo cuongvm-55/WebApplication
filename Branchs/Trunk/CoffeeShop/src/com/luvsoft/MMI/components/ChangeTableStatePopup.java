@@ -78,7 +78,7 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
             // Save to db, change the displayed state upon success
             Types.State newState = Types.StringToState(optionState.getValue().toString());
 
-            List<Order> orderList = Adapter.getOrderListIgnoreState(Types.State.COMPLETED);
+            List<Order> orderList = Adapter.getOrderListIgnoreState(Types.State.PAID, null, null);
             Order currentOrder = null;
             for( Order order : orderList ){
                 if( order.getTableId().equals(table.getId()) ){
@@ -87,7 +87,7 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
                 }
             }
 
-         // Cannot change from UNPAID to EMPTY if current order is not PAID
+            // Cannot change from UNPAID to EMPTY if current order is not PAID
             if( table.getState() == Types.State.UNPAID && newState == Types.State.EMPTY 
                     && currentOrder != null && currentOrder.getStatus() != Types.State.PAID){
                 System.out.println("Cannot change from UNPAID to EMPTY when current order's not PAID");
@@ -100,10 +100,6 @@ public class ChangeTableStatePopup extends Window implements ClickListener{
             }
             else if( Adapter.changeTableState(table.getId(), newState) ){
                 coffeTableContainer.changeTableState(newState, 0);
-                // if table is change to empty, set currentOrder to COMPLETED if it exist
-                if( newState == Types.State.EMPTY && currentOrder != null ){
-                    Adapter.changeOrderState(currentOrder.getId(), Types.State.COMPLETED);
-                }
             }
             close();
         }

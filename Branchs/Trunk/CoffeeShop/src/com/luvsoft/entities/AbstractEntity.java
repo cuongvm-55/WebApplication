@@ -1,26 +1,48 @@
 package com.luvsoft.entities;
 
+import java.util.Date;
 import java.util.HashMap;
 
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public abstract class AbstractEntity {
 
-    public AbstractEntity(DBObject object) {
+    public AbstractEntity(BasicDBObject object) {
         setObject(object);
     }
 
     public AbstractEntity() {
     }
 
-    public abstract void setObject(DBObject dbobject);
+    public abstract void setObject(BasicDBObject dbobject);
 
-    public abstract HashMap<String, String> toHashMap();
+    public abstract HashMap<String, Object> toHashMap();
     
-    public String getFieldValue(String fieldName, DBObject dbObject){
+    public String getString(String fieldName, BasicDBObject dbObject){
         if( dbObject.get(fieldName) != null ){
             return dbObject.get(fieldName).toString();
         }
         return "";
+    }
+
+    public double getDouble(String fieldName, BasicDBObject dbObject){
+        if( dbObject.get(fieldName) != null ){
+            return dbObject.getDouble(fieldName);
+        }
+        return 0;
+    }
+
+    public int getInt(String fieldName, BasicDBObject dbObject){
+        if( dbObject.get(fieldName) != null ){
+            return dbObject.getInt(fieldName);
+        }
+        return 0;
+    }
+
+    public Date getDate(String fieldName, BasicDBObject dbObject){
+        if( dbObject.get(fieldName) != null ){
+            return dbObject.getDate(fieldName);
+        }
+        return new Date(); // current datetime
     }
 }

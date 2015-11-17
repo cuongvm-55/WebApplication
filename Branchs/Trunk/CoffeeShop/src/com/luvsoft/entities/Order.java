@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class Order extends AbstractEntity{
     public static final String DB_FIELD_NAME_ID = "_id";
@@ -23,7 +23,7 @@ public class Order extends AbstractEntity{
     private String id;
     private List<String> orderDetailIdList; // list of order detail object id
     private Types.State status;
-    private float  paidMoney; // thousand vietnam dong
+    private double  paidMoney; // vietnam dong
     private Date creatingTime;
     private int waitingTime; // in minutes
     private Date paidTime;
@@ -45,34 +45,35 @@ public class Order extends AbstractEntity{
         staffName = "";
     }
 
-    public Order(DBObject object)
+    public Order(BasicDBObject object)
     {
         super(object);
     }
 
     @Override
-    public HashMap<String, String> toHashMap()
+    public HashMap<String, Object> toHashMap()
     {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_TABLE_ID, tableId);
         map.put(DB_FIELD_NAME_NOTE, note);
-        map.put(DB_FIELD_NAME_PAID_MONEY, "" + paidMoney);
-        map.put(DB_FIELD_NAME_PAID_TIME, Types.DateToString(paidTime));
-        map.put(DB_FIELD_NAME_WAITING_TIME, waitingTime + "");
+        map.put(DB_FIELD_NAME_PAID_MONEY, paidMoney);
+        map.put(DB_FIELD_NAME_WAITING_TIME, waitingTime);
         map.put(DB_FIELD_NAME_STATUS, status.toString());
         map.put(DB_FIELD_NAME_STAFF_NAME, staffName);
-        map.put(DB_FIELD_NAME_CREATING_TIME, Types.DateToString(creatingTime));
+        // Date time need to save as TimeStamp type
+        map.put(DB_FIELD_NAME_PAID_TIME, paidTime);
+        map.put(DB_FIELD_NAME_CREATING_TIME, creatingTime);
         // Map list
         map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, Types.formatListToString(orderDetailIdList));
         return map;
     }
 
     @Override
-    public void setObject(DBObject dbObject)
+    public void setObject(BasicDBObject dbObject)
     {
-        id = getFieldValue(DB_FIELD_NAME_ID, dbObject);
-        String str =getFieldValue(DB_FIELD_NAME_ORDER_DETAIL_LIST, dbObject);
+        id = getString(DB_FIELD_NAME_ID, dbObject);
+        String str =getString(DB_FIELD_NAME_ORDER_DETAIL_LIST, dbObject);
         String[] list = str.split(",");
         orderDetailIdList = Arrays.asList(list);
 //        BasicDBList orderDetailList = (BasicDBList)dbobject.get(DB_FIELD_NAME_ORDER_DETAIL_LIST);
@@ -81,7 +82,7 @@ public class Order extends AbstractEntity{
 //        {
 //            orderDetailIdList.add((String)item);
 //        }
-        switch( getFieldValue(DB_FIELD_NAME_STATUS, dbObject) )
+        switch( getString(DB_FIELD_NAME_STATUS, dbObject) )
         {
         case "WAITING":
             status = Types.State.WAITING;
@@ -99,25 +100,14 @@ public class Order extends AbstractEntity{
             status = Types.State.UNDEFINED;
             break;
         }
-        paidMoney = Float.parseFloat(getFieldValue(DB_FIELD_NAME_PAID_MONEY, dbObject));
-        try{
-            creatingTime = Types.StringToDate(getFieldValue(DB_FIELD_NAME_CREATING_TIME, dbObject));
-        }catch(Exception e){
-            System.out.println("Fail to parse creating time");
-        }
-        try{
-            paidTime = Types.StringToDate(getFieldValue(DB_FIELD_NAME_PAID_TIME, dbObject));
-        }catch( Exception e ){
-            System.out.println("Fail to parse paid time");
-        }
-        tableId = getFieldValue(DB_FIELD_NAME_TABLE_ID, dbObject);
-        note = getFieldValue(DB_FIELD_NAME_NOTE, dbObject);
-        staffName = getFieldValue(DB_FIELD_NAME_STAFF_NAME, dbObject);
-        try{
-            waitingTime = Integer.parseInt(getFieldValue(DB_FIELD_NAME_WAITING_TIME, dbObject));
-        }catch( Exception e ){
-            waitingTime = 0;
-        }
+        paidMoney = getDouble(DB_FIELD_NAME_PAID_MONEY, dbObject);
+        creatingTime = getDate(DB_FIELD_NAME_CREATING_TIME, dbObject);
+        paidTime = getDate(DB_FIELD_NAME_PAID_TIME, dbObject);
+
+        tableId = getString(DB_FIELD_NAME_TABLE_ID, dbObject);
+        note = getString(DB_FIELD_NAME_NOTE, dbObject);
+        staffName = getString(DB_FIELD_NAME_STAFF_NAME, dbObject);
+        waitingTime = getInt(DB_FIELD_NAME_WAITING_TIME, dbObject);
     }
 
     public String getId() {
@@ -144,11 +134,11 @@ public class Order extends AbstractEntity{
         this.status = status;
     }
 
-    public float getPaidMoney() {
+    public double getPaidMoney() {
         return paidMoney;
     }
 
-    public void setPaidMoney(float paidMoney) {
+    public void setPaidMoney(double paidMoney) {
         this.paidMoney = paidMoney;
     }
     

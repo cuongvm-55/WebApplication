@@ -10,7 +10,7 @@ public class OrderDetailRecord{
     private String foodId;
     private Types.State status;
     private int quantity;
-    private float price;
+    private double price;
     static enum ChangedFlag{
         UNMODIFIED,
         MODIFIED,
@@ -49,10 +49,10 @@ public class OrderDetailRecord{
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
-    public void setPrice(float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

@@ -12,7 +12,6 @@ import com.luvsoft.utils.MongoDBConnection;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
 public abstract class AbstractFacade {
@@ -32,7 +31,8 @@ public abstract class AbstractFacade {
         try {
             DBCursor cursor = collection.find();
             while (cursor.hasNext()) {
-                retList.add((T) mapObject(cursor.next()));
+                BasicDBObject data = (BasicDBObject)cursor.next();
+                retList.add((T) mapObject(data));
             }
             return true;
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public abstract class AbstractFacade {
         DBCollection collection = getDBCollection();
         try {
             BasicDBObject query = new BasicDBObject(TAG_ID, new ObjectId(id));
-            DBObject dbobj = collection.findOne(query);
+            BasicDBObject dbobj = (BasicDBObject)collection.findOne(query);
             if (dbobj != null) {
                 retobject.setObject(dbobj);
                 return true;
@@ -74,7 +74,8 @@ public abstract class AbstractFacade {
         try {
             DBCursor cursor = collection.find(query);
             while (cursor.hasNext()) {
-                retList.add((T) mapObject(cursor.next()));
+                BasicDBObject data = (BasicDBObject) cursor.next();
+                retList.add((T) mapObject(data));
             }
             return true;
         } catch (Exception e) {
@@ -85,8 +86,8 @@ public abstract class AbstractFacade {
 
     public <T extends AbstractEntity> boolean save(T entity) {
         DBCollection collection = getDBCollection();
-        HashMap<String, String> map = entity.toHashMap();
-        String id = map.get(TAG_ID);
+        HashMap<String, Object> map = entity.toHashMap();
+        String id = map.get(TAG_ID).toString();
         map.remove(TAG_ID);
         BasicDBObject object = new BasicDBObject(map);
         object.append(TAG_ID, new ObjectId(id)); // we need to save _id as a ObjectId
@@ -138,7 +139,7 @@ public abstract class AbstractFacade {
      */
     public <T extends AbstractEntity> boolean update(String objectId, T entity) {
         try {
-            Map<String, String> map = entity.toHashMap();
+            Map<String, Object> map = entity.toHashMap();
             map.remove(TAG_ID);
             BasicDBObject newDocument = new BasicDBObject();
             newDocument.append("$set", new BasicDBObject(map));
@@ -195,7 +196,7 @@ public abstract class AbstractFacade {
      */
     public abstract String getCollectionName();
 
-    public abstract AbstractEntity mapObject(DBObject dbobject);
+    public abstract AbstractEntity mapObject(BasicDBObject dbobject);
 
     /*
      * Do some check on DB connection and return a DBCollection to manipulate

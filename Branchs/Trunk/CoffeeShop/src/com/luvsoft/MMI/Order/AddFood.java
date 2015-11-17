@@ -13,9 +13,11 @@ import com.luvsoft.entities.Category;
 import com.luvsoft.entities.Food;
 import com.luvsoft.entities.Types.State;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
@@ -25,8 +27,6 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 
 /**
  * 
@@ -48,10 +48,6 @@ public class AddFood extends Window {
 
         public OrderDetailRecord getOrderDetailRecord() {
             return orderDetailRecord;
-        }
-
-        public void setOrderDetailRecord(OrderDetailRecord orderDetailRecord) {
-            this.orderDetailRecord = orderDetailRecord;
         }
 
         public boolean isEnable() {

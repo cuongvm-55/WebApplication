@@ -69,6 +69,8 @@ public class Language {
                 WARNING = "Warning";
                 
                 DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+                FROM = "From";
+                TO = "To";
             }
                 break;
             case VIETNAMESE:
@@ -122,6 +124,8 @@ public class Language {
                 WARNING = "Cảnh báo";
                 
                 DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+                FROM = "Từ";
+                TO = "Đến";
             }
                 break;
             case JAPANESE:
@@ -186,5 +190,9 @@ public class Language {
     
     // Date time format
     public static String DATE_TIME_FORMAT;
+    
+    // Reports
+    public static String FROM;
+    public static String TO;
  
 }

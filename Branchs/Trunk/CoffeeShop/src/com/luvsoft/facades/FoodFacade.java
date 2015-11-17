@@ -1,7 +1,7 @@
 package com.luvsoft.facades;
 
 import com.luvsoft.entities.Food;
-import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 
 public class FoodFacade extends AbstractFacade{
     public static final String DB_TABLE_NAME_FOOD = "Food";
@@ -11,7 +11,7 @@ public class FoodFacade extends AbstractFacade{
     }
 
     @Override
-    public Food mapObject(DBObject dbobject) {
+    public Food mapObject(BasicDBObject dbobject) {
         Food food = new Food(dbobject);
         return food;
     }

@@ -2,8 +2,10 @@ package com.luvsoft.MMI;
 
 import java.util.Date;
 
+import com.luvsoft.MMI.report.OrderInfoProducer;
 import com.luvsoft.MMI.utils.Language;
-import com.luvsoft.report.ReportRendering;
+import com.vaadin.server.Page;
+import com.vaadin.shared.Position;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -11,6 +13,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.PopupView.PopupVisibilityEvent;
 import com.vaadin.ui.PopupView.PopupVisibilityListener;
@@ -108,7 +111,21 @@ public class ManagementView extends VerticalLayout{
                     System.out.println("To Date: " + toDate.getValue().toString());
                     
                     // Export data
-                    ReportRendering.export();
+                    OrderInfoProducer producer = new OrderInfoProducer(fromDate.getValue(), toDate.getValue());
+                    if( producer.export() ){
+                        // close popup
+                        datePickerPopup.setPopupVisible(false);
+
+                        // notify message
+                        Notification notify = new Notification("<b>Thông báo</b>",
+                                "<i>Báo cáo đã xuất thành công!</i>",
+                                Notification.Type.TRAY_NOTIFICATION  , true);
+                        notify.setPosition(Position.BOTTOM_RIGHT);
+                        notify.show(Page.getCurrent());
+                    }
+                    else{
+                        System.out.println("Fail to export report");
+                    }
                 }
                 else{
                     System.out.println("Invalid date range!");
