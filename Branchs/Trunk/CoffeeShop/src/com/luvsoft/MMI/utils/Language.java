@@ -59,6 +59,7 @@ public class Language {
                 TO_DATE = "To Date: ";
                 CLEAR_DATA = "Clear Data";
                 CREATE_REPORT = "Create Report";
+                DELETE = "Delete";
 
                 NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
                 
@@ -116,6 +117,7 @@ public class Language {
                 TO_DATE = "Đến ngày: ";
                 CLEAR_DATA = "Xóa Dữ Liệu";
                 CREATE_REPORT = "Tạo Báo Cáo";
+                DELETE = "Xóa";
 
                 // Errors
                 ERROR = "Lỗi";
@@ -150,6 +152,7 @@ public class Language {
     public static String PAID;
     public static String COMPLETED;
     public static String CANCELED;
+    public static String DELETE;
     
     // OrderInfoView texts
     public static String SEQUENCE;

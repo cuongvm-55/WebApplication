@@ -13,11 +13,9 @@ import com.luvsoft.entities.Category;
 import com.luvsoft.entities.Food;
 import com.luvsoft.entities.Types.State;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
@@ -27,6 +25,8 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 
 /**
  * 
@@ -268,21 +268,27 @@ public class AddFood extends Window {
 
                     if (orderDetailExtension.isEnable()) {
                         // Merge new order details list to old order details list
-                        boolean isDuplicate = false;
+                        boolean shouldCreateNewOne = true;
+
                         for (OrderDetailRecord record : orderDetailRecordList) {
                             if (orderDetailExtension.getOrderDetailRecord().getFoodId().equals(record.getFoodId())) {
-                                isDuplicate = true;
-                                record.setQuantity(record
-                                        .getQuantity()
-                                        + orderDetailExtension.getOrderDetailRecord()
-                                                .getQuantity());
-                                record.setChangeFlag(ChangedFlag.MODIFIED);
+                                shouldCreateNewOne = false;
+                                ChangedFlag currentFlag = record.getChangeFlag();
+                                if( currentFlag == ChangedFlag.MODIFIED || currentFlag == ChangedFlag.UNMODIFIED ) {
+                                    record.setChangeFlag(ChangedFlag.MODIFIED);
+                                } else if( currentFlag == ChangedFlag.DELETED ) {
+                                    shouldCreateNewOne = true;
+                                    break;
+                                }
+
+                                record.setQuantity(record.getQuantity() + orderDetailExtension.getOrderDetailRecord().getQuantity());
                                 record.setStatus(State.WAITING);
                                 System.out.println("Merged " + record.getFoodId() + " " + record.getQuantity());
                                 break;
                             }
                         }
-                        if (!isDuplicate) {
+                        if ( shouldCreateNewOne ) {
+                            System.out.println("ADD NEW");
                             OrderDetailRecord record = orderDetailExtension.getOrderDetailRecord();
                             record.setOrderDetailId(new ObjectId().toString());
                             record.setChangeFlag(ChangedFlag.ADDNEW);
