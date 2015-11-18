@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.mongodb.BasicDBObject;
 
-public class Order extends AbstractEntity{
+public class Order extends AbstractEntity implements Comparable<Order> {
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_ORDER_DETAIL_LIST = "OrderDetailList";
     public static final String DB_FIELD_NAME_STATUS = "Status"; // Wait, Paid, NotPaid
@@ -197,5 +197,10 @@ public class Order extends AbstractEntity{
                 + ", waitingTime=" + waitingTime + ", paidTime=" + paidTime
                 + ", tableId=" + tableId + ", note=" + note + ", staffName="
                 + staffName + "]";
+    }
+
+    @Override
+    public int compareTo(Order compareOrder) {
+        return this.creatingTime.compareTo(compareOrder.getCreatingTime());
     }
 }

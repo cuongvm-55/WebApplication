@@ -274,17 +274,19 @@ public class AddFood extends Window {
                             if (orderDetailExtension.getOrderDetailRecord().getFoodId().equals(record.getFoodId())) {
                                 shouldCreateNewOne = false;
                                 ChangedFlag currentFlag = record.getChangeFlag();
-                                if( currentFlag == ChangedFlag.MODIFIED || currentFlag == ChangedFlag.UNMODIFIED ) {
+                                if( currentFlag == ChangedFlag.UNMODIFIED ) {
                                     record.setChangeFlag(ChangedFlag.MODIFIED);
-                                } else if( currentFlag == ChangedFlag.DELETED ) {
+                                    record.setQuantity(record.getQuantity() + orderDetailExtension.getOrderDetailRecord().getQuantity());
+                                    record.setStatus(State.WAITING);
+                                } else if( currentFlag == ChangedFlag.ADDNEW ) {
+                                    record.setQuantity(record.getQuantity() + orderDetailExtension.getOrderDetailRecord().getQuantity());
+                                    record.setStatus(State.WAITING);
+                                }
+                                else if( currentFlag == ChangedFlag.DELETED ) {
                                     shouldCreateNewOne = true;
-                                    break;
                                 }
 
-                                record.setQuantity(record.getQuantity() + orderDetailExtension.getOrderDetailRecord().getQuantity());
-                                record.setStatus(State.WAITING);
                                 System.out.println("Merged " + record.getFoodId() + " " + record.getQuantity());
-                                break;
                             }
                         }
                         if ( shouldCreateNewOne ) {

@@ -158,72 +158,6 @@ public class OrderInfoView extends Window {
 
         updateTable();
 
-        // tbOrderDetails.setTableFieldFactory(new DefaultFieldFactory(){
-        // @SuppressWarnings({ "unchecked", "rawtypes" })
-        // @Override
-        // public Field createField(Container container, Object itemId,
-        // Object propertyId, Component uiContext) {
-        //
-        // Item item = tbOrderDetails.getItem(itemId);
-        // if(item.getItemProperty("orderdetailId").getValue() == null) {
-        // return null;
-        // }
-        //
-        // if (Language.STATUS.equals(propertyId)) {
-        // ComboBox select = new ComboBox();
-        // select.addItem(Language.CANCELED/*Types.State.CANCELED.toString()*/);
-        // select.addItem(Language.WAITING/*Types.State.WAITING.toString()*/);
-        // select.addItem(Language.COMPLETED/*Types.State.COMPLETED.toString()*/);
-        // select.setScrollToSelectedItem(true);
-        // select.setNullSelectionAllowed(false);
-        // select.setTextInputAllowed(false);
-        // select.setRequired(true);
-        //
-        // select.addValueChangeListener(new ValueChangeListener() {
-        // @Override
-        // public void valueChange(ValueChangeEvent event) {
-        // // Set order detail status
-        // String orderDetailId =
-        // item.getItemProperty("orderdetailId").getValue().toString();
-        // String state = event.getProperty().getValue().toString();
-        // System.out.println("State " + state);
-        // for( OrderDetailRecord record : orderDetailRecordList ){
-        // if( record.getOrderDetailId().equals(orderDetailId) ){
-        // //record.setChangeFlag(ChangedFlag.MODIFIED);
-        // record.setStatus(Types.StringToState(state));
-        // break;
-        // }
-        // }
-        // }
-        // });
-        // return select;
-        // } else if( propertyId.equals(Language.QUANTITY) ) {
-        // Property property = item.getItemProperty("orderdetailId");
-        // String orderDetailId = property.getValue().toString();
-        // String quantity =
-        // item.getItemProperty(Language.QUANTITY).getValue().toString();
-        // TextField textField = new TextField();
-        // textField.setValue(quantity);
-        // System.out.println("ID " + orderDetailId + " QUANTITY " + quantity);
-        // textField.addTextChangeListener(new TextChangeListener() {
-        // @Override
-        // public void textChange(TextChangeEvent event) {
-        // for( OrderDetailRecord record : orderDetailRecordList ){
-        // if( record.getOrderDetailId().equals(orderDetailId) ){
-        // //record.setChangeFlag(ChangedFlag.MODIFIED);
-        // record.setQuantity(Integer.parseInt(event.getText()));
-        // break;
-        // }
-        // }
-        // }
-        // });
-        // return textField;
-        // }
-        //
-        // return null;
-        // }
-        // });
-
         paidAmount = totalAmount; // default value of paid amount is equal total
                                   // amount
         lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
@@ -254,18 +188,20 @@ public class OrderInfoView extends Window {
         tbOrderDetails.setColumnCollapsingAllowed(true);
         tbOrderDetails.setColumnCollapsed("orderdetailId", true);
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
-        // tbOrderDetails.setEditable(true);
+
+        tbOrderDetails.setColumnExpandRatio(Language.SEQUENCE, 0.5f);
+        tbOrderDetails.setColumnExpandRatio(Language.FOOD_NAME, 3.0f);
+        tbOrderDetails.setColumnExpandRatio(Language.STATUS, 1.5f);
+        tbOrderDetails.setColumnExpandRatio(Language.QUANTITY, 0.5f);
+        tbOrderDetails.setColumnExpandRatio(Language.PRICE, 0.5f);
+        tbOrderDetails.setColumnExpandRatio(Language.DELETE, 0.5f);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void updateTable() {
-        Container tableContainer = tbOrderDetails.getContainerDataSource();
-        if (tableContainer == null) {
-            tableContainer = new IndexedContainer();
-            tbOrderDetails.setContainerDataSource(tableContainer);
-        }
-
         totalAmount = 0;
+        tbOrderDetails.removeAllItems();
+
         for (int i = 0; i < orderDetailRecordList.size(); i++) {
             OrderDetailRecord record = orderDetailRecordList.get(i);
 
@@ -274,93 +210,105 @@ public class OrderInfoView extends Window {
                 continue;
             }
 
-            Item item = tbOrderDetails.getItem(i);
-            if (item != null && record.getChangeFlag() == ChangedFlag.MODIFIED) {
-                Property property = item.getItemProperty(Language.FOOD_NAME);
-                property.setValue(record.getFoodName());
-                Property property1 = item.getItemProperty(Language.STATUS);
-                property1.setValue(Types.StateToLanguageString(record.getStatus()));
-                Property property2 = item.getItemProperty(Language.QUANTITY);
-                property2.setValue(record.getQuantity());
-                Property property3 = item.getItemProperty(Language.PRICE);
-                property3.setValue(record.getPrice());
-                Property property4 = item.getItemProperty("orderdetailId");
-                property4.setValue(record.getOrderDetailId());
-            } else {
-                Button btnRemove = new Button(Language.DELETE);
-                btnRemove.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-                btnRemove.setIcon(FontAwesome.BAN);
-                btnRemove.setData(i);
+            Button btnRemove = new Button(Language.DELETE);
+            btnRemove.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            btnRemove.setIcon(FontAwesome.BAN);
+            btnRemove.setData(i);
 
-                ComboBox cbStatus = new ComboBox();
-                cbStatus.addItems(Language.CANCELED, Language.WAITING, Language.COMPLETED);
-                cbStatus.setData(i);
-                cbStatus.setValue(Types.StateToLanguageString(record.getStatus()));
-                cbStatus.setScrollToSelectedItem(true);
-                cbStatus.setNullSelectionAllowed(false);
-                cbStatus.setTextInputAllowed(false);
-                cbStatus.setRequired(true);
-                cbStatus.setResponsive(true);
+            ComboBox cbStatus = new ComboBox();
+            cbStatus.addItems(Language.CANCELED, Language.WAITING, Language.COMPLETED);
+            cbStatus.setData(i);
+            cbStatus.setValue(Types.StateToLanguageString(record.getStatus()));
+            cbStatus.setScrollToSelectedItem(true);
+            cbStatus.setNullSelectionAllowed(false);
+            cbStatus.setTextInputAllowed(false);
+            cbStatus.setRequired(true);
+            cbStatus.setResponsive(true);
 
-                TextField txtQuantity = new TextField();
-                txtQuantity.setValue(record.getQuantity()+"");
-                txtQuantity.setResponsive(true);
+            TextField txtQuantity = new TextField();
+            txtQuantity.setValue(record.getQuantity()+"");
+            txtQuantity.setWidth("100%");
+            txtQuantity.setResponsive(true);
 
-                // If item is not available, we will add new one
-                if (tbOrderDetails.addItem( new Object[] {
-                                        i,
-                                        record.getFoodName(),
-                                        // Types.StateToLanguageString(record.getStatus()),
-                                        cbStatus,
-                                        txtQuantity,
-                                        new Float(record.getPrice()),
-                                        btnRemove,
-                                        record.getOrderDetailId() },i) == null) {
-                    System.out.println("NULL roai");
-                }
-
-                btnRemove.addClickListener(new ClickListener() {
-                    @Override
-                    public void buttonClick(ClickEvent event) {
-                        record.setChangeFlag(ChangedFlag.DELETED);
-                        tbOrderDetails.removeItem(event.getButton().getData());
-                        tbOrderDetails.setImmediate(true);
-                    }
-                });
-
-                cbStatus.addValueChangeListener(new ValueChangeListener() {
-                    @Override
-                    public void valueChange(ValueChangeEvent event) {
-                        // Set order detail status
-                        String state = event.getProperty().getValue().toString();
-                        record.setStatus(Types.StringToState(state));
-                        // We do not change flag to Modified if this record is a new one
-                        if(record.getChangeFlag() != ChangedFlag.ADDNEW) {
-                            record.setChangeFlag(ChangedFlag.MODIFIED);
-                        }
-                    }
-                });
-
-                txtQuantity.addTextChangeListener(new TextChangeListener() {
-                    @Override
-                    public void textChange(TextChangeEvent event) {
-                        Integer quantity;
-                        try {
-                            quantity = Integer.parseInt(txtQuantity.getValue());
-                        } catch (NumberFormatException e) {
-                            System.out.println("OrderInfoView::UpdateTable::Cannot parse from String to Integer");
-                            return;
-                        }
-                        record.setQuantity(quantity);
-                        // We do not change flag to Modified if this record is a new one
-                        if(record.getChangeFlag() != ChangedFlag.ADDNEW) {
-                            record.setChangeFlag(ChangedFlag.MODIFIED);
-                        }
-                    }
-                });
-
+            // Mark red color for canceled order details
+            if(record.getStatus() == Types.State.CANCELED) {
+                btnRemove.addStyleName("TEXT_RED");
+                txtQuantity.addStyleName("TEXT_RED");
             }
-            totalAmount += record.getPrice() * record.getQuantity();
+
+            // If item is not available, we will add new one
+            if (tbOrderDetails.addItem( new Object[] {
+                                    i,
+                                    record.getFoodName(),
+                                    // Types.StateToLanguageString(record.getStatus()),
+                                    cbStatus,
+                                    txtQuantity,
+                                    new Float(record.getPrice()),
+                                    btnRemove,
+                                    record.getOrderDetailId() },i) == null) {
+                System.out.println("NULL roai");
+            }
+
+            btnRemove.addClickListener(new ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    record.setChangeFlag(ChangedFlag.DELETED);
+                    tbOrderDetails.removeItem(event.getButton().getData());
+                    tbOrderDetails.setImmediate(true);
+                }
+            });
+
+            cbStatus.addValueChangeListener(new ValueChangeListener() {
+                @Override
+                public void valueChange(ValueChangeEvent event) {
+                    // Set order detail status
+                    String state = event.getProperty().getValue().toString();
+                    record.setStatus(Types.StringToState(state));
+                    // Mark red color for canceled order details
+                    if(record.getStatus() == Types.State.CANCELED) {
+                        btnRemove.addStyleName("TEXT_RED");
+                        txtQuantity.addStyleName("TEXT_RED");
+                        totalAmount -= record.getPrice() * record.getQuantity();
+                        paidAmount -= record.getPrice() * record.getQuantity();
+                        textFieldpaidAmount.setValue(paidAmount+"");
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
+                                + Language.CURRENCY_SYMBOL);
+                    } else {
+                        totalAmount += record.getPrice() * record.getQuantity();
+                        paidAmount += record.getPrice() * record.getQuantity();
+                        textFieldpaidAmount.setValue(paidAmount+"");
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
+                                + Language.CURRENCY_SYMBOL);
+                        btnRemove.removeStyleName("TEXT_RED");
+                        txtQuantity.removeStyleName("TEXT_RED");
+                    }
+                    // We do not change flag to Modified if this record is a new one
+                    if(record.getChangeFlag() != ChangedFlag.ADDNEW) {
+                        record.setChangeFlag(ChangedFlag.MODIFIED);
+                    }
+                }
+            });
+
+            txtQuantity.addTextChangeListener(new TextChangeListener() {
+                @Override
+                public void textChange(TextChangeEvent event) {
+                    Integer quantity;
+                    try {
+                        quantity = Integer.parseInt(event.getText());
+                    } catch (NumberFormatException e) {
+                        System.out.println("OrderInfoView::UpdateTable::Cannot parse from String to Integer");
+                        return;
+                    }
+                    record.setQuantity(quantity);
+                    // We do not change flag to Modified if this record is a new one
+                    if(record.getChangeFlag() != ChangedFlag.ADDNEW) {
+                        record.setChangeFlag(ChangedFlag.MODIFIED);
+                    }
+                }
+            });
+            if(record.getStatus() != Types.State.CANCELED) {
+                totalAmount += record.getPrice() * record.getQuantity();
+            }
         }
         tbOrderDetails.setImmediate(true);
     }

@@ -1,6 +1,7 @@
 package com.luvsoft.controllers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.luvsoft.entities.Floor;
@@ -20,6 +21,8 @@ public class FloorController extends AbstractController{
     {
         List<Floor> list = new ArrayList<Floor>();
         floorFacade.findAll(list);
+        // Sort floor by floor number
+        Collections.sort(list);
         return list;
     }
 

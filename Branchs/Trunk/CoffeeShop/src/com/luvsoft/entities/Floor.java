@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.mongodb.BasicDBObject;
 
-public class Floor extends AbstractEntity{
+public class Floor extends AbstractEntity implements Comparable<Floor> {
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_CODE = "Code";
     public static final String DB_FIELD_NAME_NUMBER = "Number";
@@ -95,5 +95,11 @@ public class Floor extends AbstractEntity{
 
     public void setTableIdList(List<String> tableIdList) {
         this.tableIdList = tableIdList;
+    }
+
+    @Override
+    public int compareTo(Floor compareFloor) {
+        int compareNumber = Integer.parseInt(compareFloor.getNumber());
+        return Integer.parseInt(this.number) - compareNumber;
     }
 }

@@ -1,6 +1,7 @@
 package com.luvsoft.controllers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class OrderController extends AbstractController{
             query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", begDate).add("$lte", endDate).get());
         }
         orderFacade.findByQuery(query, list);
+        Collections.sort(list);
         return list;
     }
 
@@ -51,6 +53,7 @@ public class OrderController extends AbstractController{
             query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", begDate).add("$lte", endDate).get());
         }
         orderFacade.findByQuery(query, list);
+        Collections.sort(list);
         return list;
     }
 
