@@ -1,9 +1,16 @@
 package com.luvsoft.MMI;
 
 import java.util.Date;
+import java.util.List;
 
+import org.vaadin.dialogs.ConfirmDialog;
+
+import com.luvsoft.MMI.Order.AddFood;
+import com.luvsoft.MMI.management.FoodManagement;
 import com.luvsoft.MMI.report.OrderInfoProducer;
 import com.luvsoft.MMI.utils.Language;
+import com.luvsoft.entities.Order;
+import com.luvsoft.entities.Types;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Alignment;
@@ -58,6 +65,12 @@ public class ManagementView extends VerticalLayout{
         btnFoodManagement.setStyleName("customizationButton FULL_SIZE FONT_OVERSIZE");
         btnFoodManagement.setCaption(Language.FOOD_MANAGEMENT);
         btnFoodManagement.setWidth("50%");
+        btnFoodManagement.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                getUI().addWindow(new FoodManagement());
+            }
+        });
 
         btnConfiguration.setStyleName("customizationButton FULL_SIZE FONT_OVERSIZE");
         btnConfiguration.setCaption(Language.CONFIGURATION);
@@ -76,7 +89,7 @@ public class ManagementView extends VerticalLayout{
         Label lblChooseDate = new Label(Language.CHOOSE_DATE);
         Label lblFromDate = new Label(Language.FROM_DATE);
         Label lblToDate = new Label(Language.TO_DATE);
-        
+
         DateField fromDate = new DateField();
         DateField toDate = new DateField();
         HorizontalLayout frLayout = new HorizontalLayout();
@@ -86,7 +99,7 @@ public class ManagementView extends VerticalLayout{
         fromDate.setValue(new Date());
         fromDate.setRangeEnd(new Date());
         fromDate.setDateFormat("dd-MM-yyyy");
-        
+
         HorizontalLayout toLayout = new HorizontalLayout();
         toLayout.addComponents(lblToDate, toDate);
         toLayout.setComponentAlignment( lblToDate, Alignment.MIDDLE_LEFT);
@@ -94,24 +107,57 @@ public class ManagementView extends VerticalLayout{
         toDate.setValue(new Date());
         toDate.setRangeEnd(new Date());
         toDate.setDateFormat("dd-MM-yyyy");
-        
+
         Button btnClearData = new Button(Language.CLEAR_DATA);
         btnClearData.addStyleName("customizationButton");
         btnClearData.addStyleName(ValoTheme.BUTTON_HUGE);
-        
+        btnClearData.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                System.out.println("Remove data...");
+                // close popup
+                datePickerPopup.setPopupVisible(false);
+                ConfirmDialog.show( getUI(), Language.CONFIRM_DELETE_TITLE, Language.CONFIRM_DELETE_CONTENT,
+                        Language.ASK_FOR_CONFIRM, Language.ASK_FOR_DENIED, new ConfirmDialog.Listener() {
+                            public void onClose(ConfirmDialog dialog) {
+                                if (dialog.isConfirmed()) {
+                                    System.out.println("user confirmed");
+                                    if( removeOrderDataInDateRange(fromDate.getValue(), toDate.getValue()) ){
+                                     // notify message
+                                        Notification notify = new Notification("<b>Thông báo</b>",
+                                                "<i>Đã xóa dữ liệu thành công!</i>",
+                                                Notification.Type.TRAY_NOTIFICATION  , true);
+                                        notify.setPosition(Position.BOTTOM_RIGHT);
+                                        notify.show(Page.getCurrent());
+                                    }
+                                    else{
+                                        System.out.println("Fail to remove data...");
+                                    }
+                                } else {
+                                    System.out.println("user canceled, do nothing!");
+                                }
+                            }
+                        });
+            }
+        });
+
         Button btnCreateReport = new Button(Language.CREATE_REPORT);
         btnCreateReport.addStyleName("customizationButton");
         btnCreateReport.addStyleName(ValoTheme.BUTTON_HUGE);
         btnCreateReport.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                if( toDate.getValue().after(fromDate.getValue()) || toDate.getValue().equals(fromDate.getValue()) )
+                Date begDate = fromDate.getValue();
+                Date endDate = toDate.getValue();
+                if( begDate != null && endDate != null &&
+                        endDate.after(begDate) || endDate.equals(begDate) )
                 {
-                    System.out.println("From Date: " + fromDate.getValue().toString());
-                    System.out.println("To Date: " + toDate.getValue().toString());
+                    System.out.println("Export report...");
+                    System.out.println("From Date: " + begDate.toString());
+                    System.out.println("To Date: " + endDate.toString());
                     
                     // Export data
-                    OrderInfoProducer producer = new OrderInfoProducer(fromDate.getValue(), toDate.getValue());
+                    OrderInfoProducer producer = new OrderInfoProducer(begDate, endDate);
                     if( producer.export() ){
                         // close popup
                         datePickerPopup.setPopupVisible(false);
@@ -160,5 +206,37 @@ public class ManagementView extends VerticalLayout{
             }
         });
         this.addComponent(datePickerPopup);
+    }
+
+    private boolean removeOrderDataInDateRange(Date fromDate, Date toDate){
+        boolean bOk = true;
+        if(fromDate != null && toDate != null &&
+           toDate.after(fromDate) || toDate.equals(fromDate) ){
+            // Get all order in date range
+            List<Order> orderList = Adapter.getOrderListWithState(Types.State.PAID, fromDate, toDate);
+
+            if(orderList == null || orderList.isEmpty() ){
+                // Stop here, no data to remove
+                System.out.println("No order to remove!");
+                return true;
+            }
+
+            for( Order order : orderList ){
+                // Delete all order details
+                List<String> odDetailList = order.getOrderDetailIdList();
+                if( odDetailList == null || odDetailList.isEmpty() ){
+                    // No order detail to remove
+                    System.out.println("No order detail to remove!, orderId" + order.getId());
+                    continue;
+                }
+                for( String odDetailId : order.getOrderDetailIdList() ){
+                    bOk &= Adapter.removeOrderDetail(odDetailId);
+                }
+
+                // Remove order
+                bOk &= Adapter.removeOrder(order.getId());
+            }
+        }
+        return bOk;
     }
 }

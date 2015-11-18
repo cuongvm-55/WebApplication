@@ -60,9 +60,12 @@ public class Language {
                 CLEAR_DATA = "Clear Data";
                 CREATE_REPORT = "Create Report";
                 DELETE = "Delete";
+                DELETE_FOODS = "Remove food";
+                ADD_CATEGORY = "Add category";
+                DELETE_CATEGORY = "Remove category";
 
                 NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
-                
+
                 // Errors
                 ERROR = "Error";
                 CANNOT_CHANGE_TABLE_STATE = "Cannot change table state to Empty, curent Order is not Paid!";
@@ -72,6 +75,11 @@ public class Language {
                 DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
                 FROM = "From";
                 TO = "To";
+
+                CONFIRM_DELETE_TITLE = "Confirm to delete";
+                CONFIRM_DELETE_CONTENT = "Do you really want to delete?";
+                ASK_FOR_CONFIRM = "Ok";
+                ASK_FOR_DENIED = "Cancel";
             }
                 break;
             case VIETNAMESE:
@@ -118,16 +126,24 @@ public class Language {
                 CLEAR_DATA = "Xóa Dữ Liệu";
                 CREATE_REPORT = "Tạo Báo Cáo";
                 DELETE = "Xóa";
+                DELETE_FOODS = "Xóa món";
+                ADD_CATEGORY = "Thêm danh mục";
+                DELETE_CATEGORY = "Xóa danh mục";
 
                 // Errors
                 ERROR = "Lỗi";
                 CANNOT_CHANGE_TABLE_STATE = "Không thể chuyển trạng thái Trống, hóa đơn chưa Thanh toán!";
                 // Warnings
                 WARNING = "Cảnh báo";
-                
+
                 DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
                 FROM = "Từ";
                 TO = "Đến";
+
+                CONFIRM_DELETE_TITLE = "Xác nhận";
+                CONFIRM_DELETE_CONTENT = "Bạn có chắc chắn muốn xóa dữ liệu không?";
+                ASK_FOR_CONFIRM = "Đồng ý";
+                ASK_FOR_DENIED = "Hủy";
             }
                 break;
             case JAPANESE:
@@ -176,6 +192,9 @@ public class Language {
     public static String TO_DATE;
     public static String CLEAR_DATA;
     public static String CREATE_REPORT;
+    public static String DELETE_FOODS;
+    public static String ADD_CATEGORY;
+    public static String DELETE_CATEGORY;
 
     // Currency
     public static String CURRENCY_SYMBOL;
@@ -184,10 +203,11 @@ public class Language {
     public static String CANCEL;
 
     public static String NO_ORDER_IN_ORDER_LIST;
-    
+
     // Errors
     public static String ERROR;
     public static String CANNOT_CHANGE_TABLE_STATE;
+
     // Warnings
     public static String WARNING;
     
@@ -198,4 +218,9 @@ public class Language {
     public static String FROM;
     public static String TO;
  
+    // Confirm dialog
+    public static String CONFIRM_DELETE_TITLE;
+    public static String CONFIRM_DELETE_CONTENT;
+    public static String ASK_FOR_CONFIRM;
+    public static String ASK_FOR_DENIED;
 }
