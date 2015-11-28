@@ -1,4 +1,4 @@
-package com.luvsoft.MMI.Order;
+package com.luvsoft.MMI.order;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,16 +6,18 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.Order.OrderDetailRecord.ChangedFlag;
 import com.luvsoft.MMI.components.CustomizationTreeElement;
+import com.luvsoft.MMI.order.OrderDetailRecord.ChangedFlag;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Category;
 import com.luvsoft.entities.Food;
 import com.luvsoft.entities.Types.State;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
@@ -23,10 +25,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 
 /**
  * 
@@ -35,7 +34,7 @@ import com.vaadin.data.Property.ValueChangeListener;
  */
 
 @SuppressWarnings("serial")
-public class AddFood extends Window {
+public class AddFoodView extends AbstractOrderView {
 
     private class OrderDetailRecordExtension {
         private OrderDetailRecord orderDetailRecord;
@@ -60,26 +59,25 @@ public class AddFood extends Window {
     }
 
     private List<Category> listOfCategory = new ArrayList<Category>();
-    private OrderInfoView orderInforView;
     private List<OrderDetailRecord> orderDetailRecordList;
     private List<OrderDetailRecordExtension> orderDetailExtensionList;
 
-    public AddFood(OrderInfoView orderInfoView) {
+    public AddFoodView() {
         super();
+    }
+
+    @Override
+    public void createView() {
         // Get all foods from database
         listOfCategory = Adapter.retrieveCategoryList();
 
-        this.orderInforView = orderInfoView;
-        this.orderDetailRecordList = this.orderInforView.getOrderDetailRecordList();
+        this.orderDetailRecordList = ((OrderInfoView) this.getParentView()).getOrderDetailRecordList();
         if (this.orderDetailRecordList == null) {
             this.orderDetailRecordList = new ArrayList<OrderDetailRecord>();
         }
         orderDetailExtensionList = new ArrayList<OrderDetailRecordExtension>();
 
-        initView();
-    }
 
-    private void initView() {
         setModal(true);
         setClosable(true);
         setResizable(false);
@@ -89,7 +87,7 @@ public class AddFood extends Window {
         VerticalLayout container = new VerticalLayout();
         container.setSizeFull();
 
-        Label lblTableNumber = new Label(Language.TABLE + " ");
+        Label lblTableNumber = new Label(Language.TABLE + " " + getCurrentTable().getNumber());
         lblTableNumber
                 .addStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_CENTER BACKGROUND_BLUE TEXT_WHITE");
         lblTableNumber.setWidth("100%");
@@ -302,9 +300,9 @@ public class AddFood extends Window {
 
                 if(!orderDetailRecordList.isEmpty()) {
                     System.out.println("orderDetailRecordList is not empty");
-                    orderInforView.setOrderDetailRecordList(orderDetailRecordList);
-                    orderInforView.setOrderDetailListChanged(true);
-                    orderInforView.populate();
+                    ((OrderInfoView) getParentView()).setOrderDetailRecordList(orderDetailRecordList);
+                    ((OrderInfoView) getParentView()).setOrderDetailListChanged(true);
+                    getParentView().reloadView();
                 }
                 close();
             }
@@ -313,5 +311,11 @@ public class AddFood extends Window {
         footer.setComponentAlignment(btnConfirm, Alignment.MIDDLE_CENTER);
 
         return footer;
+    }
+
+    @Override
+    public void reloadView() {
+        // TODO Auto-generated method stub
+        
     }
 }

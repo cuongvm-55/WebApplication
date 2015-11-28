@@ -16,6 +16,7 @@ import com.vaadin.ui.PopupView.PopupVisibilityEvent;
 import com.vaadin.ui.PopupView.PopupVisibilityListener;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class MainView extends VerticalLayout implements View {
@@ -77,8 +78,10 @@ public class MainView extends VerticalLayout implements View {
         horzTitleContainer.setSizeFull();
 
         btnMenu = new Button();
-        btnMenu.setIcon(FontAwesome.ALIGN_JUSTIFY);
-        btnMenu.setStyleName("icon-only huge");
+        btnMenu.setIcon(FontAwesome.LIST);
+        btnMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnMenu.addStyleName(ValoTheme.BUTTON_LARGE);
+        // btnMenu.addStyleName("valo-menu-toggle");
         btnMenu.setResponsive(true);
         btnMenu.setSizeFull();
 

@@ -3,8 +3,8 @@ package com.luvsoft.MMI.components;
 import java.util.List;
 
 import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.Order.OrderDetailRecord;
-import com.luvsoft.MMI.Order.OrderInfo;
+import com.luvsoft.MMI.order.OrderDetailRecord;
+import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;
@@ -109,6 +109,7 @@ public class OrderElement extends VerticalLayout{
         }
         tbOrderInfos.setVisibleColumns(Language.SEQUENCE,Language.FOOD_NAME,Language.QUANTITY,Language.STATUS);
         tbOrderInfos.setTableFieldFactory(new DefaultFieldFactory(){
+            @SuppressWarnings({ "rawtypes", "unchecked" })
             @Override
             public Field createField(Container container, Object itemId,
                     Object propertyId, Component uiContext) {

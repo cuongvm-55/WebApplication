@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 
-import com.luvsoft.MMI.Order.OrderDetailRecord;
-import com.luvsoft.MMI.Order.OrderInfo;
+import com.luvsoft.MMI.order.OrderDetailRecord;
+import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.controllers.CategoryController;
 import com.luvsoft.controllers.FloorController;

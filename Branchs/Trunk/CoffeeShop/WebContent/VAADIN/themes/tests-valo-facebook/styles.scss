@@ -1,0 +1,133 @@
+@import "variables";
+@import "../tests-valo/valotest";
+
+.tests-valo-facebook {
+   @include valotest;
+
+   //========================================
+  // UNILITY CSS RULES
+  //========================================
+  .BACKGROUND_BLUE {
+     background-color:#3bb697;
+  }
+
+  .TEXT_WHITE {
+     color: #ffffff;
+  }
+
+  .TEXT_BLUE {
+     color:#3bb697;
+  }
+
+  .TEXT_RED {
+     color:#e62020;
+  }
+
+  .FONT_TAHOMA {
+     font-family: Tahoma, Verdana, Segoe, sans-serif;
+  }
+
+   .TEXT_CENTER {
+     text-align:center;
+     vertical-align: middle;
+  }
+
+   .FONT_OVERSIZE {
+      font-size: 40px;
+   }
+
+   .FONT_OVER_OVERSIZE {
+      font-size: 50px;
+   }
+   .FULL_SIZE {
+      width:100%;
+      height:100%;
+   }
+  //========================================
+  // CLASS CSS
+  //========================================
+
+  .v-popupview-popup-leftMenuStyle {
+     top:0px;
+     width:60%;
+     height:100%;
+  }
+
+   .v-popupview-popup-popupStyle {
+      left: 30% !important;
+      top: 25% !important;
+      width: 50%;
+   }
+
+  .customizationButton {
+     background-color:#3bb697;
+     background-image:none;
+     border:1px solid #ffffff;
+     color:#ffffff;
+  }
+
+  .elementContainerStyle {
+     margin-top: 20px;
+  }
+    .v-table-cell-wrapper {
+        white-space: normal;
+    }
+
+    .v-table-resizer {
+        display: none;
+    }
+    
+    .text-align-left{
+        text-align: left;
+    }
+    
+    .table-name-orderList {
+        font-size: 30px;
+        background-color:#ffffff;
+        background-image:none;
+        color:#3bb697;
+        margin-top: 1px;
+    }
+    
+    .top-line{
+        margin-top: 1px;
+        margin-bottom: 1px;
+        height: 1px;
+        background-color:#3bb697;
+    }
+    .bottom-line{
+        margin-top: 1px;
+        //margin-bottom: 3px;
+        height: 1px;
+        background-color:#3bb697;
+    }
+    .scrollable {
+        overflow: auto;
+    }
+
+    .hoverImage:hover {
+        background-color: #3bb697;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#e7e7e7));
+        background-image: -webkit-linear-gradient(top, #3bb697, #e7e7e7); 
+        background-image: -moz-linear-gradient(top, #3bb697, #e7e7e7); 
+        background-image: -ms-linear-gradient(top, #3bb697, #e7e7e7); 
+        background-image: -o-linear-gradient(top, #3bb697, #e7e7e7);
+        border-radius: 50%;
+        background-color:#3bb697;
+        box-shadow: 0px 3px 8px #aaa, inset 0px 2px 3px #fff;
+    }
+
+    .hoverImage {
+        background-color: #f7f7f7;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#e7e7e7));
+        background-image: -webkit-linear-gradient(top, #f7f7f7, #e7e7e7); 
+        background-image: -moz-linear-gradient(top, #f7f7f7, #e7e7e7); 
+        background-image: -ms-linear-gradient(top, #f7f7f7, #e7e7e7); 
+        background-image: -o-linear-gradient(top, #f7f7f7, #e7e7e7);
+        border-radius: 50%;
+        box-shadow: 0px 3px 8px #aaa, inset 0px 2px 3px #fff;
+    }
+    .margintop100{
+        margin-top: 100px;
+    }
+}

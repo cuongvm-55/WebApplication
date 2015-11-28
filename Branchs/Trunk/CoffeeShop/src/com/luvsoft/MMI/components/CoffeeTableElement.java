@@ -1,6 +1,7 @@
 package com.luvsoft.MMI.components;
 
 import com.luvsoft.MMI.TableListView;
+import com.luvsoft.MMI.order.ChangeTableStateView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Table;
@@ -24,7 +25,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     private Image btnTableState;
     private Label lblWaitingTime;
     private Label lblTableNumber;
-    private ChangeTableStatePopup changeTableStatePopup;
+    private ChangeTableStateView changeTableStateView;
 
     // data
     private Table table; // table info
@@ -70,23 +71,11 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         this.lblTableNumber.setStyleName("huge bold TEXT_BLUE");
         this.lblTableNumber.setSizeUndefined();
 
-        changeTableStatePopup = new ChangeTableStatePopup(this, table);
-
         this.addComponents(btnTableState, lblWaitingTime, lblTableNumber);
         this.setComponentAlignment(btnTableState, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(lblWaitingTime, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(lblTableNumber, Alignment.MIDDLE_CENTER);
 
-//        changeTableStatePopup.getPopup().addPopupVisibilityListener(new PopupVisibilityListener() {
-//            @Override
-//            public void popupVisibilityChange(PopupVisibilityEvent event) {
-//                if(event.isPopupVisible()) {
-//                    MainView.getInstance().getMainLayout().setEnabled(false);
-//                } else {
-//                    MainView.getInstance().getMainLayout().setEnabled(true);
-//                }
-//            }
-//        });
         // Add click listener
         this.btnTableState.addClickListener(this);
     }
@@ -164,9 +153,12 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     @Override
     public void click(ClickEvent event) {
         if (event.getComponent() == btnTableState) {
-            // TODO changeTableStatePopup.setPopup
             System.out.println("curTblId: " + table.getId());
-            tableListView.getUI().addWindow(changeTableStatePopup);
+            changeTableStateView = new ChangeTableStateView();
+            changeTableStateView.setParentView(tableListView);
+            changeTableStateView.setCurrentTable(table);
+            changeTableStateView.createView();
+            tableListView.getUI().addWindow(changeTableStateView);
         }
     }
 

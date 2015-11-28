@@ -12,15 +12,16 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-public class TableListView extends Panel{
+public class TableListView extends Panel implements ViewInterface {
     private List<Floor> floorList;
     private List<Table> tableList;
     public TableListView(){
         super();
-        init();
+        createView();
     }
 
-    public void init(){
+    @Override
+    public void createView() {
         this.setSizeFull();
         VerticalLayout vtcContentContainer = new VerticalLayout();
         floorList = Adapter.retrieveFloorList();
@@ -46,8 +47,12 @@ public class TableListView extends Panel{
 
             CustomizationTreeElement treeElement = new CustomizationTreeElement(gridElementContent, Language.FLOOR + " " + floorList.get(j).getNumber());
             vtcContentContainer.addComponent(treeElement);
-
-            this.setContent(vtcContentContainer);
         }
+        this.setContent(vtcContentContainer);
+    }
+
+    @Override
+    public void reloadView() {
+        createView();
     }
 }

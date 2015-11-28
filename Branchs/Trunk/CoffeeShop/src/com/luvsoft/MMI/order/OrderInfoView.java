@@ -1,4 +1,4 @@
-package com.luvsoft.MMI.Order;
+package com.luvsoft.MMI.order;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,18 +7,14 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.Order.OrderDetailRecord.ChangedFlag;
+import com.luvsoft.MMI.order.OrderDetailRecord.ChangedFlag;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.OrderDetail;
 import com.luvsoft.entities.Types;
-import com.vaadin.data.Container;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
+import com.luvsoft.entities.Types.State;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.data.util.converter.Converter.ConversionException;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -33,10 +29,8 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 /*
@@ -44,7 +38,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 
 @SuppressWarnings("serial")
-public class OrderInfoView extends Window {
+public class OrderInfoView extends AbstractOrderView {
     final int TABLE_NUMBER_OF_ROWS = 6;
     /*
      * This is a vertical layout contains list of orders
@@ -65,7 +59,6 @@ public class OrderInfoView extends Window {
 
     // Data
     private Order currentOrder;
-    private com.luvsoft.entities.Table table;
 
     // current orderinfo
     // it will be loaded form db
@@ -78,9 +71,8 @@ public class OrderInfoView extends Window {
     // Flag: is new order?
     private boolean isNewOrder;
 
-    public OrderInfoView(com.luvsoft.entities.Table table) {
+    public OrderInfoView() {
         super();
-        this.table = table;
         totalAmount = 0.00f;
         paidAmount = 0.00f;
         currentOrder = null;
@@ -88,11 +80,10 @@ public class OrderInfoView extends Window {
         orderDetailRecordList = null;
         isOrderDetailListChanged = false;
         isNewOrder = false;
-        init();
-        // populate();
     }
 
-    public void init() {
+    @Override
+    public void createView() {
         setModal(true);
         setClosable(true);
         setResizable(false);
@@ -105,7 +96,7 @@ public class OrderInfoView extends Window {
         lbTableName
                 .setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.setWidth("100%");
-        lbTableName.setValue(Language.TABLE + " " + table.getNumber());
+        lbTableName.setValue(Language.TABLE + " " + getCurrentTable().getNumber());
 
         buildTable();
 
@@ -125,7 +116,7 @@ public class OrderInfoView extends Window {
             currentOrder.setNote("");
             // @ todo: Staffname should be editable
             currentOrder.setStaffName("");
-            currentOrder.setTableId(table.getId());
+            currentOrder.setTableId(getCurrentTable().getId());
             currentOrder.setCreatingTime(new Date());
 
             // Create new order detail record list
@@ -133,17 +124,21 @@ public class OrderInfoView extends Window {
 
             // Create new order info
             orderInfo = new OrderInfo();
-            orderInfo.setTableName(Language.TABLE + " " + table.getNumber());
+            orderInfo.setTableName(Language.TABLE + " " + getCurrentTable().getNumber());
             orderInfo.setOrderDetailRecordList(orderDetailRecordList);
 
             // Change flag
             isNewOrder = true;
         }
 
+        updateTable();
+
         setupUI();
     }
 
-    public void populate() {
+
+    @Override
+    public void reloadView() {
         // Fill data
         if (orderInfo == null) {
             System.out.println("No orderinfo for this table!");
@@ -197,7 +192,6 @@ public class OrderInfoView extends Window {
         tbOrderDetails.setColumnExpandRatio(Language.DELETE, 0.5f);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void updateTable() {
         totalAmount = 0;
         tbOrderDetails.removeAllItems();
@@ -253,6 +247,13 @@ public class OrderInfoView extends Window {
                 @Override
                 public void buttonClick(ClickEvent event) {
                     record.setChangeFlag(ChangedFlag.DELETED);
+                    if(record.getStatus() != State.CANCELED) {
+                        totalAmount -= record.getPrice() * record.getQuantity();
+                        paidAmount -= record.getPrice() * record.getQuantity();
+                        textFieldpaidAmount.setValue(paidAmount+"");
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
+                                + Language.CURRENCY_SYMBOL);
+                    }
                     tbOrderDetails.removeItem(event.getButton().getData());
                     tbOrderDetails.setImmediate(true);
                 }
@@ -268,19 +269,24 @@ public class OrderInfoView extends Window {
                     if(record.getStatus() == Types.State.CANCELED) {
                         btnRemove.addStyleName("TEXT_RED");
                         txtQuantity.addStyleName("TEXT_RED");
+
                         totalAmount -= record.getPrice() * record.getQuantity();
                         paidAmount -= record.getPrice() * record.getQuantity();
+
                         textFieldpaidAmount.setValue(paidAmount+"");
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
-                                + Language.CURRENCY_SYMBOL);
-                    } else {
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "+ Language.CURRENCY_SYMBOL);
+                        record.setPreviousStatus(Types.State.CANCELED);
+
+                    } else if(record.getStatus() != Types.State.CANCELED && record.getPreviousStatus() == Types.State.CANCELED){
                         totalAmount += record.getPrice() * record.getQuantity();
                         paidAmount += record.getPrice() * record.getQuantity();
+
                         textFieldpaidAmount.setValue(paidAmount+"");
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
-                                + Language.CURRENCY_SYMBOL);
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "+ Language.CURRENCY_SYMBOL);
+
                         btnRemove.removeStyleName("TEXT_RED");
                         txtQuantity.removeStyleName("TEXT_RED");
+                        record.setPreviousStatus(record.getStatus());
                     }
                     // We do not change flag to Modified if this record is a new one
                     if(record.getChangeFlag() != ChangedFlag.ADDNEW) {
@@ -355,19 +361,6 @@ public class OrderInfoView extends Window {
         container.setSizeFull();
         container.setComponentAlignment(lbTableName, Alignment.TOP_CENTER);
 
-        textFieldpaidAmount.addTextChangeListener(new TextChangeListener() {
-            @Override
-            public void textChange(TextChangeEvent event) {
-                // TODO Auto-generated method stub
-                // layout.replaceComponent(textFieldpaidAmount, lbPaidAmount);
-                // paidAmount = Float.parseFloat(event.getText());
-
-                // save the amount to db
-                // Adapter.updateFieldValueOfOrder(currentOrder.getId(),
-                // Order.DB_FIELD_NAME_PAID_MONEY, ""+paidAmount);
-            }
-        });
-
         tbOrderDetails.addItemClickListener(new ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent itemClickEvent) {
@@ -388,7 +381,7 @@ public class OrderInfoView extends Window {
 
         VerticalLayout footer = new VerticalLayout();
         footer.setWidth("100%");
-        ;
+
         footer.setHeightUndefined();
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
 
@@ -399,7 +392,11 @@ public class OrderInfoView extends Window {
         btnAddFood.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                getUI().addWindow(new AddFood(orderInforView));
+                AddFoodView addFoodView = new AddFoodView();
+                addFoodView.setParentView(orderInforView);
+                addFoodView.setCurrentTable(getCurrentTable());
+                addFoodView.createView();
+                getUI().addWindow(addFoodView);
             }
         });
 
@@ -519,7 +516,7 @@ public class OrderInfoView extends Window {
                 }
 
                 // next, update order
-                // currentOrder.getOrderDetailIdList().clear();
+                boolean ret = true;
                 currentOrder.setOrderDetailIdList(orderDetailIdList);
                 if (isNewOrder) {
                     System.out.println("is new order");
@@ -532,6 +529,7 @@ public class OrderInfoView extends Window {
                     } else {
                         System.out.println("Fail to update orderId: "
                                 + currentOrder.getId());
+                        ret = false;
                     }
                 } else {
                     if (Adapter.updateOrderDetailList(currentOrder)) {
@@ -543,7 +541,14 @@ public class OrderInfoView extends Window {
                     } else {
                         System.out.println("Fail to update orderId: "
                                 + currentOrder.getId());
+                        ret = false;
                     }
+                }
+
+                if(ret == true) {
+                    // Change table state to waiting when we have new order or change current order
+                    Adapter.changeTableState(getCurrentTable().getId(), State.WAITING);
+                    (((ChangeTableStateView) getParentView()).getParentView()).reloadView();
                 }
 
                 // Clear data
@@ -585,12 +590,12 @@ public class OrderInfoView extends Window {
         List<Order> orderList = Adapter.getOrderListIgnoreState(Types.State.PAID, null, null);
         System.out.println(orderList.toString());
         for (Order order : orderList) {
-            if (order.getTableId().equals(this.table.getId())) {
+            if (order.getTableId().equals(this.getCurrentTable().getId())) {
                 System.out.println("OrderId: " + order.getId());
                 return order;
             }
         }
-        System.out.println("No order for tableId: " + this.table.getId());
+        System.out.println("No order for tableId: " + this.getCurrentTable().getId());
         return null;
     }
 

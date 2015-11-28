@@ -2,8 +2,8 @@ package com.luvsoft.MMI;
 
 import java.util.List;
 
-import com.luvsoft.MMI.Order.OrderInfo;
 import com.luvsoft.MMI.components.OrderElement;
+import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;

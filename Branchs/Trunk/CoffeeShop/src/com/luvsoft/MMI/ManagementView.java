@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.vaadin.dialogs.ConfirmDialog;
 
-import com.luvsoft.MMI.Order.AddFood;
 import com.luvsoft.MMI.management.FoodManagement;
 import com.luvsoft.MMI.report.OrderInfoProducer;
 import com.luvsoft.MMI.utils.Language;

@@ -9,8 +9,8 @@ import jxl.write.Label;
 import jxl.write.WritableCell;
 
 import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.Order.OrderDetailRecord;
-import com.luvsoft.MMI.Order.OrderInfo;
+import com.luvsoft.MMI.order.OrderDetailRecord;
+import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;

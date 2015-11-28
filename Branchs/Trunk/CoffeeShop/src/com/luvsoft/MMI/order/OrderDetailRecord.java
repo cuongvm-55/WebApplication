@@ -1,4 +1,4 @@
-package com.luvsoft.MMI.Order;
+package com.luvsoft.MMI.order;
 
 import com.luvsoft.entities.Types;
 import com.luvsoft.entities.Types.State;
@@ -9,6 +9,7 @@ public class OrderDetailRecord{
     private String foodName;
     private String foodId;
     private Types.State status;
+    private Types.State previousStatus;
     private int quantity;
     private double price;
     static enum ChangedFlag{
@@ -29,6 +30,7 @@ public class OrderDetailRecord{
         quantity = 0;
         price = 0.00f;
         changeFlag = ChangedFlag.UNMODIFIED;
+        previousStatus = State.CANCELED;
     }
 
     public String getFoodName() {
@@ -43,6 +45,14 @@ public class OrderDetailRecord{
     public void setStatus(Types.State status) {
         this.status = status;
     }
+    public Types.State getPreviousStatus() {
+        return previousStatus;
+    }
+
+    public void setPreviousStatus(Types.State previousStatus) {
+        this.previousStatus = previousStatus;
+    }
+
     public int getQuantity() {
         return quantity;
     }
