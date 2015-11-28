@@ -8,6 +8,7 @@ import java.util.List;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.OrderDetail;
 import com.luvsoft.entities.Types;
+import com.luvsoft.entities.Types.State;
 import com.luvsoft.facades.OrderDetailsFacade;
 import com.luvsoft.facades.OrderFacade;
 import com.mongodb.BasicDBObject;
@@ -44,11 +45,15 @@ public class OrderController extends AbstractController{
     }
 
     /*
-     * Get all order that has Status different from state
+     * Get all order that has Status different from states
      */
-    public List<Order> getOrderListIgnoreState(Types.State state, Date begDate, Date endDate){
+    public List<Order> getOrderListIgnoreStates(Types.State state1, Types.State state2, Date begDate, Date endDate){
         List<Order> list = new ArrayList<Order>();
-        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$ne", state.toString())); 
+        List<String> stateList = new ArrayList<String>();
+        stateList.add(state1.toString());
+        stateList.add(state2.toString());
+
+        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$nin", stateList)); 
         if( begDate != null && endDate != null ){
             query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", begDate).add("$lte", endDate).get());
         }

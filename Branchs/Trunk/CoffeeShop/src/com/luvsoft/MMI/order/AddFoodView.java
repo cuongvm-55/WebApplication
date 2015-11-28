@@ -293,6 +293,7 @@ public class AddFoodView extends AbstractOrderView {
                             record.setOrderDetailId(new ObjectId().toString());
                             record.setChangeFlag(ChangedFlag.ADDNEW);
                             record.setStatus(State.WAITING);
+                            record.setPreviousStatus(State.WAITING);
                             orderDetailRecordList.add(record);
                         }
                     }
@@ -315,7 +316,6 @@ public class AddFoodView extends AbstractOrderView {
 
     @Override
     public void reloadView() {
-        // TODO Auto-generated method stub
-        
+        // No thing to do
     }
 }

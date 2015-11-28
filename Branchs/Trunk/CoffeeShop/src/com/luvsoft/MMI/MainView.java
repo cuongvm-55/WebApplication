@@ -19,7 +19,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
-public class MainView extends VerticalLayout implements View {
+public class MainView extends VerticalLayout implements View, ViewInterface {
     /*
      * UIs
      */
@@ -37,25 +37,29 @@ public class MainView extends VerticalLayout implements View {
 
     public MainView() {
         super();
-        initView();
+        createView();
     }
 
     /*
      * Initialize main view which includes title bar and left menu
      */
-    private void initView() {
+    @Override
+    public void createView() {
         this.setSizeFull();
 
-        createTitleComponent("Lê Thị Kim Chi");
+        createTitleComponent("Trần Văn Thắng");
 
         mainLayout = new VerticalLayout();
         mainLayout.setSizeFull();
 
-        // The first screen should displays table list
-        mainLayout.addComponent(new TableListView());
-
         createLeftMenuPopup();
         createEditNamePopup();
+
+        // The first screen should displays table list
+        TableListView tableListView = new TableListView();
+        tableListView.setParentView(this);
+        tableListView.createView();
+        mainLayout.addComponent(tableListView);
 
         // Add all layouts to the container
         this.addComponents(horzTitleContainer, mainLayout, popLeftMenu, popEditName);
@@ -65,6 +69,12 @@ public class MainView extends VerticalLayout implements View {
 
         // Add event listener
         this.addClickListener();
+    }
+
+    @Override
+    public void reloadView() {
+        // Nothing to do
+        
     }
 
     /*
@@ -152,11 +162,17 @@ public class MainView extends VerticalLayout implements View {
     public void enter(ViewChangeEvent event) {
         if(event.getParameters() == null || event.getParameters().isEmpty()) {
             mainLayout.removeAllComponents();
-            mainLayout.addComponent(new TableListView());
+            TableListView tableListView = new TableListView();
+            tableListView.setParentView(this);
+            tableListView.createView();
+            mainLayout.addComponent(tableListView);
             popLeftMenu.setPopupVisible(false);
         } else if(event.getParameters().equals(CoffeeshopUI.TABLE_LIST_VIEW)) {
             mainLayout.removeAllComponents();
-            mainLayout.addComponent(new TableListView());
+            TableListView tableListView = new TableListView();
+            tableListView.setParentView(this);
+            tableListView.createView();
+            mainLayout.addComponent(tableListView);
             popLeftMenu.setPopupVisible(false);
         } else if(event.getParameters().equals(CoffeeshopUI.ORDER_LIST_VIEW)) {
             mainLayout.removeAllComponents();
@@ -253,12 +269,22 @@ public class MainView extends VerticalLayout implements View {
         this.mainLayout = mainLayout;
     }
 
-    public Label getLblStaffName() {
-        return lblStaffName;
+    public String getStaffName() {
+        return lblStaffName.getValue();
     }
 
-    public void setLblStaffName(Label lblStaffName) {
-        this.lblStaffName = lblStaffName;
+    public void setStaffName(String staffName) {
+        this.lblStaffName.setValue(staffName);
     }
-    
+
+    @Override
+    public ViewInterface getParentView() {
+        // Nothing to do
+        return null;
+    }
+
+    @Override
+    public void setParentView(ViewInterface parentView) {
+        // Nothing to do
+    }
 }

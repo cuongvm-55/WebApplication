@@ -15,6 +15,7 @@ public class Table extends AbstractEntity{
     private String number;
     private int waitingTime;
     private Types.State state;
+    private String staffName;
 
     public Table()
     {
@@ -100,6 +101,14 @@ public class Table extends AbstractEntity{
 
     public void setWaitingTime(int waitingTime) {
         this.waitingTime = waitingTime;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
     @Override
