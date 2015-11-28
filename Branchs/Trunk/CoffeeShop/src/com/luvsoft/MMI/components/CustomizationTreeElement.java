@@ -24,20 +24,15 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
     private Button btnExpandElement;
     private HorizontalLayout horzFloorTitleContainer;
     private Label lblFloorName;
-    private Component btnAddTable;
+    private Component addComponent;
     private Component content;
 
-    public CustomizationTreeElement(Component content, String title, boolean hasAddTableBtn) {
+    public CustomizationTreeElement(Component content, String title, Component additionalComponent) {
         super();
-        initView(content, title, hasAddTableBtn);
+        initView(content, title, additionalComponent);
     }
 
-    public CustomizationTreeElement(Component content, String title) {
-        super();
-        initView(content, title, true);
-    }
-
-    public void initView(Component content, String title, boolean hasAddTableBtn) {
+    public void initView(Component content, String title, Component additionalComponent) {
         this.content = content;
         this.setStyleName("elementContainerStyle");
 
@@ -56,22 +51,20 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.lblFloorName.setStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_CENTER");
         this.lblFloorName.setWidth("100%");
 
-        if(hasAddTableBtn == true) {
-            this.btnAddTable = new Button();
-            this.btnAddTable.setHeight("100%");
-            btnAddTable.setIcon(FontAwesome.PLUS_CIRCLE);
-            btnAddTable.setStyleName("icon-only primary TEXT_WHITE");
-        } else {
-            this.btnAddTable = new Label("");
-            this.btnAddTable.setHeight("100%");
+        if( additionalComponent == null ){
+            addComponent = new Label("");
+            addComponent.setHeight("100%");
+        }
+        else{
+            addComponent = additionalComponent;
         }
 
         // Add label and button to element container
-        this.horzFloorTitleContainer.addComponents(this.btnExpandElement, this.lblFloorName, this.btnAddTable);
+        this.horzFloorTitleContainer.addComponents(this.btnExpandElement, this.lblFloorName, addComponent);
         this.horzFloorTitleContainer.setExpandRatio(this.btnExpandElement, 1.0f);
         this.horzFloorTitleContainer.setExpandRatio(this.lblFloorName, 4.0f);
-        this.horzFloorTitleContainer.setExpandRatio(this.btnAddTable, 1.0f);
-        this.horzFloorTitleContainer.setComponentAlignment(btnAddTable, Alignment.MIDDLE_RIGHT);
+        this.horzFloorTitleContainer.setExpandRatio(addComponent, 1.0f);
+        this.horzFloorTitleContainer.setComponentAlignment(addComponent, Alignment.MIDDLE_RIGHT);
 
         this.addComponents(this.horzFloorTitleContainer, content);
 

@@ -7,6 +7,8 @@ import com.luvsoft.MMI.components.CustomizationTreeElement;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Floor;
 import com.luvsoft.entities.Table;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -45,7 +47,13 @@ public class TableListView extends Panel implements ViewInterface {
                 gridElementContent.addComponent(tableElement);
             }
 
-            CustomizationTreeElement treeElement = new CustomizationTreeElement(gridElementContent, Language.FLOOR + " " + floorList.get(j).getNumber());
+            // Add table button
+            Button btnAddTbl = new Button();
+            btnAddTbl.setHeight("100%");
+            btnAddTbl.setIcon(FontAwesome.PLUS_CIRCLE);
+            btnAddTbl.setStyleName("icon-only primary TEXT_WHITE");
+            
+            CustomizationTreeElement treeElement = new CustomizationTreeElement(gridElementContent, Language.FLOOR + " " + floorList.get(j).getNumber(), btnAddTbl);
             vtcContentContainer.addComponent(treeElement);
         }
         this.setContent(vtcContentContainer);

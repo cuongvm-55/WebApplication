@@ -14,7 +14,7 @@ public class FloorController extends AbstractController{
     private static TableFacade tableFacade = new TableFacade();
     private static FloorFacade floorFacade = new FloorFacade();
 
-    /*
+    /**
      * Gets floor list
      */
     public List<Floor> getAllFloor()
@@ -26,7 +26,7 @@ public class FloorController extends AbstractController{
         return list;
     }
 
-    /*
+    /**
      * Gets a table by _id
      */
     public Table getTableById(String tableId)
@@ -36,7 +36,7 @@ public class FloorController extends AbstractController{
         return table;
     }
     
-    /*
+    /**
      * Change table state
      */
     public boolean setTableStatus(String tableId, Types.State status){

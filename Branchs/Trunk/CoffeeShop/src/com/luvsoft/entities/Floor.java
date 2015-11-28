@@ -1,7 +1,6 @@
 package com.luvsoft.entities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,15 +35,7 @@ public class Floor extends AbstractEntity implements Comparable<Floor> {
         id = getString(DB_FIELD_NAME_ID, dbObject);
         code = getString(DB_FIELD_NAME_CODE, dbObject);
         number = getString(DB_FIELD_NAME_NUMBER, dbObject);
-        String str = getString(DB_FIELD_NAME_TABLE_LIST, dbObject);
-        String[] list = str.split(",");
-        tableIdList = Arrays.asList(list);
-//        BasicDBList  list = (BasicDBList)dbobject.get(DB_FIELD_NAME_TABLE_LIST);
-//        tableIdList = new ArrayList<String>();
-//        for(Object item : list)
-//        {
-//            tableIdList.add((String)item);
-//        }
+        tableIdList = Types.stringToList(getString(DB_FIELD_NAME_TABLE_LIST, dbObject));
     }
 
     @Override

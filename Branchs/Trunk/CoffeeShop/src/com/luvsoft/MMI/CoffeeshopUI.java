@@ -10,7 +10,6 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 @Theme("tests-valo-facebook")

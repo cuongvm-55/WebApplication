@@ -17,11 +17,11 @@ import com.mongodb.MongoException;
 public abstract class AbstractFacade {
     public static final String TAG_ID = "_id";
 
-    // ///////////////////////////////////////////////////////////
-    // ! Function is used to get all document in a collection
-    // !
-    // ! @return ArrayList list of documents in this collection
-    // ///////////////////////////////////////////////////////////
+    /**
+     * Function is used to get all document in a collection
+     * 
+     * @return ArrayList list of documents in this collection
+     */
     @SuppressWarnings("unchecked")
     public <T extends AbstractEntity> boolean findAll(List<T> retList) {
         DBCollection collection = getDBCollection();
@@ -101,7 +101,7 @@ public abstract class AbstractFacade {
         return true;
     }
     
-    /*
+    /**
      * Replace a current query Entity by a new Entity
      */
     public <T extends AbstractEntity> boolean replace(T queryEntity, T newEntity)
@@ -116,7 +116,7 @@ public abstract class AbstractFacade {
         return true;
     }
 
-    /*
+    /**
      * Update field value, SET field="value" WHERE objectId="ObjectId"
      */
     public boolean updateFieldValue(String objectId, String fieldName,
@@ -134,7 +134,7 @@ public abstract class AbstractFacade {
         return true;
     }
     
-    /*
+    /**
      * Update field value, SET field="value" WHERE objectId="ObjectId"
      */
     public <T extends AbstractEntity> boolean update(String objectId, T entity) {
@@ -153,7 +153,7 @@ public abstract class AbstractFacade {
         return true;
     }
     
-    /*
+    /**
      * Remove a document by its _id
      * Note: remove all uses "db.messages.remove({})"
      */
@@ -178,7 +178,7 @@ public abstract class AbstractFacade {
             return false;
         }
     }
-    /*
+    /**
      * Remove a document by query
      */
     public boolean removeByQuery(BasicDBObject query) throws MongoException {
@@ -191,14 +191,11 @@ public abstract class AbstractFacade {
         return true;
     }
 
-    /*
-     * Remove all
-     */
     public abstract String getCollectionName();
 
     public abstract AbstractEntity mapObject(BasicDBObject dbobject);
 
-    /*
+    /**
      * Do some check on DB connection and return a DBCollection to manipulate
      * the db
      */

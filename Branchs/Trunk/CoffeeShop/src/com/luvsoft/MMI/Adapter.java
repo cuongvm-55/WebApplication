@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.bson.types.ObjectId;
-
 import com.luvsoft.MMI.order.OrderDetailRecord;
 import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
@@ -20,12 +18,6 @@ import com.luvsoft.entities.Order;
 import com.luvsoft.entities.OrderDetail;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
-import com.luvsoft.facades.CategoryFacade;
-import com.luvsoft.facades.FloorFacade;
-import com.luvsoft.facades.FoodFacade;
-import com.luvsoft.facades.OrderDetailsFacade;
-import com.luvsoft.facades.OrderFacade;
-import com.luvsoft.facades.TableFacade;
 
 public class Adapter {
     private static FloorController floorCtrl = new FloorController();
@@ -156,134 +148,23 @@ public class Adapter {
         return orderCtrl.updateFieldValueOfOrderDetail(orderDetailId, OrderDetail.DB_FIELD_NAME_STATE, state.toString());
     }
 
-    public static void createDataForMongoDB(){
-        // Food list
-        FoodFacade foodFacade = new FoodFacade();
-        //foodFacade.removeAll();
-        List<Food> foodList = new ArrayList<Food>();
-        List<String> foodIdList = new ArrayList<String>();
-        for(int i=0; i<5;i++){
-            Food food = new Food();
-            ObjectId id = new ObjectId();
-            food.setId(id.toString());
-            food.setCode("FOOD " + i);
-            food.setName("Food name " + i);
-            food.setPrice(50.00f);
-            foodList.add(food);
-            foodFacade.save(food);
-        }
-        foodFacade.findAll(foodList);
-        for(Food food : foodList){
-            foodIdList.add(food.getId());
-        }
+    public static Category getCategoryById(String cateId){
+        return categoryCtrl.getCategoryById(cateId);
+    }
 
-        // Category list
-        CategoryFacade categoryFacade = new CategoryFacade();
-        //categoryFacade.removeAll();
-        for(int i=0;i<3;i++){
-            Category category = new Category();
-            ObjectId id = new ObjectId();
-            category.setId(id.toString());
-            category.setCode("CODE " +i);
-            category.setName("Category "+i);
-            category.setFoodIdList(foodIdList);
-            
-            categoryFacade.save(category);
-        }
-        
-        // OrderDetail List
-        OrderDetailsFacade orderDetailFC = new OrderDetailsFacade();
-        //orderDetailFC.removeAll();
-        List<OrderDetail> odDetailList = new ArrayList<OrderDetail>();
-        List<String> odDetailIdList = new ArrayList<String>();
-        int j=0;
-        for(int i=0;i<10;i++){
-            OrderDetail orderDetail = new OrderDetail();
-            ObjectId id = new ObjectId();
-            orderDetail.setId(id.toString());
-            orderDetail.setQuantity(i+1);
-            if(i%4==0) orderDetail.setState(Types.State.CANCELED);
-            else if(i%3==0) orderDetail.setState(Types.State.COMPLETED);
-            else orderDetail.setState(Types.State.WAITING);
-            if(j >= foodIdList.size() ) j=0;
-            orderDetail.setFoodId(foodIdList.get(j));
-            
-            orderDetailFC.save(orderDetail);
-            j++;
-        }
-        orderDetailFC.findAll(odDetailList);
-        for(OrderDetail odDetail : odDetailList){
-            odDetailIdList.add(odDetail.getId());
-        }
-        
-        // Table List
-        TableFacade tbFc = new TableFacade();
-        //tbFc.removeAll();
-        List<Table> tbList = new ArrayList<Table>();
-        List<String> tbIdList_Fl1 = new ArrayList<String>();
-        List<String> tbIdList_Fl2 = new ArrayList<String>();
-        
-        for(int i=0;i<10;i++){
-            Table table = new Table();
-            ObjectId id = new ObjectId();
-            table.setId(id.toString());
-            table.setNumber(""+i);
-            table.setCode("TABLE "+i);
-            if(i%4==0) table.setState(Types.State.PAID);
-            else if(i%3==0) table.setState(Types.State.EMPTY);
-            else table.setState(Types.State.WAITING);
-            
-            tbFc.save(table);
-        }
-        
-        tbFc.findAll(tbList);
-        for(Table table : tbList){
-            int number = Integer.parseInt(table.getNumber());
-            if(number < 6) tbIdList_Fl1.add(table.getId());
-            else{
-                tbIdList_Fl2.add(table.getId());
-            }
-        }
-        
-        // Floor List
-        FloorFacade flFc = new FloorFacade();
-        //flFc.removeAll();
-        for(int i=0;i<2;i++){
-            Floor floor = new Floor();
-            ObjectId id = new ObjectId();
-            floor.setId(id.toString());
-            floor.setCode("FLOOR "+i);
-            floor.setNumber(""+i);
-            if(i==0) floor.setTableIdList(tbIdList_Fl1);
-            else floor.setTableIdList(tbIdList_Fl2);
-            
-            flFc.save(floor);
-        }
-        
-        // Order List
-        OrderFacade orderFC = new OrderFacade();
-        //orderFC.removeAll();
-        int i=0;
-        for(Table table : tbList){
-            if(table.getState() != Types.State.EMPTY){
-                Order order = new Order();
-                ObjectId id = new ObjectId();
-                order.setId(id.toString());
-                order.setNote("Note ..................." +i);
-                order.setOrderDetailIdList(odDetailIdList);
-                order.setPaidMoney(50.00f);
-                Date paidTime = new Date();
-                order.setPaidTime(paidTime);
-                order.setStaffName("Staff name "+i);
-                if(i%4==0) order.setStatus(Types.State.CANCELED);
-                else if(i%3==0) order.setStatus(Types.State.COMPLETED);
-                else order.setStatus(Types.State.WAITING);
-                order.setTableId(table.getId());
-                order.setWaitingTime(i);
-                order.setCreatingTime(paidTime);
-                orderFC.save(order);
-                i++;
-            }
-        }
+    public static boolean removeCategory(String cateId){
+        return categoryCtrl.removeCategory(cateId);
+    }
+
+    public static boolean removeFood(String foodId){
+        return foodCtrl.removeFood(foodId);
+    }
+
+    public static boolean addNewFood(Food food){
+        return foodCtrl.addNewFood(food);
+    }
+
+    public static boolean updateFood(String foodId, Food food){
+        return foodCtrl.updateFood(foodId, food);
     }
 }

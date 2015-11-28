@@ -24,4 +24,23 @@ public class CategoryController extends AbstractController{
         categoryFacade.findAll(list);
         return list;
     }
+
+    /**
+     * Get category by its Id
+     * @return Category
+     */
+    public Category getCategoryById(String categoryId){
+        Category cate = new Category();
+        categoryFacade.findById(categoryId, cate);
+        return cate;
+    }
+    
+    /**
+     * Remove category by id
+     * @param categoryId
+     * @return
+     */
+    public boolean removeCategory(String categoryId){
+        return categoryFacade.removeById(categoryId);
+    }
 }

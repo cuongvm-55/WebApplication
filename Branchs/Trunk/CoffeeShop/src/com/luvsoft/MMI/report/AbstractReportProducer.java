@@ -89,7 +89,7 @@ public abstract class AbstractReportProducer {
                 WritableSheet sheet = workBook.createSheet(getSheetName(), 0);
 
                 // Create title
-                Label lbTitle = createLabelCell(4, 1, getTitle());
+                Label lbTitle = createLabelCell(3, 1, getTitle());  // col 4, row 1
                 sheet.addCell(lbTitle);
 
                 // Build headers

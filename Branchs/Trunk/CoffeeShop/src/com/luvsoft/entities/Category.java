@@ -1,7 +1,6 @@
 package com.luvsoft.entities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,9 +49,7 @@ public class Category extends AbstractEntity{
         id = getString(DB_FIELD_NAME_ID, dbObject);
         code = getString(DB_FIELD_NAME_CODE, dbObject);
         name = getString(DB_FIELD_NAME_NAME, dbObject);
-        String str = getString(DB_FIELD_NAME_FOOD_LIST, dbObject);
-        String[] list = str.split(",");
-        foodIdList = Arrays.asList(list);
+        foodIdList = Types.stringToList(getString(DB_FIELD_NAME_FOOD_LIST, dbObject));
     }
 
     public String getId() {
@@ -99,5 +96,10 @@ public class Category extends AbstractEntity{
     public String toString() {
         return "Category [id=" + id + ", code=" + code + ", name=" + name
                 + ", foodIdList=" + foodIdList + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return id.equals(((Category)obj).getId());
     }
 }

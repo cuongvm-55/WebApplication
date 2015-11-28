@@ -28,7 +28,7 @@ public class OrderController extends AbstractController{
     public boolean getOrderDetailById(String orderDetailId, OrderDetail orderDtl){
         return orderDetailFacade.findById(orderDetailId, orderDtl);
     }
-    /*
+    /**
      * Get all order that has Status = state in date range [begin, end]
      * begin & end = null --> get all
      */
@@ -43,7 +43,7 @@ public class OrderController extends AbstractController{
         return list;
     }
 
-    /*
+    /**
      * Get all order that has Status different from state
      */
     public List<Order> getOrderListIgnoreState(Types.State state, Date begDate, Date endDate){
@@ -57,63 +57,63 @@ public class OrderController extends AbstractController{
         return list;
     }
 
-    /*
+    /**
      * Change status of an Order
      */
     public boolean setOrderStatus(String orderId, Types.State status){
         return orderFacade.updateFieldValue(orderId, Order.DB_FIELD_NAME_STATUS, status.toString());
     }
     
-    /*
+    /**
      * Add new Order
      */
     public boolean addNewOrder(Order order){
         return orderFacade.save(order);
     }
     
-    /*
+    /**
      * Remove an Order
      */
     public boolean removeOrder(String orderId){
         return orderFacade.removeById(orderId);
     }
  
-    /*
+    /**
      * Add new OrderDetail
      */
     public boolean addNewOrderDetail(OrderDetail orderDetail){
         return orderDetailFacade.save(orderDetail);
     }
     
-    /*
+    /**
      * Remove an OrderDetail
      */
     public boolean removeOrderDetail(String orderDetailId){
         return orderDetailFacade.removeById(orderDetailId);
     }
 
-    /*
-     * Update fieldValue
+    /**
+     * Update fieldValue of order
      */
     public boolean updateFieldValueOfOrder(String orderId, String fieldName, String fieldVale){
         return orderFacade.updateFieldValue(orderId, fieldName, fieldVale);
     }
 
-    /*
-     * Update fieldValue
+    /**
+     * Update fieldValue of orderdetail
      */
     public boolean updateFieldValueOfOrderDetail(String orderId, String fieldName, String fieldVale){
         return orderDetailFacade.updateFieldValue(orderId, fieldName, fieldVale);
     }
 
-    /*
+    /**
      * Update order
      */
     public boolean updateOrder(String orderId, Order order){
         return orderFacade.update(orderId, order);
     }
     
-    /*
+    /**
      * Update order detail
      */
     public boolean updateOrderDetail(String orderDetailId, OrderDetail orderDetail){

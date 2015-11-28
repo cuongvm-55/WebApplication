@@ -1,7 +1,6 @@
 package com.luvsoft.entities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -73,15 +72,7 @@ public class Order extends AbstractEntity implements Comparable<Order> {
     public void setObject(BasicDBObject dbObject)
     {
         id = getString(DB_FIELD_NAME_ID, dbObject);
-        String str =getString(DB_FIELD_NAME_ORDER_DETAIL_LIST, dbObject);
-        String[] list = str.split(",");
-        orderDetailIdList = Arrays.asList(list);
-//        BasicDBList orderDetailList = (BasicDBList)dbobject.get(DB_FIELD_NAME_ORDER_DETAIL_LIST);
-//        orderDetailIdList = new ArrayList<String>(); 
-//        for(Object item : orderDetailList)
-//        {
-//            orderDetailIdList.add((String)item);
-//        }
+        orderDetailIdList = Types.stringToList(getString(DB_FIELD_NAME_ORDER_DETAIL_LIST, dbObject));
         switch( getString(DB_FIELD_NAME_STATUS, dbObject) )
         {
         case "WAITING":

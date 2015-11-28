@@ -73,6 +73,7 @@ public class Language {
                 WARNING = "Warning";
                 
                 DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+                DATE_TIME_FORMAT_DATE_ONLY = "yyyy/MM/dd";
                 FROM = "From";
                 TO = "To";
 
@@ -137,6 +138,7 @@ public class Language {
                 WARNING = "Cảnh báo";
 
                 DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+                DATE_TIME_FORMAT_DATE_ONLY = "dd/MM/yyyy";
                 FROM = "Từ";
                 TO = "Đến";
 
@@ -213,6 +215,7 @@ public class Language {
     
     // Date time format
     public static String DATE_TIME_FORMAT;
+    public static String DATE_TIME_FORMAT_DATE_ONLY;
     
     // Reports
     public static String FROM;

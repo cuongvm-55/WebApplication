@@ -108,7 +108,7 @@ public class AddFoodView extends AbstractOrderView {
 
         for (Category category : listOfCategory) {
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
-                    buildContentElement(category), category.getName(), false);
+                    buildContentElement(category), category.getName(), null);
             content.addComponent(treeElement);
             content.setComponentAlignment(treeElement, Alignment.TOP_CENTER);
         }

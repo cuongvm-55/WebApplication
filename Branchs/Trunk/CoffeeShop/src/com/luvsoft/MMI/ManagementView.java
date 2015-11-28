@@ -92,20 +92,26 @@ public class ManagementView extends VerticalLayout{
         DateField fromDate = new DateField();
         DateField toDate = new DateField();
         HorizontalLayout frLayout = new HorizontalLayout();
+        frLayout.setSizeFull();
         frLayout.addComponents(lblFromDate, fromDate);
-        frLayout.setComponentAlignment(lblFromDate, Alignment.MIDDLE_LEFT);
-        frLayout.setComponentAlignment(fromDate, Alignment.MIDDLE_RIGHT);
+        frLayout.setExpandRatio(lblFromDate, 4.0f);
+        frLayout.setExpandRatio(fromDate, 6.0f);
+        frLayout.setComponentAlignment(lblFromDate, Alignment.MIDDLE_RIGHT);
+        frLayout.setComponentAlignment(fromDate, Alignment.MIDDLE_LEFT);
         fromDate.setValue(new Date());
         fromDate.setRangeEnd(new Date());
-        fromDate.setDateFormat("dd-MM-yyyy");
+        fromDate.setDateFormat(Language.DATE_TIME_FORMAT_DATE_ONLY);
 
         HorizontalLayout toLayout = new HorizontalLayout();
+        toLayout.setSizeFull();
         toLayout.addComponents(lblToDate, toDate);
-        toLayout.setComponentAlignment( lblToDate, Alignment.MIDDLE_LEFT);
-        toLayout.setComponentAlignment(toDate, Alignment.MIDDLE_RIGHT);
+        toLayout.setExpandRatio(lblToDate, 4.0f);
+        toLayout.setExpandRatio(toDate, 6.0f);
+        toLayout.setComponentAlignment( lblToDate, Alignment.MIDDLE_RIGHT);
+        toLayout.setComponentAlignment(toDate, Alignment.MIDDLE_LEFT);
         toDate.setValue(new Date());
         toDate.setRangeEnd(new Date());
-        toDate.setDateFormat("dd-MM-yyyy");
+        toDate.setDateFormat(Language.DATE_TIME_FORMAT_DATE_ONLY);
 
         Button btnClearData = new Button(Language.CLEAR_DATA);
         btnClearData.addStyleName("customizationButton");
@@ -189,7 +195,6 @@ public class ManagementView extends VerticalLayout{
         layout.setComponentAlignment(frLayout, Alignment.MIDDLE_CENTER);
         layout.setComponentAlignment(toLayout, Alignment.MIDDLE_CENTER);
         layout.setComponentAlignment(control, Alignment.MIDDLE_CENTER);
-
         layout.setSpacing(true);
         datePickerPopup = new PopupView(null, layout);
         datePickerPopup.setStyleName("popupStyle");

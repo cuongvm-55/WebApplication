@@ -12,4 +12,22 @@ public class FoodController extends AbstractController{
         foodFacade.findById(foodId, food);
         return food;
     }
+
+    public boolean removeFood(String foodId){
+        return foodFacade.removeById(foodId);
+    }
+
+    /*
+     * Add new food
+     */
+    public boolean addNewFood(Food food){
+        return foodFacade.save(food);
+    }
+
+    /*
+     * Update foodId by information of food
+     */
+    public boolean updateFood(String foodId, Food food){
+        return foodFacade.update(foodId, food);
+    }
 }

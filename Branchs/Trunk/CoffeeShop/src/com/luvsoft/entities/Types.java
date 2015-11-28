@@ -2,6 +2,8 @@ package com.luvsoft.entities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -97,6 +99,11 @@ public class Types {
         return state;
     }
     
+    /**
+     * use when save list string to database
+     * @param list
+     * @return
+     */
     public static String formatListToString(List<String> list){
         String str="";
         for(int i=0;i<list.size()-1;i++)
@@ -107,6 +114,18 @@ public class Types {
             str += list.get(list.size()-1);
         }
         return str;
+    }
+    
+    /**
+     * use when read string list from db
+     */
+    public static List<String> stringToList(String str){
+        List<String> retList = new ArrayList<String>();
+        if( !str.equals("") ){
+            String[] list = str.split(",");
+            retList = Arrays.asList(list);
+        }
+        return retList;
     }
     
     public static Date StringToDate(String str){
