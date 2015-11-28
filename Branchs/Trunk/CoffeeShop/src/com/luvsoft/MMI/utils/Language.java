@@ -51,6 +51,7 @@ public class Language {
                 NOTE = "Note";
                 ALL_DONE = "All Done";
                 CANCEL = "Cancel";
+                CANCEL_ORDER = "Cancel order";
                 STATISTIC = "Statistic";
                 FOOD_MANAGEMENT = "Food Management";
                 CONFIGURATION = "Configuration";
@@ -68,7 +69,8 @@ public class Language {
 
                 // Errors
                 ERROR = "Error";
-                CANNOT_CHANGE_TABLE_STATE = "Cannot change table state to Empty, curent Order is not Paid!";
+                CANNOT_CHANGE_TABLE_STATE = "Cannot change table state to Empty, curent Order is not Paid! Please Cancel this order if you want";
+                CANNOT_CANCEL_ORDER = "Cannot change table state to Cancel, curent Order is Paid. Please use Empty instead of.";
                 // Warnings
                 WARNING = "Warning";
                 
@@ -79,6 +81,7 @@ public class Language {
 
                 CONFIRM_DELETE_TITLE = "Confirm to delete";
                 CONFIRM_DELETE_CONTENT = "Do you really want to delete?";
+                CONIFRM_CANCEL_ORDER = "Do you want to Cancel the order of this table?";
                 ASK_FOR_CONFIRM = "Ok";
                 ASK_FOR_DENIED = "Cancel";
             }
@@ -117,6 +120,7 @@ public class Language {
                 NOTE = "Ghi chú";
                 ALL_DONE = "Xong Hết";
                 CANCEL = "Thoát";
+                CANCEL_ORDER = "Hủy Đặt Món";
                 STATISTIC = "Thống Kê";
                 NO_ORDER_IN_ORDER_LIST = "Hiện tại chưa có bàn nào đặt món!";
                 FOOD_MANAGEMENT = "Quản Lí Món";
@@ -133,7 +137,8 @@ public class Language {
 
                 // Errors
                 ERROR = "Lỗi";
-                CANNOT_CHANGE_TABLE_STATE = "Không thể chuyển trạng thái Trống, hóa đơn chưa Thanh toán!";
+                CANNOT_CHANGE_TABLE_STATE = "Không thể chuyển trạng thái Trống, hóa đơn chưa Thanh toán! Hãy nhấn Hủy nếu muốn hủy hóa đơn này";
+                CANNOT_CANCEL_ORDER = "Không thể chuyển trạng thái Hủy, hóa đơn đã thanh toán. Hãy chọn Trống nếu muốn tiếp tục";
                 // Warnings
                 WARNING = "Cảnh báo";
 
@@ -144,6 +149,7 @@ public class Language {
 
                 CONFIRM_DELETE_TITLE = "Xác nhận";
                 CONFIRM_DELETE_CONTENT = "Bạn có chắc chắn muốn xóa dữ liệu không?";
+                CONIFRM_CANCEL_ORDER = "Bạn có chắc chắn muốn Hủy hóa đơn của bàn này không?";
                 ASK_FOR_CONFIRM = "Đồng ý";
                 ASK_FOR_DENIED = "Hủy";
             }
@@ -170,6 +176,7 @@ public class Language {
     public static String PAID;
     public static String COMPLETED;
     public static String CANCELED;
+    public static String CANCEL_ORDER;
     public static String DELETE;
     
     // OrderInfoView texts
@@ -209,6 +216,7 @@ public class Language {
     // Errors
     public static String ERROR;
     public static String CANNOT_CHANGE_TABLE_STATE;
+    public static String CANNOT_CANCEL_ORDER;
 
     // Warnings
     public static String WARNING;
@@ -224,6 +232,7 @@ public class Language {
     // Confirm dialog
     public static String CONFIRM_DELETE_TITLE;
     public static String CONFIRM_DELETE_CONTENT;
+    public static String CONIFRM_CANCEL_ORDER;
     public static String ASK_FOR_CONFIRM;
     public static String ASK_FOR_DENIED;
 }

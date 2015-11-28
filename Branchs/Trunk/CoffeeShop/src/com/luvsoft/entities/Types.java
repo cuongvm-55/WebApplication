@@ -90,7 +90,7 @@ public class Types {
         else if( str.equals("COMPLETED") || str.equals(Language.COMPLETED)){
             state = State.COMPLETED;
         }
-        else if( str.equals("CANCELED") || str.equals(Language.CANCELED)){
+        else if( str.equals("CANCELED") || str.equals(Language.CANCELED) || str.equals(Language.CANCEL_ORDER)){
             state = State.CANCELED;
         }
         else{

@@ -56,6 +56,7 @@ public class OrderInfoView extends AbstractOrderView {
     private VerticalLayout container;
     private TextField txtNote;
     private TextField textFieldpaidAmount;
+    private String staffName;
 
     // Data
     private Order currentOrder;
@@ -100,6 +101,8 @@ public class OrderInfoView extends AbstractOrderView {
 
         buildTable();
 
+        staffName = getCurrentTable().getStaffName();
+
         currentOrder = retrieveOrder();
         if (currentOrder != null) {
             orderInfo = Adapter.retrieveOrderInfo(currentOrder);
@@ -114,8 +117,7 @@ public class OrderInfoView extends AbstractOrderView {
             currentOrder.setId(new ObjectId().toString());
             currentOrder.setStatus(Types.State.WAITING);
             currentOrder.setNote("");
-            // @ todo: Staffname should be editable
-            currentOrder.setStaffName("");
+            currentOrder.setStaffName(staffName);
             currentOrder.setTableId(getCurrentTable().getId());
             currentOrder.setCreatingTime(new Date());
 
@@ -314,6 +316,7 @@ public class OrderInfoView extends AbstractOrderView {
             });
             if(record.getStatus() != Types.State.CANCELED) {
                 totalAmount += record.getPrice() * record.getQuantity();
+                paidAmount += record.getPrice() * record.getQuantity();
             }
         }
         tbOrderDetails.setImmediate(true);
@@ -533,6 +536,11 @@ public class OrderInfoView extends AbstractOrderView {
                     }
                 } else {
                     if (Adapter.updateOrderDetailList(currentOrder)) {
+                        // Update order if staffName is different
+                        if(!staffName.equals(currentOrder.getStaffName())) {
+                            currentOrder.setStaffName(staffName);
+                            Adapter.updateOrder(currentOrder.getId(), currentOrder);
+                        }
                         System.out.println("Updated orderId: "
                                 + currentOrder.getId());
                         System.out.println("\tUpdated orderDetailList: "
@@ -573,6 +581,7 @@ public class OrderInfoView extends AbstractOrderView {
                         // Change table status to PAID
                         Adapter.changeTableState(currentOrder.getTableId(),
                                 Types.State.PAID);
+                        (((ChangeTableStateView) getParentView()).getParentView()).reloadView();
                     }
                     close();// close the window
                 }
@@ -587,7 +596,7 @@ public class OrderInfoView extends AbstractOrderView {
      */
     private Order retrieveOrder() {
         System.out.println("loadOrder...");
-        List<Order> orderList = Adapter.getOrderListIgnoreState(Types.State.PAID, null, null);
+        List<Order> orderList = Adapter.getOrderListIgnoreStates(Types.State.PAID, Types.State.CANCELED, null, null);
         System.out.println(orderList.toString());
         for (Order order : orderList) {
             if (order.getTableId().equals(this.getCurrentTable().getId())) {

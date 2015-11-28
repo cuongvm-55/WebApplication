@@ -17,9 +17,9 @@ import com.vaadin.ui.VerticalLayout;
 public class TableListView extends Panel implements ViewInterface {
     private List<Floor> floorList;
     private List<Table> tableList;
+    private ViewInterface parentView;
     public TableListView(){
         super();
-        createView();
     }
 
     @Override
@@ -32,6 +32,8 @@ public class TableListView extends Panel implements ViewInterface {
             return;
         }
 
+        String staffName = ((MainView) getParentView()).getStaffName();
+
         for (int j = 0; j < floorList.size(); j++) {
             GridLayout gridElementContent = new GridLayout();
             gridElementContent.setColumns(3);
@@ -43,6 +45,7 @@ public class TableListView extends Panel implements ViewInterface {
                 Table table = tableList.get(i);
                 System.out.println("TableId: " + table.getId());
                 table.setWaitingTime(i);
+                table.setStaffName(staffName);
                 CoffeeTableElement tableElement = new CoffeeTableElement(table, this);
                 gridElementContent.addComponent(tableElement);
             }
@@ -62,5 +65,15 @@ public class TableListView extends Panel implements ViewInterface {
     @Override
     public void reloadView() {
         createView();
+    }
+
+    @Override
+    public ViewInterface getParentView() {
+        return parentView;
+    }
+
+    @Override
+    public void setParentView(ViewInterface parentView) {
+        this.parentView = parentView;
     }
 }

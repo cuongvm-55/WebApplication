@@ -49,6 +49,7 @@ public class Adapter {
             record.setPrice(food.getPrice());
             record.setQuantity(orderDetail.getQuantity());
             record.setStatus(orderDetail.getState());
+            record.setPreviousStatus(orderDetail.getState());
             orderDetailRecordList.add(record);
         }
         orderInfo.setOrderDetailRecordList(orderDetailRecordList);
@@ -97,9 +98,9 @@ public class Adapter {
         return orderCtrl.getOrderListWithState(state, begDate, endDate);
     }
 
-    public static List<Order> getOrderListIgnoreState(Types.State state, Date begDate, Date endDate){
-        System.out.println("Get order list ignore state: " + state.toString());
-        return orderCtrl.getOrderListIgnoreState(state, begDate, endDate);
+    public static List<Order> getOrderListIgnoreStates(Types.State state1, Types.State state2, Date begDate, Date endDate){
+        System.out.println("Get order list ignore state: " + state1.toString() + state2.toString());
+        return orderCtrl.getOrderListIgnoreStates(state1, state2, begDate, endDate);
     }
 
     public static boolean updateFieldValueOfOrder(String orderId, String fieldName, String fieldVale){

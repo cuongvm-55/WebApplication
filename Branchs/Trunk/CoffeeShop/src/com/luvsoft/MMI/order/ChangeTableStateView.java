@@ -2,11 +2,14 @@ package com.luvsoft.MMI.order;
 
 import java.util.List;
 
+import org.vaadin.dialogs.ConfirmDialog;
+
 import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;
+import com.luvsoft.entities.Types.State;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
@@ -31,7 +34,8 @@ public class ChangeTableStateView extends AbstractOrderView implements
     private Button btnAddOrder;
     private Button btnConfirm;
     private OrderInfoView orderInforView;
-
+    private Types.State newState;
+    private Order currentOrder;
 
     public ChangeTableStateView() {
     }
@@ -54,8 +58,8 @@ public class ChangeTableStateView extends AbstractOrderView implements
         vtcPopupContainer.setSizeFull();
 
         optionState = new OptionGroup();
-        optionState.addItems(Language.PAID, Language.UNPAID, Language.EMPTY,
-                Language.WAITING);
+        optionState.addItems(Language.EMPTY, Language.WAITING,
+                Language.CANCEL_ORDER);
         selectOptionState(getCurrentTable().getState());
 
         vtcPopupContainer.addComponents(lblTableNumber, optionState,
@@ -84,12 +88,11 @@ public class ChangeTableStateView extends AbstractOrderView implements
         }
         else if( event.getComponent() == btnConfirm ) {
             // Save to db, change the displayed state upon success
-            Types.State newState = Types.StringToState(optionState.getValue()
-                    .toString());
+            newState = Types.StringToState(optionState.getValue().toString());
 
-            List<Order> orderList = Adapter.getOrderListIgnoreState(
-                    Types.State.PAID, null, null);
-            Order currentOrder = null;
+            List<Order> orderList = Adapter.getOrderListIgnoreStates(
+                    Types.State.PAID, Types.State.CANCELED, null, null);
+            currentOrder = null;
             for (Order order : orderList) {
                 if( order.getTableId().equals(getCurrentTable().getId()) ) {
                     currentOrder = order;
@@ -98,11 +101,14 @@ public class ChangeTableStateView extends AbstractOrderView implements
             }
 
             // Cannot change from UNPAID to EMPTY if current order is not PAID
-            if( getCurrentTable().getState() == Types.State.UNPAID
-                    && newState == Types.State.EMPTY && currentOrder != null
+            // Cannot change from WAITING to EMPTY if current order is not PAID
+            if( (getCurrentTable().getState() == Types.State.UNPAID || getCurrentTable()
+                    .getState() == Types.State.WAITING)
+                    && newState == Types.State.EMPTY
+                    && currentOrder != null
                     && currentOrder.getStatus() != Types.State.PAID ) {
                 System.out
-                        .println("Cannot change from UNPAID to EMPTY when current order's not PAID");
+                        .println("Cannot change from UNPAID or WAITING to EMPTY when current order's not PAID");
                 // notify message
                 Notification notify = new Notification("<b>Error</b>", "<i>"
                         + Language.CANNOT_CHANGE_TABLE_STATE + "</i>",
@@ -110,11 +116,53 @@ public class ChangeTableStateView extends AbstractOrderView implements
                 notify.setPosition(Position.BOTTOM_RIGHT);
                 notify.show(Page.getCurrent());
             }
-            else if( Adapter.changeTableState(getCurrentTable().getId(),
-                    newState) ) {
-                getParentView().reloadView();
+            else if( newState == State.CANCELED ) {
+                ConfirmDialog.show(getUI(), Language.CONFIRM_DELETE_TITLE,
+                        Language.CONIFRM_CANCEL_ORDER,
+                        Language.ASK_FOR_CONFIRM, Language.ASK_FOR_DENIED,
+                        new ConfirmDialog.Listener() {
+                            public void onClose(ConfirmDialog dialog) {
+                                if( dialog.isConfirmed() ) {
+                                    newState = State.EMPTY;
+                                    // Reset all current order
+                                    if( currentOrder != null ) {
+                                        Adapter.changeOrderState(
+                                                currentOrder.getId(),
+                                                State.CANCELED);
+                                        Adapter.changeTableState(
+                                                getCurrentTable().getId(),
+                                                newState);
+                                        if( getCurrentTable().getState() == Types.State.PAID
+                                                && currentOrder != null
+                                                && currentOrder.getStatus() == State.PAID ) {
+                                            Notification notify = new Notification(
+                                                    "<b>Error</b>",
+                                                    "<i>"
+                                                            + Language.CANNOT_CANCEL_ORDER
+                                                            + "</i>",
+                                                    Notification.Type.TRAY_NOTIFICATION,
+                                                    true);
+                                            notify.setPosition(Position.BOTTOM_RIGHT);
+                                            notify.show(Page.getCurrent());
+                                        }
+                                        else {
+                                            getParentView().reloadView();
+                                            close();
+                                        }
+                                    }
+                                }
+                                else {
+                                    System.out
+                                            .println("user canceled, do nothing!");
+                                }
+                            }
+                        });
             }
-            close();
+            else {
+                Adapter.changeTableState(getCurrentTable().getId(), newState);
+                getParentView().reloadView();
+                close();
+            }
         }
     }
 
@@ -152,6 +200,8 @@ public class ChangeTableStateView extends AbstractOrderView implements
             case WAITING:
                 optionState.select(Language.WAITING);
                 break;
+            case CANCELED:
+                optionState.select(Language.CANCEL_ORDER);
             default:
                 break;
         }
