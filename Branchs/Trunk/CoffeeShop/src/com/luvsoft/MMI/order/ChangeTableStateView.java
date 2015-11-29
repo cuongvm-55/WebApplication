@@ -5,7 +5,6 @@ import java.util.List;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;
@@ -83,7 +82,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
             orderInforView.setParentView(this);
             orderInforView.setCurrentTable(getCurrentTable());
             orderInforView.createView();
-            ((TableListView) getParentView()).getUI().addWindow(orderInforView);
+            getUI().addWindow(orderInforView);
             close();
         }
         else if( event.getComponent() == btnConfirm ) {

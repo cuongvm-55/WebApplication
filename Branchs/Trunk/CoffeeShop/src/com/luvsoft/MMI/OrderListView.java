@@ -19,7 +19,7 @@ import com.vaadin.ui.VerticalLayout;
  * This class is used to implement Order list View
  */
 @SuppressWarnings("serial")
-public class OrderListView extends Panel{
+public class OrderListView extends Panel implements ViewInterface{
     private VerticalLayout vtcLayout;
     
     // data
@@ -27,10 +27,11 @@ public class OrderListView extends Panel{
 
     public OrderListView() {
         super();
-        init();
+        createView();
     }
 
-    public void init(){
+    @Override
+    public void createView() {
         vtcLayout = new VerticalLayout();
         //vtcLayout.setSizeFull();
         loadOrderList();
@@ -44,6 +45,7 @@ public class OrderListView extends Panel{
         for( Order order : orderList ){
             OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
             OrderElement orderElement = new OrderElement(order);
+            orderElement.setParentView(this);
             orderElement.populate(orderInfo);
             //HorizontalLayout topLine = new HorizontalLayout();
             //topLine.setSizeFull();
@@ -56,7 +58,23 @@ public class OrderListView extends Panel{
         this.setContent(vtcLayout);
         this.setSizeFull();
     }
-    
+
+    @Override
+    public void reloadView() {
+        createView();
+    }
+
+    @Override
+    public ViewInterface getParentView() {
+        // Nothing to do
+        return null;
+    }
+
+    @Override
+    public void setParentView(ViewInterface parentView) {
+        // Nothing to do
+    }
+
     /*
      * At a particular moment, there's only 1 Order corresponding to a Table
      * In DB, we should have two types of Orders:

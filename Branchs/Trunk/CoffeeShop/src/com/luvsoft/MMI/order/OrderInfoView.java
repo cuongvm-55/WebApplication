@@ -49,6 +49,8 @@ public class OrderInfoView extends AbstractOrderView {
     private Label lbPaidAmount; // label real amount that customer pay for the
                                 // bill, the amount can be modified
 
+    private Button btnConfirmOrder;
+    private Button btnConfirmPaid;
     // private Panel panelContentContainer;
     private com.vaadin.ui.Table tbOrderDetails;
     private float totalAmount;
@@ -97,20 +99,22 @@ public class OrderInfoView extends AbstractOrderView {
         lbTableName
                 .setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.setWidth("100%");
-        lbTableName.setValue(Language.TABLE + " " + getCurrentTable().getNumber());
+        lbTableName.setValue(Language.TABLE + " "
+                + getCurrentTable().getNumber());
 
         buildTable();
 
         staffName = getCurrentTable().getStaffName();
 
         currentOrder = retrieveOrder();
-        if (currentOrder != null) {
+        if( currentOrder != null ) {
             orderInfo = Adapter.retrieveOrderInfo(currentOrder);
-            if (orderInfo != null) {
+            if( orderInfo != null ) {
                 orderDetailRecordList = orderInfo.getOrderDetailRecordList();
             }
             isNewOrder = false;
-        } else {
+        }
+        else {
             // If there's no order corresponding to current table, create new
             // one
             currentOrder = new Order();
@@ -126,7 +130,8 @@ public class OrderInfoView extends AbstractOrderView {
 
             // Create new order info
             orderInfo = new OrderInfo();
-            orderInfo.setTableName(Language.TABLE + " " + getCurrentTable().getNumber());
+            orderInfo.setTableName(Language.TABLE + " "
+                    + getCurrentTable().getNumber());
             orderInfo.setOrderDetailRecordList(orderDetailRecordList);
 
             // Change flag
@@ -138,17 +143,16 @@ public class OrderInfoView extends AbstractOrderView {
         setupUI();
     }
 
-
     @Override
     public void reloadView() {
         // Fill data
-        if (orderInfo == null) {
+        if( orderInfo == null ) {
             System.out.println("No orderinfo for this table!");
             return;
         }
         lbTableName.setValue(orderInfo.getTableName());
         txtNote.setValue(orderInfo.getNote());
-        if (orderDetailRecordList == null) {
+        if( orderDetailRecordList == null ) {
             // just return if no record
             return;
         }
@@ -160,6 +164,11 @@ public class OrderInfoView extends AbstractOrderView {
         lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
                 + Language.CURRENCY_SYMBOL);
         textFieldpaidAmount.setValue(paidAmount + "");
+
+        if( !orderDetailRecordList.isEmpty() ) {
+            btnConfirmOrder.setEnabled(true);
+            btnConfirmPaid.setEnabled(true);
+        }
     }
 
     private void buildTable() {
@@ -172,8 +181,8 @@ public class OrderInfoView extends AbstractOrderView {
                 null);
         tbOrderDetails.addContainerProperty(Language.FOOD_NAME, String.class,
                 null);
-        tbOrderDetails
-                .addContainerProperty(Language.STATUS, ComboBox.class, null);
+        tbOrderDetails.addContainerProperty(Language.STATUS, ComboBox.class,
+                null);
         tbOrderDetails.addContainerProperty(Language.QUANTITY, TextField.class,
                 null);
         tbOrderDetails.addContainerProperty(Language.PRICE, Float.class, null);
@@ -202,7 +211,7 @@ public class OrderInfoView extends AbstractOrderView {
             OrderDetailRecord record = orderDetailRecordList.get(i);
 
             // If item already deleted, nothing to do
-            if(record.getChangeFlag() == ChangedFlag.DELETED) {
+            if( record.getChangeFlag() == ChangedFlag.DELETED ) {
                 continue;
             }
 
@@ -212,7 +221,8 @@ public class OrderInfoView extends AbstractOrderView {
             btnRemove.setData(i);
 
             ComboBox cbStatus = new ComboBox();
-            cbStatus.addItems(Language.CANCELED, Language.WAITING, Language.COMPLETED);
+            cbStatus.addItems(Language.CANCELED, Language.WAITING,
+                    Language.COMPLETED);
             cbStatus.setData(i);
             cbStatus.setValue(Types.StateToLanguageString(record.getStatus()));
             cbStatus.setScrollToSelectedItem(true);
@@ -222,26 +232,21 @@ public class OrderInfoView extends AbstractOrderView {
             cbStatus.setResponsive(true);
 
             TextField txtQuantity = new TextField();
-            txtQuantity.setValue(record.getQuantity()+"");
+            txtQuantity.setValue(record.getQuantity() + "");
             txtQuantity.setWidth("100%");
             txtQuantity.setResponsive(true);
 
             // Mark red color for canceled order details
-            if(record.getStatus() == Types.State.CANCELED) {
+            if( record.getStatus() == Types.State.CANCELED ) {
                 btnRemove.addStyleName("TEXT_RED");
                 txtQuantity.addStyleName("TEXT_RED");
             }
 
             // If item is not available, we will add new one
-            if (tbOrderDetails.addItem( new Object[] {
-                                    i,
-                                    record.getFoodName(),
-                                    // Types.StateToLanguageString(record.getStatus()),
-                                    cbStatus,
-                                    txtQuantity,
-                                    new Float(record.getPrice()),
-                                    btnRemove,
-                                    record.getOrderDetailId() },i) == null) {
+            if( tbOrderDetails.addItem(new Object[] { i, record.getFoodName(),
+                    // Types.StateToLanguageString(record.getStatus()),
+                    cbStatus, txtQuantity, new Float(record.getPrice()),
+                    btnRemove, record.getOrderDetailId() }, i) == null ) {
                 System.out.println("NULL roai");
             }
 
@@ -249,12 +254,12 @@ public class OrderInfoView extends AbstractOrderView {
                 @Override
                 public void buttonClick(ClickEvent event) {
                     record.setChangeFlag(ChangedFlag.DELETED);
-                    if(record.getStatus() != State.CANCELED) {
+                    if( record.getStatus() != State.CANCELED ) {
                         totalAmount -= record.getPrice() * record.getQuantity();
                         paidAmount -= record.getPrice() * record.getQuantity();
-                        textFieldpaidAmount.setValue(paidAmount+"");
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
-                                + Language.CURRENCY_SYMBOL);
+                        textFieldpaidAmount.setValue(paidAmount + "");
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT
+                                + totalAmount + " " + Language.CURRENCY_SYMBOL);
                     }
                     tbOrderDetails.removeItem(event.getButton().getData());
                     tbOrderDetails.setImmediate(true);
@@ -268,30 +273,35 @@ public class OrderInfoView extends AbstractOrderView {
                     String state = event.getProperty().getValue().toString();
                     record.setStatus(Types.StringToState(state));
                     // Mark red color for canceled order details
-                    if(record.getStatus() == Types.State.CANCELED) {
+                    if( record.getStatus() == Types.State.CANCELED ) {
                         btnRemove.addStyleName("TEXT_RED");
                         txtQuantity.addStyleName("TEXT_RED");
 
                         totalAmount -= record.getPrice() * record.getQuantity();
                         paidAmount -= record.getPrice() * record.getQuantity();
 
-                        textFieldpaidAmount.setValue(paidAmount+"");
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "+ Language.CURRENCY_SYMBOL);
+                        textFieldpaidAmount.setValue(paidAmount + "");
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT
+                                + totalAmount + " " + Language.CURRENCY_SYMBOL);
                         record.setPreviousStatus(Types.State.CANCELED);
 
-                    } else if(record.getStatus() != Types.State.CANCELED && record.getPreviousStatus() == Types.State.CANCELED){
+                    }
+                    else if( record.getStatus() != Types.State.CANCELED
+                            && record.getPreviousStatus() == Types.State.CANCELED ) {
                         totalAmount += record.getPrice() * record.getQuantity();
                         paidAmount += record.getPrice() * record.getQuantity();
 
-                        textFieldpaidAmount.setValue(paidAmount+"");
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "+ Language.CURRENCY_SYMBOL);
+                        textFieldpaidAmount.setValue(paidAmount + "");
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT
+                                + totalAmount + " " + Language.CURRENCY_SYMBOL);
 
                         btnRemove.removeStyleName("TEXT_RED");
                         txtQuantity.removeStyleName("TEXT_RED");
                         record.setPreviousStatus(record.getStatus());
                     }
-                    // We do not change flag to Modified if this record is a new one
-                    if(record.getChangeFlag() != ChangedFlag.ADDNEW) {
+                    // We do not change flag to Modified if this record is a new
+                    // one
+                    if( record.getChangeFlag() != ChangedFlag.ADDNEW ) {
                         record.setChangeFlag(ChangedFlag.MODIFIED);
                     }
                 }
@@ -303,18 +313,21 @@ public class OrderInfoView extends AbstractOrderView {
                     Integer quantity;
                     try {
                         quantity = Integer.parseInt(event.getText());
-                    } catch (NumberFormatException e) {
-                        System.out.println("OrderInfoView::UpdateTable::Cannot parse from String to Integer");
+                    }
+                    catch ( NumberFormatException e ) {
+                        System.out
+                                .println("OrderInfoView::UpdateTable::Cannot parse from String to Integer");
                         return;
                     }
                     record.setQuantity(quantity);
-                    // We do not change flag to Modified if this record is a new one
-                    if(record.getChangeFlag() != ChangedFlag.ADDNEW) {
+                    // We do not change flag to Modified if this record is a new
+                    // one
+                    if( record.getChangeFlag() != ChangedFlag.ADDNEW ) {
                         record.setChangeFlag(ChangedFlag.MODIFIED);
                     }
                 }
             });
-            if(record.getStatus() != Types.State.CANCELED) {
+            if( record.getStatus() != Types.State.CANCELED ) {
                 totalAmount += record.getPrice() * record.getQuantity();
                 paidAmount += record.getPrice() * record.getQuantity();
             }
@@ -327,6 +340,7 @@ public class OrderInfoView extends AbstractOrderView {
         txtNote = new TextField(Language.NOTE);
         txtNote.addStyleName("bold large FONT_TAHOMA");
         txtNote.setSizeFull();
+        txtNote.setValue(currentOrder.getNote());
 
         // total amount label
         lbTotalAmount = new Label();
@@ -367,7 +381,7 @@ public class OrderInfoView extends AbstractOrderView {
         tbOrderDetails.addItemClickListener(new ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent itemClickEvent) {
-                if (itemClickEvent.getButton().equals(MouseButton.RIGHT)) {
+                if( itemClickEvent.getButton().equals(MouseButton.RIGHT) ) {
                     System.out.println("Right Click on\nrow: "
                             + itemClickEvent.getItemId().toString()
                             + "\ncolumn: "
@@ -405,15 +419,16 @@ public class OrderInfoView extends AbstractOrderView {
 
         HorizontalLayout confirmButtonsContainer = new HorizontalLayout();
         // confirm button
-        Button btnConfirmPaid = new Button(Language.CONFIRM_PAID);
+        btnConfirmPaid = new Button(Language.CONFIRM_PAID);
         btnConfirmPaid.addStyleName("customizationButton");
         btnConfirmPaid.addStyleName(ValoTheme.BUTTON_HUGE);
 
-        Button btnConfirmOrder = new Button(Language.CONFIRM_ORDER);
+        btnConfirmOrder = new Button(Language.CONFIRM_ORDER);
         btnConfirmOrder.addStyleName(ValoTheme.BUTTON_HUGE);
         btnConfirmOrder.addStyleName("customizationButton");
         // Don't allow some button when no order exist
-        if (currentOrder == null) {
+        if( isNewOrder && orderDetailRecordList.isEmpty()
+                && txtNote.getValue().isEmpty() ) {
             btnConfirmOrder.setEnabled(false);
             btnConfirmPaid.setEnabled(false);
         }
@@ -429,8 +444,8 @@ public class OrderInfoView extends AbstractOrderView {
             @Override
             public void buttonClick(ClickEvent event) {
                 // Save the note
-                if (currentOrder != null
-                        && !currentOrder.getNote().equals(txtNote.getValue())) {
+                if( currentOrder != null
+                        && !currentOrder.getNote().equals(txtNote.getValue()) ) {
                     currentOrder.setNote(txtNote.getValue());
                     Adapter.updateFieldValueOfOrder(currentOrder.getId(),
                             Order.DB_FIELD_NAME_NOTE, txtNote.getValue());
@@ -444,7 +459,7 @@ public class OrderInfoView extends AbstractOrderView {
                 for (OrderDetailRecord record : orderDetailRecordList) {
                     OrderDetail odDetail = new OrderDetail();
                     String id = record.getOrderDetailId();
-                    if (id.equals("")) {
+                    if( id.equals("") ) {
                         id = new ObjectId().toString();
                     }
                     orderDetailIdList.add(id);
@@ -455,17 +470,18 @@ public class OrderInfoView extends AbstractOrderView {
                     System.out.println("record.getChangeFlag() "
                             + record.getChangeFlag());
 
-                    switch (record.getChangeFlag()) {
+                    switch ( record.getChangeFlag() ) {
                         case MODIFIED:
                             // update MODIFIED records
                             System.out.println("Modified");
-                            if (!Adapter.updateOrderDetail(odDetail.getId(),
-                                    odDetail)) {
+                            if( !Adapter.updateOrderDetail(odDetail.getId(),
+                                    odDetail) ) {
                                 System.out
                                         .println("Fail to update order detail, Id: "
                                                 + odDetail.getId());
                                 isOrderDetailListChanged = false;
-                            } else {
+                            }
+                            else {
                                 // set table state to WAITING
                                 Adapter.changeTableState(
                                         currentOrder.getTableId(),
@@ -476,12 +492,13 @@ public class OrderInfoView extends AbstractOrderView {
                         case ADDNEW:
                             System.out.println("Add New");
                             // create ADDNEW records
-                            if (!Adapter.addNewOrderDetail(odDetail)) {
+                            if( !Adapter.addNewOrderDetail(odDetail) ) {
                                 System.out
                                         .println("Fail to add new order detail, Id: "
                                                 + odDetail.getId());
                                 isOrderDetailListChanged = false;
-                            } else {
+                            }
+                            else {
                                 System.out.println("odDetail.getId() "
                                         + odDetail.getId());
                                 // set table state to WAITING
@@ -494,12 +511,13 @@ public class OrderInfoView extends AbstractOrderView {
                         case DELETED:
                             System.out.println("Delete");
                             // delete DELETED records
-                            if (!Adapter.removeOrderDetail(odDetail.getId())) {
+                            if( !Adapter.removeOrderDetail(odDetail.getId()) ) {
                                 System.out
                                         .println("Fail to delete order detail, Id: "
                                                 + odDetail.getId());
                                 isOrderDetailListChanged = false;
-                            } else {
+                            }
+                            else {
                                 orderDetailIdList.remove(orderDetailIdList
                                         .size() - 1);
                                 isOrderDetailListChanged = true;
@@ -512,7 +530,7 @@ public class OrderInfoView extends AbstractOrderView {
                 }
 
                 // If there's no new food was selected, return
-                if (!isOrderDetailListChanged) {
+                if( !isOrderDetailListChanged ) {
                     System.out.println("No changes, return");
                     close();
                     return;
@@ -521,42 +539,49 @@ public class OrderInfoView extends AbstractOrderView {
                 // next, update order
                 boolean ret = true;
                 currentOrder.setOrderDetailIdList(orderDetailIdList);
-                if (isNewOrder) {
+                if( isNewOrder ) {
                     System.out.println("is new order");
-                    if (Adapter.addNewOrder(currentOrder)) {
+                    if( Adapter.addNewOrder(currentOrder) ) {
                         System.out.println("Updated orderId: "
                                 + currentOrder.getId());
                         System.out.println("\tUpdated orderDetailList: "
                                 + currentOrder.getOrderDetailIdList()
                                         .toString());
-                    } else {
+                    }
+                    else {
                         System.out.println("Fail to update orderId: "
                                 + currentOrder.getId());
                         ret = false;
                     }
-                } else {
-                    if (Adapter.updateOrderDetailList(currentOrder)) {
+                }
+                else {
+                    if( Adapter.updateOrderDetailList(currentOrder) ) {
                         // Update order if staffName is different
-                        if(!staffName.equals(currentOrder.getStaffName())) {
+                        if( !staffName.equals(currentOrder.getStaffName()) ) {
                             currentOrder.setStaffName(staffName);
-                            Adapter.updateOrder(currentOrder.getId(), currentOrder);
+                            Adapter.updateOrder(currentOrder.getId(),
+                                    currentOrder);
                         }
                         System.out.println("Updated orderId: "
                                 + currentOrder.getId());
                         System.out.println("\tUpdated orderDetailList: "
                                 + currentOrder.getOrderDetailIdList()
                                         .toString());
-                    } else {
+                    }
+                    else {
                         System.out.println("Fail to update orderId: "
                                 + currentOrder.getId());
                         ret = false;
                     }
                 }
 
-                if(ret == true) {
-                    // Change table state to waiting when we have new order or change current order
-                    Adapter.changeTableState(getCurrentTable().getId(), State.WAITING);
-                    (((ChangeTableStateView) getParentView()).getParentView()).reloadView();
+                if( ret == true ) {
+                    // Change table state to waiting when we have new order or
+                    // change current order
+                    Adapter.changeTableState(getCurrentTable().getId(),
+                            State.WAITING);
+                    (((ChangeTableStateView) getParentView()).getParentView())
+                            .reloadView();
                 }
 
                 // Clear data
@@ -572,7 +597,7 @@ public class OrderInfoView extends AbstractOrderView {
         btnConfirmPaid.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                if ( currentOrder != null ) {
+                if( currentOrder != null ) {
                     currentOrder.setPaidMoney(Float
                             .parseFloat(textFieldpaidAmount.getValue()));
                     currentOrder.setPaidTime(new Date());
@@ -583,17 +608,21 @@ public class OrderInfoView extends AbstractOrderView {
                         if( Adapter.addNewOrder(currentOrder) ) {
                             ret = true;
                         }
-                    } else {
-                        if (Adapter.updateOrder(currentOrder.getId(), currentOrder)) {
+                    }
+                    else {
+                        if( Adapter.updateOrder(currentOrder.getId(),
+                                currentOrder) ) {
                             ret = true;
                         }
                     }
 
-                    if(ret == true ) {
-                     // Change table status to PAID
-                        Adapter.changeTableState(currentOrder.getTableId(),Types.State.PAID);
+                    if( ret == true ) {
+                        // Change table status to PAID
+                        Adapter.changeTableState(currentOrder.getTableId(),
+                                Types.State.PAID);
                     }
-                    (((ChangeTableStateView) getParentView()).getParentView()).reloadView();
+                    (((ChangeTableStateView) getParentView()).getParentView())
+                            .reloadView();
                     close();// close the window
                 }
             }
@@ -607,15 +636,17 @@ public class OrderInfoView extends AbstractOrderView {
      */
     private Order retrieveOrder() {
         System.out.println("loadOrder...");
-        List<Order> orderList = Adapter.getOrderListIgnoreStates(Types.State.PAID, Types.State.CANCELED, null, null);
+        List<Order> orderList = Adapter.getOrderListIgnoreStates(
+                Types.State.PAID, Types.State.CANCELED, null, null);
         System.out.println(orderList.toString());
         for (Order order : orderList) {
-            if (order.getTableId().equals(this.getCurrentTable().getId())) {
+            if( order.getTableId().equals(this.getCurrentTable().getId()) ) {
                 System.out.println("OrderId: " + order.getId());
                 return order;
             }
         }
-        System.out.println("No order for tableId: " + this.getCurrentTable().getId());
+        System.out.println("No order for tableId: "
+                + this.getCurrentTable().getId());
         return null;
     }
 

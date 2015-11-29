@@ -3,6 +3,8 @@ package com.luvsoft.MMI.components;
 import java.util.List;
 
 import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.OrderListView;
+import com.luvsoft.MMI.ViewInterface;
 import com.luvsoft.MMI.order.OrderDetailRecord;
 import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
@@ -32,7 +34,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-public class OrderElement extends VerticalLayout{
+public class OrderElement extends VerticalLayout implements ViewInterface {
     /*
      * This is a VerticalLayout contains info of an order
      */
@@ -42,52 +44,11 @@ public class OrderElement extends VerticalLayout{
     //OrderDetailRecord orderInfo;
     private List<OrderDetailRecord> orderDetailList;
     private Order order;
+    private OrderListView parentView;
+
     public OrderElement(Order _order){
         super();
-        lbTableName = new Label();
-        tbOrderInfos = new Table();
-        btnConfFinish = new Button(Language.ALL_DONE);
-        lbTableName.setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
-        lbTableName.setWidth("100%");
-
-        tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
-        tbOrderInfos.addContainerProperty(Language.FOOD_NAME, String.class, null);
-        tbOrderInfos.addContainerProperty(Language.QUANTITY, Integer.class, null);
-        tbOrderInfos.addContainerProperty(Language.STATUS, String.class, null);
-        tbOrderInfos.addContainerProperty(new String("orderdetailId"), String.class, null);
-        tbOrderInfos.setPageLength(tbOrderInfos.size());
-        tbOrderInfos.setSizeFull();
-
-        btnConfFinish.setStyleName("customizationButton text-align-left");
-        btnConfFinish.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                System.out.println("Finish click!, OrderId: " + order.getId());
-                // Set status of order to be UNPAID
-                if( Adapter.changeOrderState(order.getId(), Types.State.UNPAID) ){
-                    // Set all order details to be COMPLETED
-                    for( String orderDetailId : order.getOrderDetailIdList() ){
-                        Adapter.changeOrderDetailState(orderDetailId, Types.State.COMPLETED);
-                        // @todo: send notification about the finish of making foods
-                        OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
-                        // notify message
-                        Notification notify = new Notification("<b>Alert</b>",
-                                "<i>Đồ uống bàn" + orderInfo.getTableName() +" đã xong!</i>",
-                                Notification.Type.TRAY_NOTIFICATION  , true);
-                        notify.setPosition(Position.BOTTOM_RIGHT);
-                        notify.show(Page.getCurrent());
-                    }
-
-                    // Set table status to be UNPAID
-                    Adapter.changeTableState(order.getTableId(), Types.State.UNPAID);
-                }
-            }
-        });
-
-        this.addComponents(lbTableName, tbOrderInfos, btnConfFinish);
-        this.setComponentAlignment(tbOrderInfos, Alignment.MIDDLE_CENTER);
-        this.setComponentAlignment(btnConfFinish, Alignment.MIDDLE_CENTER);
-
+        createView();
         this.order = _order;
     }
     
@@ -160,5 +121,68 @@ public class OrderElement extends VerticalLayout{
                 }
             }
         });
+    }
+
+    @Override
+    public void createView() {
+        lbTableName = new Label();
+        tbOrderInfos = new Table();
+        btnConfFinish = new Button(Language.ALL_DONE);
+        lbTableName.setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+        lbTableName.setWidth("100%");
+
+        tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
+        tbOrderInfos.addContainerProperty(Language.FOOD_NAME, String.class, null);
+        tbOrderInfos.addContainerProperty(Language.QUANTITY, Integer.class, null);
+        tbOrderInfos.addContainerProperty(Language.STATUS, String.class, null);
+        tbOrderInfos.addContainerProperty(new String("orderdetailId"), String.class, null);
+        tbOrderInfos.setPageLength(tbOrderInfos.size());
+        tbOrderInfos.setSizeFull();
+
+        btnConfFinish.setStyleName("customizationButton text-align-left");
+        btnConfFinish.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                System.out.println("Finish click!, OrderId: " + order.getId());
+                // Set status of order to be UNPAID
+                if( Adapter.changeOrderState(order.getId(), Types.State.UNPAID) ){
+                    // Set all order details to be COMPLETED
+                    for( String orderDetailId : order.getOrderDetailIdList() ){
+                        Adapter.changeOrderDetailState(orderDetailId, Types.State.COMPLETED);
+                        // @todo: send notification about the finish of making foods
+                        OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+                        // notify message
+                        Notification notify = new Notification("<b>Alert</b>",
+                                "<i>Đồ uống " + orderInfo.getTableName() +" đã xong!</i>",
+                                Notification.Type.TRAY_NOTIFICATION  , true);
+                        notify.setPosition(Position.BOTTOM_RIGHT);
+                        notify.show(Page.getCurrent());
+                    }
+
+                    // Set table status to be UNPAID
+                    Adapter.changeTableState(order.getTableId(), Types.State.UNPAID);
+                    parentView.reloadView();
+                }
+            }
+        });
+
+        this.addComponents(lbTableName, tbOrderInfos, btnConfFinish);
+        this.setComponentAlignment(tbOrderInfos, Alignment.MIDDLE_CENTER);
+        this.setComponentAlignment(btnConfFinish, Alignment.MIDDLE_CENTER);
+    }
+
+    @Override
+    public void reloadView() {
+        
+    }
+
+    @Override
+    public ViewInterface getParentView() {
+        return parentView;
+    }
+
+    @Override
+    public void setParentView(ViewInterface parentView) {
+        this.parentView = (OrderListView) parentView;
     }
 }
