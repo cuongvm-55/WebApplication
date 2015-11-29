@@ -132,23 +132,18 @@ public class ChangeTableStateView extends AbstractOrderView implements
                                         Adapter.changeTableState(
                                                 getCurrentTable().getId(),
                                                 newState);
-                                        if( getCurrentTable().getState() == Types.State.PAID
-                                                && currentOrder != null
-                                                && currentOrder.getStatus() == State.PAID ) {
-                                            Notification notify = new Notification(
-                                                    "<b>Error</b>",
-                                                    "<i>"
-                                                            + Language.CANNOT_CANCEL_ORDER
-                                                            + "</i>",
-                                                    Notification.Type.TRAY_NOTIFICATION,
-                                                    true);
-                                            notify.setPosition(Position.BOTTOM_RIGHT);
-                                            notify.show(Page.getCurrent());
-                                        }
-                                        else {
-                                            getParentView().reloadView();
-                                            close();
-                                        }
+                                        getParentView().reloadView();
+                                        close();
+                                    } else if( getCurrentTable().getState() == Types.State.PAID ) {
+                                        Notification notify = new Notification(
+                                                "<b>Error</b>",
+                                                "<i>"
+                                                        + Language.CANNOT_CANCEL_ORDER
+                                                        + "</i>",
+                                                Notification.Type.TRAY_NOTIFICATION,
+                                                true);
+                                        notify.setPosition(Position.BOTTOM_RIGHT);
+                                        notify.show(Page.getCurrent());
                                     }
                                 }
                                 else {

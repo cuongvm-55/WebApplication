@@ -572,17 +572,28 @@ public class OrderInfoView extends AbstractOrderView {
         btnConfirmPaid.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                if (currentOrder != null) {
+                if ( currentOrder != null ) {
                     currentOrder.setPaidMoney(Float
                             .parseFloat(textFieldpaidAmount.getValue()));
                     currentOrder.setPaidTime(new Date());
                     currentOrder.setStatus(Types.State.PAID);
-                    if (Adapter.updateOrder(currentOrder.getId(), currentOrder)) {
-                        // Change table status to PAID
-                        Adapter.changeTableState(currentOrder.getTableId(),
-                                Types.State.PAID);
-                        (((ChangeTableStateView) getParentView()).getParentView()).reloadView();
+
+                    boolean ret = false;
+                    if( isNewOrder ) {
+                        if( Adapter.addNewOrder(currentOrder) ) {
+                            ret = true;
+                        }
+                    } else {
+                        if (Adapter.updateOrder(currentOrder.getId(), currentOrder)) {
+                            ret = true;
+                        }
                     }
+
+                    if(ret == true ) {
+                     // Change table status to PAID
+                        Adapter.changeTableState(currentOrder.getTableId(),Types.State.PAID);
+                    }
+                    (((ChangeTableStateView) getParentView()).getParentView()).reloadView();
                     close();// close the window
                 }
             }
