@@ -104,14 +104,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
         // Build records
         // Retrieve order list fall in the date range,
         // only retrieve PAID orders
-
-        // Reach day begin
-        reachDayBegin(fromDate);
-
-        // Reach day end
-        reachDayEnd(toDate);
-
-        List<Order> orderList = Adapter.getOrderListWithState(Types.State.PAID, fromDate, toDate);
+        List<Order> orderList = Adapter.getOrderListWithState(Types.State.PAID, reachDayBegin(fromDate), reachDayEnd(toDate));
         if( orderList == null ){
             // Stop here is there's no Order with PAID state
             System.out.println("There's no orders with state PAID between "+fromDate.toString() + ", " + toDate.toString());
@@ -156,13 +149,14 @@ public class OrderInfoProducer extends AbstractReportProducer{
                 contents.add(nbrPrice);
 
                 amount = (rc.getPrice()*rc.getQuantity());
-                totalAmount += amount;
                 jxl.write.Number nbrAmount = createNumberCell(FIELD_HEADER.AMOUNT.getValue(), row, amount);
                 contents.add(nbrAmount);
 
                 Label lblStatus = createLabelCell(FIELD_HEADER.STATUS.getValue(), row, rc.getStatus().toString());
                 contents.add(lblStatus);
-
+                if(rc.getStatus() == Types.State.COMPLETED){
+                    totalAmount += amount;
+                }
                 // for empty field, do not create cell
                 // if current record is the last record of order, create the total cell and paid amount cell
                 if( index == (odDtList.size() - 1) ){

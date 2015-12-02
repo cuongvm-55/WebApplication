@@ -39,20 +39,23 @@ public abstract class AbstractReportProducer {
     // returns title
     protected abstract String getTitle();
 
-    public void reachDayBegin(Date date){
+    public Date reachDayBegin(Date date){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, 0);
-        date = cal.getTime();
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+
+        return cal.getTime();
     }
 
-    public void reachDayEnd(Date date){
+    public Date reachDayEnd(Date date){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, 23);
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
-        date = cal.getTime();
+        return cal.getTime();
     }
 
     public Label createLabelCell(int col, int row, String str){

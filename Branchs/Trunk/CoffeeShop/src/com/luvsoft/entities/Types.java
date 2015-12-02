@@ -123,7 +123,7 @@ public class Types {
         List<String> retList = new ArrayList<String>();
         if( !str.equals("") ){
             String[] list = str.split(",");
-            retList = Arrays.asList(list);
+            retList.addAll(Arrays.asList(list));
         }
         return retList;
     }

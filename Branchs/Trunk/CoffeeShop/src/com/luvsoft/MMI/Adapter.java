@@ -56,6 +56,12 @@ public class Adapter {
         return orderInfo;
     }
 
+    public static OrderDetail getOrderDetailById(String odDtId){
+        OrderDetail orderDtl = new OrderDetail();
+        orderCtrl.getOrderDetailById(odDtId, orderDtl);
+        return orderDtl;
+    }
+
     public static List<Floor> retrieveFloorList(){
         System.out.println("retrieveFloorList...");
         return floorCtrl.getAllFloor();
@@ -99,7 +105,7 @@ public class Adapter {
     }
 
     public static List<Order> getOrderListIgnoreStates(Types.State state1, Types.State state2, Date begDate, Date endDate){
-        System.out.println("Get order list ignore state: " + state1.toString() + state2.toString());
+        System.out.println("Get order list ignore state: " + state1.toString() + ", " + state2.toString());
         return orderCtrl.getOrderListIgnoreStates(state1, state2, begDate, endDate);
     }
 
@@ -153,6 +159,10 @@ public class Adapter {
         return categoryCtrl.getCategoryById(cateId);
     }
 
+    public static boolean addNewCategory(Category category){
+        return categoryCtrl.addNewCategory(category);
+    }
+
     public static boolean removeCategory(String cateId){
         return categoryCtrl.removeCategory(cateId);
     }
@@ -168,4 +178,9 @@ public class Adapter {
     public static boolean updateFood(String foodId, Food food){
         return foodCtrl.updateFood(foodId, food);
     }
+
+    public static boolean updateCategory(String cateId, Category cate){
+        return categoryCtrl.updateCategory(cateId, cate);
+    }
+    
 }

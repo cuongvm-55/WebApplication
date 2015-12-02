@@ -6,7 +6,9 @@ import java.util.List;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.ViewInterface;
 import com.luvsoft.MMI.components.CustomizationTreeElement;
+import com.luvsoft.MMI.management.FoodForm.STATE;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Category;
 import com.luvsoft.entities.Food;
@@ -27,40 +29,41 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
-public class FoodManagement extends Window{
+public class FoodManagement extends Window implements ViewInterface{
     List<Category> toBeDeletedCategories;
     List<String> toBeDeletedFoods;
 
+    VerticalLayout layout;
+    Label lblWindowName;
+    Component panel;
+    Component footer;
     public FoodManagement(){
         setModal(true);
         setClosable(true);
         setResizable(false);
         setDraggable(false);
         setSizeFull();
-        setupUI();
+        createView();
 
         toBeDeletedCategories = new ArrayList<Category>();
         toBeDeletedFoods = new ArrayList<String>();
     }
 
-    public void setupUI(){
-        VerticalLayout layout = new VerticalLayout();
+    @Override
+    public void createView(){
+        layout = new VerticalLayout();
         layout.setSizeFull();
 
         // window name
-        Label lblWindowName = new Label(Language.FOOD_MANAGEMENT);
+        lblWindowName = new Label(Language.FOOD_MANAGEMENT);
         lblWindowName.addStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lblWindowName.setWidth("100%");
 
-        // food list
-        List<Category> categories = Adapter.retrieveCategoryList();
-        Component panel = new Panel();
-        if( categories != null ){
-            panel = buildContent(categories);
-        }
+        // Content
+        buildContent();
 
         // control buttons
-        Component footer = buildFooter();
+        footer = buildFooter();
         layout.addComponents(lblWindowName, panel, footer);
         layout.setExpandRatio(panel, 1.0f);
         layout.setExpandRatio(panel, 7.0f);
@@ -68,14 +71,22 @@ public class FoodManagement extends Window{
         this.setContent(layout);
     }
 
-    public Component buildContent(List<Category> categories) {
+    public void buildContent(){
+        // food list
+        List<Category> categories = Adapter.retrieveCategoryList();
+        panel = new Panel();
+        if( categories != null ){
+            panel = buildTree(categories);
+        }
+    }
+
+    public Component buildTree(List<Category> categories) {
         Panel wrapPanel = new Panel();
         wrapPanel.setSizeFull();
 
         VerticalLayout content = new VerticalLayout();
 
         for (Category category : categories) {
-            System.out.println("FoodIdList: " + category.getFoodIdList().size());
             // Check box "To be deleted category"
             CheckBox checkBox = new CheckBox();
             checkBox.setCaption("Remove");
@@ -188,7 +199,14 @@ public class FoodManagement extends Window{
         Button btnAddFood = new Button(Language.ADD_FOOD);
         btnAddFood.addStyleName(ValoTheme.BUTTON_HUGE);
         btnAddFood.addStyleName("customizationButton");
-
+        btnAddFood.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                FoodForm form = new FoodForm(STATE.ADDNEW);
+                form.setParentView(getThis());
+                getUI().addWindow(form);
+            }
+        });
         Button btnRemoveFood = new Button(Language.DELETE_FOODS);
         btnRemoveFood.addStyleName(ValoTheme.BUTTON_HUGE);
         btnRemoveFood.addStyleName("customizationButton");
@@ -202,6 +220,9 @@ public class FoodManagement extends Window{
                                     for( int i = 0; i < toBeDeletedFoods.size(); i++ ){
                                         Adapter.removeFood(toBeDeletedFoods.get(i));
                                     }
+
+                                    // Refresh
+                                    reloadView();
                                 } else {
                                     System.out.println("user canceled, do nothing!");
                                 }
@@ -213,6 +234,14 @@ public class FoodManagement extends Window{
         Button btnAddCategory = new Button(Language.ADD_CATEGORY);
         btnAddCategory.addStyleName(ValoTheme.BUTTON_HUGE);
         btnAddCategory.addStyleName("customizationButton");
+        btnAddCategory.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                        CategoryForm form = new CategoryForm();
+                        form.setParentView(getThis());
+                        getUI().addWindow(form);
+            }
+        });
 
         Button btnRemoveCategory = new Button(Language.DELETE_CATEGORY);
         btnRemoveCategory.addStyleName(ValoTheme.BUTTON_HUGE);
@@ -234,6 +263,9 @@ public class FoodManagement extends Window{
                                             }
 
                                             Adapter.removeCategory(category.getId());
+
+                                            // Refresh
+                                            reloadView();
                                         }
                                     }
                                 } else {
@@ -256,5 +288,33 @@ public class FoodManagement extends Window{
         footer.setComponentAlignment(hzLayoutFoodCtrl, Alignment.MIDDLE_CENTER);
         footer.setComponentAlignment(hzLayoutCategoryCtrl, Alignment.MIDDLE_CENTER);
         return footer;
+    }
+
+    @Override
+    public void reloadView() {
+        layout = new VerticalLayout();
+        layout.setSizeFull();
+        buildContent();
+        layout.addComponents(lblWindowName, panel, footer);
+        layout.setExpandRatio(panel, 1.0f);
+        layout.setExpandRatio(panel, 7.0f);
+        layout.setExpandRatio(footer, 2.0f);
+        this.setContent(layout);
+    }
+
+    public FoodManagement getThis(){
+        return this;
+    }
+
+    @Override
+    public ViewInterface getParentView() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setParentView(ViewInterface parentView) {
+        // TODO Auto-generated method stub
+        
     }
 }

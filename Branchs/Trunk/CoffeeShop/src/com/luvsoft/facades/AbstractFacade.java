@@ -88,6 +88,11 @@ public abstract class AbstractFacade {
         DBCollection collection = getDBCollection();
         HashMap<String, Object> map = entity.toHashMap();
         String id = map.get(TAG_ID).toString();
+        // if Id is empty, create new id
+        if( id.equals("") ){
+            id = (new ObjectId()).toString();
+        }
+
         map.remove(TAG_ID);
         BasicDBObject object = new BasicDBObject(map);
         object.append(TAG_ID, new ObjectId(id)); // we need to save _id as a ObjectId

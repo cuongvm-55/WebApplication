@@ -8,7 +8,6 @@ import java.util.List;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.OrderDetail;
 import com.luvsoft.entities.Types;
-import com.luvsoft.entities.Types.State;
 import com.luvsoft.facades.OrderDetailsFacade;
 import com.luvsoft.facades.OrderFacade;
 import com.mongodb.BasicDBObject;

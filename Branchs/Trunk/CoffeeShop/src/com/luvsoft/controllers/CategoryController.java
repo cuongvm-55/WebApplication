@@ -43,4 +43,18 @@ public class CategoryController extends AbstractController{
     public boolean removeCategory(String categoryId){
         return categoryFacade.removeById(categoryId);
     }
+    
+    /**
+     * Add new category
+     */
+    public boolean addNewCategory(Category cat){
+        return categoryFacade.save(cat);
+    }
+
+    /**
+     * Update category
+     */
+    public boolean updateCategory(String cateId, Category cate){
+        return categoryFacade.update(cateId, cate);
+    }
 }

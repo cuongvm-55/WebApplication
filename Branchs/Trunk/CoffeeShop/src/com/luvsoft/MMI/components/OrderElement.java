@@ -100,27 +100,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                 //return super.createField(container, itemId, propertyId, uiContext);
             }
         });
-
         tbOrderInfos.setEditable(true);
-        // Click listener
-        tbOrderInfos.addItemClickListener(new ItemClickListener() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void itemClick(ItemClickEvent itemClickEvent) {
-                if( itemClickEvent.getButton().equals(MouseButton.RIGHT) ){
-                   if( itemClickEvent.getPropertyId().toString().equals(Language.STATUS) )
-                   {
-                       OrderDetailRecord orderinfo;
-                       orderinfo = orderDetailList.get(Integer.parseInt(itemClickEvent.getItemId().toString()));
-                       Image img = orderinfo.getIconFromStatus(orderinfo.getNextState(orderinfo.getStatus()));
-                       tbOrderInfos.getItem(itemClickEvent.getItemId()).getItemProperty(Language.STATUS).setValue(img);
-                       System.out.println("CHange status! " + orderinfo.getStatus());
-                   }
-                    //System.out.println("Right Click on\nrow: "+itemClickEvent.getItemId().toString() +
-                    //                "\ncolumn: "+itemClickEvent.getPropertyId().toString());
-                }
-            }
-        });
     }
 
     @Override
@@ -146,18 +126,20 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                 System.out.println("Finish click!, OrderId: " + order.getId());
                 // Set status of order to be UNPAID
                 if( Adapter.changeOrderState(order.getId(), Types.State.UNPAID) ){
-                    // Set all order details to be COMPLETED
+                    // Set all order details to be COMPLETED except CANCELED one
                     for( String orderDetailId : order.getOrderDetailIdList() ){
-                        Adapter.changeOrderDetailState(orderDetailId, Types.State.COMPLETED);
-                        // @todo: send notification about the finish of making foods
-                        OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
-                        // notify message
-                        Notification notify = new Notification("<b>Alert</b>",
-                                "<i>Đồ uống " + orderInfo.getTableName() +" đã xong!</i>",
-                                Notification.Type.TRAY_NOTIFICATION  , true);
-                        notify.setPosition(Position.BOTTOM_RIGHT);
-                        notify.show(Page.getCurrent());
+                        if(  Adapter.getOrderDetailById(orderDetailId) != null && Adapter.getOrderDetailById(orderDetailId).getState() != Types.State.CANCELED ){
+                            Adapter.changeOrderDetailState(orderDetailId, Types.State.COMPLETED);
+                        }
                     }
+                    // @todo: send notification about the finish of making foods
+                    OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+                    // notify message
+                    Notification notify = new Notification("<b>Alert</b>",
+                            "<i>Đồ uống " + orderInfo.getTableName() +" đã xong!</i>",
+                            Notification.Type.TRAY_NOTIFICATION  , true);
+                    notify.setPosition(Position.BOTTOM_RIGHT);
+                    notify.show(Page.getCurrent());
 
                     // Set table status to be UNPAID
                     Adapter.changeTableState(order.getTableId(), Types.State.UNPAID);

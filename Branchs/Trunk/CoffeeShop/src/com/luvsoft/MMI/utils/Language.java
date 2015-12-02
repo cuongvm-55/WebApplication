@@ -84,6 +84,8 @@ public class Language {
                 CONIFRM_CANCEL_ORDER = "Do you want to Cancel the order of this table?";
                 ASK_FOR_CONFIRM = "Ok";
                 ASK_FOR_DENIED = "Cancel";
+
+                SAVE = "Save";
             }
                 break;
             case VIETNAMESE:
@@ -152,6 +154,8 @@ public class Language {
                 CONIFRM_CANCEL_ORDER = "Bạn có chắc chắn muốn Hủy hóa đơn của bàn này không?";
                 ASK_FOR_CONFIRM = "Đồng ý";
                 ASK_FOR_DENIED = "Hủy";
+
+                SAVE = "Lưu";
             }
                 break;
             case JAPANESE:
@@ -235,4 +239,7 @@ public class Language {
     public static String CONIFRM_CANCEL_ORDER;
     public static String ASK_FOR_CONFIRM;
     public static String ASK_FOR_DENIED;
+
+    // Form
+    public static String SAVE;
 }
