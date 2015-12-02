@@ -1,7 +1,5 @@
 package com.luvsoft.MMI.management;
 
-import java.util.List;
-
 import org.bson.types.ObjectId;
 
 import com.luvsoft.MMI.Adapter;
@@ -36,7 +34,10 @@ public class CategoryForm extends Window implements ViewInterface{
     private ViewInterface parentView;
 
     private Label lblMsg;
-    public CategoryForm(){
+    static public enum STATE{UPDATE, ADDNEW};
+    private STATE state;
+    private Category category;
+    public CategoryForm(Category _category, STATE _state){
         this.setCaption("New Category");
         this.setModal(true);
         this.setResizable(false);
@@ -46,9 +47,11 @@ public class CategoryForm extends Window implements ViewInterface{
         this.setHeight("240px");
         this.center();
 
+        category = _category;
+        state = _state;
         categoryItem = new PropertysetItem();
-        categoryItem.addItemProperty("code", new ObjectProperty<String>(""));
-        categoryItem.addItemProperty("name", new ObjectProperty<String>(""));
+        categoryItem.addItemProperty("code", new ObjectProperty<String>(category.getCode()));
+        categoryItem.addItemProperty("name", new ObjectProperty<String>(category.getName()));
 
         //this.setItemDataSource(item);
         TextField codeField = new TextField("Code");
@@ -70,7 +73,7 @@ public class CategoryForm extends Window implements ViewInterface{
                 if( codeField.getValue().equals("") && nameField.getValue().equals("") ){
                     throw new CommitException("Code or name cannot be empty!");
                 }
-                else if( isCategoryNameExist(nameField.getValue()) ){
+                else if( Adapter.isCategoryNameExist(nameField.getValue()) ){
                     throw new CommitException("Category is already exist!");
                 }
             }
@@ -81,13 +84,24 @@ public class CategoryForm extends Window implements ViewInterface{
                 // refresh parent view
                 System.out.println("Post commit...");
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
-                Category category = new Category();
                 category.setCode(item.getItemProperty("code").getValue().toString());
                 category.setName(item.getItemProperty("name").getValue().toString());
-                category.setId((new ObjectId()).toString());
-                if( Adapter.addNewCategory(category)){
-                    parentView.reloadView();
-                    close();
+                switch(state){
+                case ADDNEW:
+                    category.setId((new ObjectId()).toString());
+                    if( Adapter.addNewCategory(category)){
+                        parentView.reloadView();
+                        close();
+                    }
+                    break;
+                case UPDATE:
+                    if( Adapter.updateCategory(category.getId(), category) ){
+                        parentView.reloadView();
+                        close();
+                    }
+                    break;
+                default:
+                    break;
                 }
             }
         });
@@ -139,17 +153,6 @@ public class CategoryForm extends Window implements ViewInterface{
         this.setContent(vtcLayout);
     }
 
-    private boolean isCategoryNameExist(String categoryName){
-        List<Category> cateList = Adapter.retrieveCategoryList();
-        if( cateList != null ){
-            for( Category cate : cateList ){
-                if( cate.getName().equals(categoryName) ){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     @Override
     public void createView() {
     }

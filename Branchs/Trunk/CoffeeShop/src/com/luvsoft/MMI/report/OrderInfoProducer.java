@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jxl.format.Colour;
 import jxl.write.DateTime;
 import jxl.write.Label;
 import jxl.write.WritableCell;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
+import jxl.write.WriteException;
 
 import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.order.OrderDetailRecord;
@@ -32,7 +36,8 @@ public class OrderInfoProducer extends AbstractReportProducer{
         EMPTY(8),        // Space between records and total column
 
         TOTAL_AMOUNT(9), // Total = nbOfRecords * amount
-        PAID_AMOUNT(10);  // Real amount received from customer
+        PAID_AMOUNT(10),  // Real amount received from customer
+        STAFF_NAME(11);  // Staff name
         private final int num;
         private FIELD_HEADER(int index){
             num = index;
@@ -75,6 +80,13 @@ public class OrderInfoProducer extends AbstractReportProducer{
     protected boolean buildContent(List<WritableCell> contents) {
         // line 4, empty
         // build record headers
+        WritableFont times12font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false);
+        try{
+            times12font.setColour(Colour.BLACK);
+        }catch(WriteException e){
+            // do nothing
+        }
+        WritableCellFormat times12format = new WritableCellFormat (times12font);
         Label lbNo = createLabelCell(FIELD_HEADER.NO.getValue(), 5, "Stt"); // line 5
         Label lbTableName = createLabelCell(FIELD_HEADER.TABLE_NAME.getValue(), 5, "Bàn");
         Label lbFoodName = createLabelCell(FIELD_HEADER.FOOD_NAME.getValue(), 5, "Tên Món");
@@ -85,7 +97,22 @@ public class OrderInfoProducer extends AbstractReportProducer{
         Label lbEmpty = createLabelCell(FIELD_HEADER.EMPTY.getValue(), 5, "");
         Label lbTotalAmount = createLabelCell(FIELD_HEADER.TOTAL_AMOUNT.getValue(), 5, "Tổng Tiền");
         Label lbPaidAmount = createLabelCell(FIELD_HEADER.PAID_AMOUNT.getValue(), 5, "Thực Thu");
-        Label lbCreatingTime = createLabelCell(FIELD_HEADER.CREATING_TIME.getValue(), 5, "Thời gian");
+        Label lbCreatingTime = createLabelCell(FIELD_HEADER.CREATING_TIME.getValue(), 5, "Thời Gian");
+        Label lbStaffName = createLabelCell(FIELD_HEADER.STAFF_NAME.getValue(), 5, "Tên Nhân Viên");
+        
+        lbNo.setCellFormat(times12format);
+        lbTableName.setCellFormat(times12format);
+        lbFoodName.setCellFormat(times12format);
+        lbQuantity.setCellFormat(times12format);
+        lbPrice.setCellFormat(times12format);
+        lbAmount.setCellFormat(times12format);
+        lbStatus.setCellFormat(times12format);
+        lbEmpty.setCellFormat(times12format);
+        lbTotalAmount.setCellFormat(times12format);
+        lbPaidAmount.setCellFormat(times12format);
+        lbCreatingTime.setCellFormat(times12format);
+        lbStaffName.setCellFormat(times12format);
+
         if( contents == null ){
             contents = new ArrayList<WritableCell>();
         }
@@ -100,6 +127,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
         contents.add(lbEmpty);
         contents.add(lbTotalAmount);
         contents.add(lbPaidAmount);
+        contents.add(lbStaffName);
 
         // Build records
         // Retrieve order list fall in the date range,
@@ -130,41 +158,69 @@ public class OrderInfoProducer extends AbstractReportProducer{
             for( int index=0; index < odDtList.size(); index++ ){
                 double amount = 0.00f;
                 OrderDetailRecord rc = odDtList.get(index);
+                WritableFont font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD, false);
+                if( rc.getStatus() == Types.State.CANCELED ){
+                    try{
+                        font.setColour(Colour.RED);}
+                    catch(WriteException e){
+                        // do nothing
+                    }
+                }
+                WritableCellFormat contentFormat = new WritableCellFormat (font);
+
                 jxl.write.Number nbrNo = createNumberCell(FIELD_HEADER.NO.getValue(), row, row - 6);
+                nbrNo.setCellFormat(contentFormat);
                 contents.add(nbrNo);
 
                 DateTime date = createDateCell(FIELD_HEADER.CREATING_TIME.getValue(), row, order.getCreatingTime(), false);
+                date.setCellFormat(contentFormat);
                 contents.add(date);
                 
                 Label lblTblName = createLabelCell(FIELD_HEADER.TABLE_NAME.getValue(), row, orderInfo.getTableName());
+                lblTblName.setCellFormat(contentFormat);
                 contents.add(lblTblName);
 
                 Label lblFoodName = createLabelCell(FIELD_HEADER.FOOD_NAME.getValue(), row, rc.getFoodName());
+                lblFoodName.setCellFormat(contentFormat);
                 contents.add(lblFoodName);
 
                 jxl.write.Number nbrQuantity = createNumberCell(FIELD_HEADER.QUANTITY.getValue(), row, rc.getQuantity());
+                nbrQuantity.setCellFormat(contentFormat);
                 contents.add(nbrQuantity);
 
                 jxl.write.Number nbrPrice = createNumberCell(FIELD_HEADER.PRICE.getValue(), row, rc.getPrice());
+                nbrPrice.setCellFormat(contentFormat);
                 contents.add(nbrPrice);
 
                 amount = (rc.getPrice()*rc.getQuantity());
                 jxl.write.Number nbrAmount = createNumberCell(FIELD_HEADER.AMOUNT.getValue(), row, amount);
+                nbrAmount.setCellFormat(contentFormat);
                 contents.add(nbrAmount);
 
                 Label lblStatus = createLabelCell(FIELD_HEADER.STATUS.getValue(), row, rc.getStatus().toString());
+                lblStatus.setCellFormat(contentFormat);
                 contents.add(lblStatus);
                 if(rc.getStatus() == Types.State.COMPLETED){
                     totalAmount += amount;
                 }
+
                 // for empty field, do not create cell
                 // if current record is the last record of order, create the total cell and paid amount cell
                 if( index == (odDtList.size() - 1) ){
+                    WritableFont fontTotal = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD, false);
+                    WritableCellFormat totalFormat = new WritableCellFormat (fontTotal);
                     jxl.write.Number nbrTotalAmount = createNumberCell(FIELD_HEADER.TOTAL_AMOUNT.getValue(), row, totalAmount);
+                    nbrTotalAmount.setCellFormat(totalFormat);
                     contents.add(nbrTotalAmount);
 
                     jxl.write.Number nbrPaidAmount = createNumberCell(FIELD_HEADER.PAID_AMOUNT.getValue(), row, order.getPaidMoney());
+                    nbrPaidAmount.setCellFormat(totalFormat);
                     contents.add(nbrPaidAmount);
+
+                    // staff name
+                    Label lblStaffName = createLabelCell(FIELD_HEADER.STAFF_NAME.getValue(), row, order.getStaffName());
+                    lblStaffName.setCellFormat(totalFormat);
+                    contents.add(lblStaffName);
                 }
 
                 row++;

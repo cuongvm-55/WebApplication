@@ -87,30 +87,46 @@ public class FoodManagement extends Window implements ViewInterface{
         VerticalLayout content = new VerticalLayout();
 
         for (Category category : categories) {
+            CheckBox cbModify = new CheckBox();
+            cbModify.setCaption("Sửa");
+            cbModify.addStyleName(ValoTheme.CHECKBOX_LARGE);
+            cbModify.setData(category);
+            cbModify.addValueChangeListener(new ValueChangeListener() {
+                @Override
+                public void valueChange(ValueChangeEvent event) {
+                    boolean value = (boolean) event.getProperty().getValue();
+                    if( value ){
+                        CategoryForm form = new CategoryForm(category, CategoryForm.STATE.UPDATE);
+                        form.setParentView(FoodManagement.this);
+                        getUI().addWindow(form);
+                    }
+                }
+            });
             // Check box "To be deleted category"
-            CheckBox checkBox = new CheckBox();
-            checkBox.setCaption("Remove");
-            checkBox.addStyleName(ValoTheme.CHECKBOX_LARGE);
-            checkBox.setData(category);
-            checkBox.addValueChangeListener(new ValueChangeListener() {
+            CheckBox cbDel = new CheckBox();
+            cbDel.setCaption("Xóa");
+            cbDel.addStyleName(ValoTheme.CHECKBOX_LARGE);
+            cbDel.setData(category);
+            cbDel.addValueChangeListener(new ValueChangeListener() {
                 @Override
                 public void valueChange(ValueChangeEvent event) {
                     boolean value = (boolean) event.getProperty().getValue();
                     if( value ){
                         // Check
-                        System.out.println("Checked: " + checkBox.getData().toString());
-                        toBeDeletedCategories.add((Category)checkBox.getData());
+                        toBeDeletedCategories.add((Category)cbDel.getData());
                     }
                     else{
                         // Unckeck
-                        System.out.println("UnChecked: " + checkBox.getData().toString());
-                        toBeDeletedCategories.remove((Category)checkBox.getData());
+                        toBeDeletedCategories.remove((Category)cbDel.getData());
                     }
                 }
             });
             
+            HorizontalLayout hzLayout = new HorizontalLayout();
+            hzLayout.addComponents(cbModify, cbDel);
+            hzLayout.setSpacing(true);
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
-                    buildContentElement(category), category.getName(), checkBox);
+                    buildContentElement(category), category.getName(), hzLayout);
             content.addComponent(treeElement);
             content.setComponentAlignment(treeElement, Alignment.TOP_CENTER);
         }
@@ -170,6 +186,9 @@ public class FoodManagement extends Window implements ViewInterface{
         btnEdit.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                FoodForm form = new FoodForm(food, STATE.UPDATE);
+                form.setParentView(FoodManagement.this);
+                getUI().addWindow(form);
             }
         });
 
@@ -202,8 +221,8 @@ public class FoodManagement extends Window implements ViewInterface{
         btnAddFood.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                FoodForm form = new FoodForm(STATE.ADDNEW);
-                form.setParentView(getThis());
+                FoodForm form = new FoodForm(new Food(), STATE.ADDNEW);
+                form.setParentView(FoodManagement.this);
                 getUI().addWindow(form);
             }
         });
@@ -237,8 +256,8 @@ public class FoodManagement extends Window implements ViewInterface{
         btnAddCategory.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                        CategoryForm form = new CategoryForm();
-                        form.setParentView(getThis());
+                        CategoryForm form = new CategoryForm(new Category(), CategoryForm.STATE.ADDNEW);
+                        form.setParentView(FoodManagement.this);
                         getUI().addWindow(form);
             }
         });
@@ -300,10 +319,6 @@ public class FoodManagement extends Window implements ViewInterface{
         layout.setExpandRatio(panel, 7.0f);
         layout.setExpandRatio(footer, 2.0f);
         this.setContent(layout);
-    }
-
-    public FoodManagement getThis(){
-        return this;
     }
 
     @Override

@@ -14,6 +14,7 @@ import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.WritableCell;
 import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
@@ -93,6 +94,9 @@ public abstract class AbstractReportProducer {
 
                 // Create title
                 Label lbTitle = createLabelCell(3, 1, getTitle());  // col 4, row 1
+                WritableFont font = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD, false);
+                WritableCellFormat format = new WritableCellFormat (font);
+                lbTitle.setCellFormat(format);
                 sheet.addCell(lbTitle);
 
                 // Build headers

@@ -182,5 +182,16 @@ public class Adapter {
     public static boolean updateCategory(String cateId, Category cate){
         return categoryCtrl.updateCategory(cateId, cate);
     }
-    
+
+    public static boolean isCategoryNameExist(String categoryName){
+        List<Category> cateList = Adapter.retrieveCategoryList();
+        if( cateList != null ){
+            for( Category cate : cateList ){
+                if( cate.getName().equals(categoryName) ){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

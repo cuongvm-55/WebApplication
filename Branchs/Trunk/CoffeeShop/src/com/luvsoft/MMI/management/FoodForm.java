@@ -43,7 +43,9 @@ public class FoodForm extends Window implements ViewInterface{
     
     static public enum STATE{UPDATE, ADDNEW};
     private STATE state;
-    public FoodForm(STATE _state){
+    private Food food;
+
+    public FoodForm(Food _food, STATE _state){
         this.setCaption("New Category");
         this.setModal(true);
         this.setResizable(false);
@@ -54,10 +56,11 @@ public class FoodForm extends Window implements ViewInterface{
         this.center();
 
         state = _state;
+        food = _food;
         foodItem = new PropertysetItem();
-        foodItem.addItemProperty("code", new ObjectProperty<String>(""));
-        foodItem.addItemProperty("name", new ObjectProperty<String>(""));
-        foodItem.addItemProperty("price", new ObjectProperty<Float>(0.00f));
+        foodItem.addItemProperty("code", new ObjectProperty<String>(food.getCode()));
+        foodItem.addItemProperty("name", new ObjectProperty<String>(food.getName()));
+        foodItem.addItemProperty("price", new ObjectProperty<Double>(food.getPrice()));
 
         //this.setItemDataSource(item);
         TextField codeField = new TextField("Code");
@@ -82,7 +85,10 @@ public class FoodForm extends Window implements ViewInterface{
         cbType.setRequired(true);
         cbType.setResponsive(true);
 
-        
+        if( getCategoryOfFood(food) != null ){
+            cbType.setValue(getCategoryOfFood(food).getName());
+        }
+
         // Now create the binder and bind the fields
         FieldGroup fieldGroup = new FieldGroup(foodItem);
         fieldGroup.bind(codeField, "code");
@@ -90,7 +96,6 @@ public class FoodForm extends Window implements ViewInterface{
         fieldGroup.bind(priceField, "price");
         fieldGroup.setBuffered(true);
         fieldGroup.setFieldFactory(new FieldGroupFieldFactory() {
-            
             @SuppressWarnings("rawtypes")
             @Override
             public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
@@ -114,7 +119,6 @@ public class FoodForm extends Window implements ViewInterface{
                 // refresh parent view
                 System.out.println("Post commit...");
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
-                Food food = new Food();
                 food.setCode(item.getItemProperty("code").getValue().toString());
                 food.setName(item.getItemProperty("name").getValue().toString());
                 double price;
@@ -124,26 +128,52 @@ public class FoodForm extends Window implements ViewInterface{
                 }catch(Exception e){
                     System.out.println("You must enter number value for price");
                 }
-                food.setId((new ObjectId()).toString());
-                if( Adapter.addNewFood(food)){
-                    // Add to selected category
-                    Category cate = getCategoryByName(cbType.getValue().toString());
-                    if( cate != null ){
-                        List<String> foodIds = cate.getFoodIdList();
-                        foodIds.add(food.getId());
-                        if( !Adapter.updateCategory(cate.getId(), cate) ){
-                            System.out.println("Fail to update category id: " + cate.getId());
-                        }
+
+                // save data
+                switch(state){
+                case ADDNEW:
+                    food.setId((new ObjectId()).toString());
+                    if( !Adapter.addNewFood(food)){
+                        System.out.println("Fail to add food, id: " + food.getId());
                     }
-                    else{
-                        System.out.println("Cannot find category name: " + cbType.getValue().toString());
+
+                    break;
+                case UPDATE:
+                    if( !Adapter.updateFood(food.getId(), food) ){
+                        System.out.println("Fail to update food: " + food.getId() );
                     }
-                    parentView.reloadView();
-                    close();
+
+                    break;
+                default:
+                    // do nothing
+                    break;
+                }
+
+                // Remove food id from previous category
+                Category preCate = getCategoryOfFood(food);
+                if(preCate != null){
+                    List<String> foodIds = preCate.getFoodIdList();
+                    foodIds.remove(food.getId());
+                    if( !Adapter.updateCategory(preCate.getId(), preCate) ){
+                        System.out.println("Fail to update category id: " + preCate.getId());
+                    }
+                }
+
+                // Add to selected category
+                Category newCate = getCategoryByName(cbType.getValue().toString());
+                if( newCate != null ){
+                    List<String> foodIds = newCate.getFoodIdList();
+                    foodIds.add(food.getId());
+                    if( !Adapter.updateCategory(newCate.getId(), newCate) ){
+                        System.out.println("Fail to update category id: " + newCate.getId());
+                    }
                 }
                 else{
-                    System.out.println("Fail to add food, id: " + food.getId());
+                    System.out.println("Cannot find category name: " + cbType.getValue().toString());
                 }
+
+                parentView.reloadView();
+                close();
             }
         });
         // Control buttons
@@ -208,6 +238,19 @@ public class FoodForm extends Window implements ViewInterface{
         }
         return null;
     }
+
+    private Category getCategoryOfFood(Food food){
+        List<Category> cateList = Adapter.retrieveCategoryList();
+        if( cateList != null ){
+            for( Category cate : cateList ){
+                if( cate.getFoodIdList().contains(food.getId()) ){
+                    return cate;
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public void createView() {
     }
