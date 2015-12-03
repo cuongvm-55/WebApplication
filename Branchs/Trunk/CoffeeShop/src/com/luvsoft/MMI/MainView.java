@@ -1,5 +1,6 @@
 package com.luvsoft.MMI;
 
+import com.luvsoft.MMI.management.LoginForm;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.MenuButtonListener;
 import com.vaadin.navigator.View;
@@ -181,7 +182,7 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
 
         } else if(event.getParameters().equals(CoffeeshopUI.MANAGEMENT_VIEW)) {
             mainLayout.removeAllComponents();
-            mainLayout.addComponent(new ManagementView());
+            getUI().addWindow(new LoginForm(this));
             popLeftMenu.setPopupVisible(false);
         }
     }

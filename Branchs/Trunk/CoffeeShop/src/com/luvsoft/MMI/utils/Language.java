@@ -67,8 +67,11 @@ public class Language {
                 DELETE_CATEGORY = "Remove category";
                 ADD_TABLE = "Add table";
                 ADD_FLOOR = "Add floor";
-                DELETE_TABLES = " Remove table";
+                DELETE_TABLES = "Remove table";
                 DELETE_FLOOR = "Remove floor";
+                LOGIN = "Login";
+                PINCODE = "Pincode";
+                INVALID_PINCODE = "Invalid pincode.";
 
                 NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
 
@@ -144,8 +147,11 @@ public class Language {
                 DELETE_CATEGORY = "Xóa danh mục";
                 ADD_TABLE = "Thêm bàn";
                 ADD_FLOOR = "Thêm tầng";
-                DELETE_TABLES = " Xóa bàn";
+                DELETE_TABLES = "Xóa bàn";
                 DELETE_FLOOR = "Xóa tầng";
+                LOGIN = "Đăng nhập";
+                PINCODE = "Mật khẩu";
+                INVALID_PINCODE = "Mật khẩu không đúng.";
 
                 // Errors
                 ERROR = "Lỗi";
@@ -223,6 +229,9 @@ public class Language {
     public static String ADD_TABLE;
     public static String DELETE_FLOOR;
     public static String DELETE_TABLES;
+    public static String LOGIN;
+    public static String PINCODE;
+    public static String INVALID_PINCODE;
 
     // Currency
     public static String CURRENCY_SYMBOL;

@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import jxl.format.Colour;
-import jxl.write.DateFormat;
 import jxl.write.DateTime;
 import jxl.write.Label;
 import jxl.write.WritableCell;
