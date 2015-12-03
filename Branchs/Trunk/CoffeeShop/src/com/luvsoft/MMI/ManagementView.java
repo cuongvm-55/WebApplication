@@ -6,6 +6,7 @@ import java.util.List;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.luvsoft.MMI.management.FoodManagement;
+import com.luvsoft.MMI.management.TableManagement;
 import com.luvsoft.MMI.report.OrderInfoProducer;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
@@ -21,8 +22,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PopupView;
-import com.vaadin.ui.PopupView.PopupVisibilityEvent;
-import com.vaadin.ui.PopupView.PopupVisibilityListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -36,6 +35,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class ManagementView extends VerticalLayout{
     private Button btnStatistic;
     private Button btnFoodManagement;
+    private Button btnTableManagement;
     private Button btnConfiguration;
     private PopupView  datePickerPopup;
 
@@ -44,7 +44,7 @@ public class ManagementView extends VerticalLayout{
         btnStatistic = new Button();
         btnFoodManagement = new Button();
         btnConfiguration = new Button();
-
+        btnTableManagement = new Button();
         setupUI();
     }
     
@@ -71,16 +71,28 @@ public class ManagementView extends VerticalLayout{
             }
         });
 
+        
+        btnTableManagement.setStyleName("customizationButton FULL_SIZE FONT_OVERSIZE");
+        btnTableManagement.setCaption(Language.TABLE_MANAGEMENT);
+        btnTableManagement.setWidth("50%");
+        btnTableManagement.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                getUI().addWindow(new TableManagement());
+            }
+        });
+
         btnConfiguration.setStyleName("customizationButton FULL_SIZE FONT_OVERSIZE");
         btnConfiguration.setCaption(Language.CONFIGURATION);
         btnConfiguration.setWidth("50%");
         
-        this.addComponents(btnStatistic, btnFoodManagement, btnConfiguration);
+        this.addComponents(btnStatistic, btnFoodManagement, btnTableManagement, btnConfiguration);
         this.setSpacing(true);
         this.setComponentAlignment(btnStatistic, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(btnFoodManagement, Alignment.MIDDLE_CENTER);
+        this.setComponentAlignment(btnTableManagement, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(btnConfiguration, Alignment.MIDDLE_CENTER);
-        
+
         createDatePickerPopup();
     }
     
@@ -202,15 +214,6 @@ public class ManagementView extends VerticalLayout{
         datePickerPopup.setStyleName("popupStyle");
         datePickerPopup.setPopupVisible(false);
         datePickerPopup.setHideOnMouseOut(false);
-        datePickerPopup.addPopupVisibilityListener(new PopupVisibilityListener() {
-            
-            @Override
-            public void popupVisibilityChange(PopupVisibilityEvent event) {
-                // TODO Auto-generated method stub
-                if( !event.isPopupVisible() ) {
-                }
-            }
-        });
         this.addComponent(datePickerPopup);
     }
 

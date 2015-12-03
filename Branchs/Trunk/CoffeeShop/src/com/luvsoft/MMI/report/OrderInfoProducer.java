@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import jxl.format.Colour;
+import jxl.write.DateFormat;
 import jxl.write.DateTime;
 import jxl.write.Label;
 import jxl.write.WritableCell;
@@ -173,7 +174,6 @@ public class OrderInfoProducer extends AbstractReportProducer{
                 contents.add(nbrNo);
 
                 DateTime date = createDateCell(FIELD_HEADER.CREATING_TIME.getValue(), row, order.getCreatingTime(), false);
-                date.setCellFormat(contentFormat);
                 contents.add(date);
                 
                 Label lblTblName = createLabelCell(FIELD_HEADER.TABLE_NAME.getValue(), row, orderInfo.getTableName());

@@ -194,4 +194,92 @@ public class Adapter {
         }
         return false;
     }
+
+    public static boolean addNewFloor(Floor floor){
+        return floorCtrl.addNewFloor(floor);
+    }
+
+    public static boolean updateFloor(String floorId, Floor floor){
+        return floorCtrl.updateFloor(floorId, floor);
+    }
+
+    public static boolean addNewTable(Table table){
+        return floorCtrl.addNewTable(table);
+    }
+
+    public static boolean updateTable(String tableId, Table table){
+        return floorCtrl.updateTable(tableId, table);
+    }
+    
+    public static boolean isFloorNumberExist(String floorNbr){
+        List<Floor> floorList = Adapter.retrieveFloorList();
+        if( floorList != null ){
+            for( Floor floor : floorList ){
+                if( floor.getNumber().equals(floorNbr) ){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public static boolean removeTable(String tableId){
+        return floorCtrl.removeTable(tableId);
+    }
+    
+    public static boolean removeFloor(String floorId){
+        return floorCtrl.removeFloor(floorId);
+    }
+    
+    public static Table getTableById(String tableId){
+        return floorCtrl.getTableById(tableId);
+    }
+    
+    public static Floor getFloorByName(String floorName){
+        List<Floor> floorList = Adapter.retrieveFloorList();
+        if( floorList != null ){
+            for( Floor floor : floorList ){
+                if( (Language.FLOOR + " " + floor.getNumber()).equals(floorName) ){
+                    return floor;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Floor getFloorOfTable(String tableId){
+        List<Floor> floorList = Adapter.retrieveFloorList();
+        if( floorList != null ){
+            for( Floor floor : floorList ){
+                if( floor.getTableIdList().contains(tableId) ){
+                    return floor;
+                }
+            }
+        }
+        return null;
+    }
+    
+    public static Category getCategoryByName(String categoryName){
+        List<Category> cateList = Adapter.retrieveCategoryList();
+        if( cateList != null ){
+            for( Category cate : cateList ){
+                if( cate.getName().equals(categoryName) ){
+                    return cate;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Category getCategoryOfFood(String foodId){
+        List<Category> cateList = Adapter.retrieveCategoryList();
+        if( cateList != null ){
+            for( Category cate : cateList ){
+                if( cate.getFoodIdList().contains(foodId) ){
+                    return cate;
+                }
+            }
+        }
+        return null;
+    }
 }

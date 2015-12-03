@@ -38,7 +38,10 @@ public class CategoryForm extends Window implements ViewInterface{
     private STATE state;
     private Category category;
     public CategoryForm(Category _category, STATE _state){
-        this.setCaption("New Category");
+        category = _category;
+        state = _state;
+        String caption = ( state == STATE.ADDNEW) ? "Danh mục mới" : "Chi tiết danh mục";
+        this.setCaption(caption);
         this.setModal(true);
         this.setResizable(false);
         this.setClosable(true);
@@ -47,8 +50,6 @@ public class CategoryForm extends Window implements ViewInterface{
         this.setHeight("240px");
         this.center();
 
-        category = _category;
-        state = _state;
         categoryItem = new PropertysetItem();
         categoryItem.addItemProperty("code", new ObjectProperty<String>(category.getCode()));
         categoryItem.addItemProperty("name", new ObjectProperty<String>(category.getName()));
@@ -73,7 +74,7 @@ public class CategoryForm extends Window implements ViewInterface{
                 if( codeField.getValue().equals("") && nameField.getValue().equals("") ){
                     throw new CommitException("Code or name cannot be empty!");
                 }
-                else if( Adapter.isCategoryNameExist(nameField.getValue()) ){
+                else if( state == STATE.ADDNEW && Adapter.isCategoryNameExist(nameField.getValue()) ){
                     throw new CommitException("Category is already exist!");
                 }
             }

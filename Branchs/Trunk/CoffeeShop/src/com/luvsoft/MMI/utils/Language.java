@@ -54,6 +54,7 @@ public class Language {
                 CANCEL_ORDER = "Cancel order";
                 STATISTIC = "Statistic";
                 FOOD_MANAGEMENT = "Food Management";
+                TABLE_MANAGEMENT = "Table Management";
                 CONFIGURATION = "Configuration";
                 CHOOSE_DATE = "Choose the date range";
                 FROM_DATE = "From Date: ";
@@ -64,6 +65,10 @@ public class Language {
                 DELETE_FOODS = "Remove food";
                 ADD_CATEGORY = "Add category";
                 DELETE_CATEGORY = "Remove category";
+                ADD_TABLE = "Add table";
+                ADD_FLOOR = "Add floor";
+                DELETE_TABLES = " Remove table";
+                DELETE_FLOOR = "Remove floor";
 
                 NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
 
@@ -126,6 +131,7 @@ public class Language {
                 STATISTIC = "Thống Kê";
                 NO_ORDER_IN_ORDER_LIST = "Hiện tại chưa có bàn nào đặt món!";
                 FOOD_MANAGEMENT = "Quản Lí Món";
+                TABLE_MANAGEMENT = "Quản Lí Bàn";
                 CONFIGURATION = "Cấu Hình";
                 CHOOSE_DATE = "Chọn khoảng thời gian";
                 FROM_DATE = "Từ Ngày: ";
@@ -136,6 +142,10 @@ public class Language {
                 DELETE_FOODS = "Xóa món";
                 ADD_CATEGORY = "Thêm danh mục";
                 DELETE_CATEGORY = "Xóa danh mục";
+                ADD_TABLE = "Thêm bàn";
+                ADD_FLOOR = "Thêm tầng";
+                DELETE_TABLES = " Xóa bàn";
+                DELETE_FLOOR = "Xóa tầng";
 
                 // Errors
                 ERROR = "Lỗi";
@@ -199,6 +209,7 @@ public class Language {
     public static String NOTE;
     public static String STATISTIC;
     public static String FOOD_MANAGEMENT;
+    public static String TABLE_MANAGEMENT;
     public static String CONFIGURATION;
     public static String CHOOSE_DATE;
     public static String FROM_DATE;
@@ -208,6 +219,10 @@ public class Language {
     public static String DELETE_FOODS;
     public static String ADD_CATEGORY;
     public static String DELETE_CATEGORY;
+    public static String ADD_FLOOR;
+    public static String ADD_TABLE;
+    public static String DELETE_FLOOR;
+    public static String DELETE_TABLES;
 
     // Currency
     public static String CURRENCY_SYMBOL;

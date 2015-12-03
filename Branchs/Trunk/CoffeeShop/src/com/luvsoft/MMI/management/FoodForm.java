@@ -46,7 +46,10 @@ public class FoodForm extends Window implements ViewInterface{
     private Food food;
 
     public FoodForm(Food _food, STATE _state){
-        this.setCaption("New Category");
+        state = _state;
+        food = _food;
+        String caption = ( state == STATE.ADDNEW) ? "Thêm món mới" : "Chi tiết món";
+        this.setCaption(caption);
         this.setModal(true);
         this.setResizable(false);
         this.setClosable(true);
@@ -54,9 +57,7 @@ public class FoodForm extends Window implements ViewInterface{
         this.setWidth("340px");
         this.setHeight("310px");
         this.center();
-
-        state = _state;
-        food = _food;
+        
         foodItem = new PropertysetItem();
         foodItem.addItemProperty("code", new ObjectProperty<String>(food.getCode()));
         foodItem.addItemProperty("name", new ObjectProperty<String>(food.getName()));
@@ -85,8 +86,9 @@ public class FoodForm extends Window implements ViewInterface{
         cbType.setRequired(true);
         cbType.setResponsive(true);
 
-        if( getCategoryOfFood(food) != null ){
-            cbType.setValue(getCategoryOfFood(food).getName());
+        Category cate = Adapter.getCategoryOfFood(food.getId());
+        if( cate != null ){
+            cbType.setValue(cate.getName());
         }
 
         // Now create the binder and bind the fields
@@ -150,7 +152,7 @@ public class FoodForm extends Window implements ViewInterface{
                 }
 
                 // Remove food id from previous category
-                Category preCate = getCategoryOfFood(food);
+                Category preCate = Adapter.getCategoryOfFood(food.getId());
                 if(preCate != null){
                     List<String> foodIds = preCate.getFoodIdList();
                     foodIds.remove(food.getId());
@@ -160,7 +162,7 @@ public class FoodForm extends Window implements ViewInterface{
                 }
 
                 // Add to selected category
-                Category newCate = getCategoryByName(cbType.getValue().toString());
+                Category newCate = Adapter.getCategoryByName(cbType.getValue().toString());
                 if( newCate != null ){
                     List<String> foodIds = newCate.getFoodIdList();
                     foodIds.add(food.getId());
@@ -225,30 +227,6 @@ public class FoodForm extends Window implements ViewInterface{
         //this.setComponentAlignment(lblMsg, Alignment.MIDDLE_CENTER);
         vtcLayout.setSpacing(true);
         this.setContent(vtcLayout);
-    }
-
-    private Category getCategoryByName(String categoryName){
-        List<Category> cateList = Adapter.retrieveCategoryList();
-        if( cateList != null ){
-            for( Category cate : cateList ){
-                if( cate.getName().equals(categoryName) ){
-                    return cate;
-                }
-            }
-        }
-        return null;
-    }
-
-    private Category getCategoryOfFood(Food food){
-        List<Category> cateList = Adapter.retrieveCategoryList();
-        if( cateList != null ){
-            for( Category cate : cateList ){
-                if( cate.getFoodIdList().contains(food.getId()) ){
-                    return cate;
-                }
-            }
-        }
-        return null;
     }
 
     @Override

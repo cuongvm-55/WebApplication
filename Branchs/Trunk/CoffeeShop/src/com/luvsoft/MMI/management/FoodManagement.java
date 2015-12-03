@@ -237,7 +237,15 @@ public class FoodManagement extends Window implements ViewInterface{
                             public void onClose(ConfirmDialog dialog) {
                                 if (dialog.isConfirmed()) {
                                     for( int i = 0; i < toBeDeletedFoods.size(); i++ ){
-                                        Adapter.removeFood(toBeDeletedFoods.get(i));
+                                        String foodId = toBeDeletedFoods.get(i);
+                                        Adapter.removeFood(foodId);
+                                        
+                                        // update corresponding category
+                                        Category cate = Adapter.getCategoryOfFood(foodId);
+                                        if( cate != null ){
+                                            cate.getFoodIdList().remove(foodId);
+                                            Adapter.updateCategory(cate.getId(), cate);
+                                        }
                                     }
 
                                     // Refresh

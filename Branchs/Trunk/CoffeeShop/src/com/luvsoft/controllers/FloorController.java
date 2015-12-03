@@ -42,4 +42,50 @@ public class FloorController extends AbstractController{
     public boolean setTableStatus(String tableId, Types.State status){
         return tableFacade.updateFieldValue(tableId, Table.DB_FIELD_NAME_STATE, status.toString());
     }
+    
+    /**
+     * Add new floor
+     */
+    public boolean addNewFloor(Floor floor){
+        return floorFacade.save(floor);
+    }
+
+    /**
+     * Update floor
+     */
+    public boolean updateFloor(String floorId, Floor floor){
+        return floorFacade.update(floorId, floor);
+    }
+
+    /**
+     * Add new table
+     */
+    public boolean addNewTable(Table table){
+        return tableFacade.save(table);
+    }
+
+    /**
+     * Update table
+     */
+    public boolean updateTable(String tableId, Table table){
+        return tableFacade.update(tableId, table);
+    }
+    
+    /**
+     * Remove table
+     * @param tableId
+     * @return
+     */
+    public boolean removeTable(String tableId){
+        return tableFacade.removeById(tableId);
+    }
+    
+    /**
+     * Remove floor
+     * @param floorId
+     * @return
+     */
+    public boolean removeFloor(String floorId){
+        return floorFacade.removeById(floorId);
+    }
 }
