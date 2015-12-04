@@ -7,7 +7,10 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.CoffeeshopUI;
 import com.luvsoft.MMI.order.OrderDetailRecord.ChangedFlag;
+import com.luvsoft.MMI.threads.Broadcaster;
+import com.luvsoft.MMI.threads.NewOrderManager;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.OrderDetail;
@@ -364,14 +367,12 @@ public class OrderInfoView extends AbstractOrderView {
         textFieldpaidAmount.setValue(paidAmount + "");
         textFieldpaidAmount
                 .addStyleName("v-textfield-dashing bold TEXT_RED FONT_TAHOMA");
-        layout.addComponents(lbPaidAmount, textFieldpaidAmount,
+        layout.addComponents(lbTotalAmount, lbPaidAmount, textFieldpaidAmount,
                 lbCurrencySymbol);
         layout.setSpacing(true);
 
-        container.addComponents(lbTableName, txtNote, tbOrderDetails,
-                lbTotalAmount, layout, buildFooter());
-        container.setExpandRatio(lbTableName, 0.7f);
-        container.setExpandRatio(txtNote, 1.0f);
+        container.addComponents(lbTableName, txtNote, tbOrderDetails, layout, buildFooter());
+        container.setExpandRatio(txtNote, 2.0f);
         container.setExpandRatio(tbOrderDetails, 7.0f);
         // container.setExpandRatio(layoutOrderHandling, 3.0f);
         container.setResponsive(true);
@@ -578,10 +579,11 @@ public class OrderInfoView extends AbstractOrderView {
                 if( ret == true ) {
                     // Change table state to waiting when we have new order or
                     // change current order
+                    Broadcaster.broadcast(CoffeeshopUI.NEW_ORDER_MESSAGE+"::"+getCurrentTable().getNumber());
                     Adapter.changeTableState(getCurrentTable().getId(),
                             State.WAITING);
-                    (((ChangeTableStateView) getParentView()).getParentView())
-                            .reloadView();
+                    NewOrderManager waitingTimeThread = new NewOrderManager(currentOrder);
+                    waitingTimeThread.start();
                 }
 
                 // Clear data
@@ -621,9 +623,8 @@ public class OrderInfoView extends AbstractOrderView {
                         Adapter.changeTableState(currentOrder.getTableId(),
                                 Types.State.PAID);
                     }
-                    (((ChangeTableStateView) getParentView()).getParentView())
-                            .reloadView();
                     close();// close the window
+                    Broadcaster.broadcast(CoffeeshopUI.ORDER_WAS_PAID+"::"+getCurrentTable().getNumber());
                 }
             }
         });

@@ -30,6 +30,7 @@ public class Language {
                 WAITER = "Waiter";
                 BARTENDER = "Bartender";
                 MANAGEMENT = "Management";
+                ORDER = "Order";
                 
                 // States
                 COMPLETED = "Completed";
@@ -81,7 +82,12 @@ public class Language {
                 CANNOT_CANCEL_ORDER = "Cannot change table state to Cancel, curent Order is Paid. Please use Empty instead of.";
                 // Warnings
                 WARNING = "Warning";
-                
+                HAVE_NEW_ORDER = "One table has new order";
+                PAY_ATTENTION = "Pay Attention";
+                ORDER_IN_TABLE = "Order in table ";
+                HAS_BEEN_CANCELED = " has been canceled";
+                ORDERED = " ordered";
+
                 DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
                 DATE_TIME_FORMAT_DATE_ONLY = "yyyy/MM/dd";
                 FROM = "From";
@@ -109,6 +115,7 @@ public class Language {
                 WAITER = "Nhân Viên Phục Vụ";
                 BARTENDER = "Nhân Viên Pha Chế";
                 MANAGEMENT = "Quản Lý";
+                ORDER = "Đặt món";
 
                 // States
                 COMPLETED = "Xong";
@@ -155,10 +162,15 @@ public class Language {
 
                 // Errors
                 ERROR = "Lỗi";
-                CANNOT_CHANGE_TABLE_STATE = "Không thể chuyển trạng thái Trống, hóa đơn chưa Thanh toán! Hãy nhấn Hủy nếu muốn hủy hóa đơn này";
-                CANNOT_CANCEL_ORDER = "Không thể chuyển trạng thái Hủy, hóa đơn đã thanh toán. Hãy chọn Trống nếu muốn tiếp tục";
+                CANNOT_CHANGE_TABLE_STATE = "Không thể chuyển trạng thái TRỐNG, hóa đơn chưa Thanh toán! Hãy nhấn HỦY nếu muốn hủy hóa đơn này";
+                CANNOT_CANCEL_ORDER = "Không thể chuyển trạng thái HỦY, hóa đơn đã thanh toán. Hãy chọn TRỐNG nếu muốn tiếp tục";
                 // Warnings
                 WARNING = "Cảnh báo";
+                HAVE_NEW_ORDER = "Có bàn đặt món";
+                PAY_ATTENTION = "Chú Ý";
+                ORDER_IN_TABLE = "Đặt món ở bàn ";
+                HAS_BEEN_CANCELED = " đã bị HỦY";
+                ORDERED = " đã đặt món";
 
                 DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
                 DATE_TIME_FORMAT_DATE_ONLY = "dd/MM/yyyy";
@@ -245,10 +257,16 @@ public class Language {
     public static String ERROR;
     public static String CANNOT_CHANGE_TABLE_STATE;
     public static String CANNOT_CANCEL_ORDER;
+    public static String PAY_ATTENTION;
 
     // Warnings
     public static String WARNING;
-    
+    public static String HAVE_NEW_ORDER;
+    public static String ORDER_IN_TABLE;
+    public static String HAS_BEEN_CANCELED;
+    public static String ORDERED;
+    public static String ORDER;
+
     // Date time format
     public static String DATE_TIME_FORMAT;
     public static String DATE_TIME_FORMAT_DATE_ONLY;

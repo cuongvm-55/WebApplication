@@ -34,29 +34,32 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
 
     public void initView(Component content, String title, Component additionalComponent) {
         this.content = content;
-        this.setStyleName("elementContainerStyle");
+        this.addStyleName("elementContainerStyle");
 
         this.horzFloorTitleContainer = new HorizontalLayout();
-        this.horzFloorTitleContainer.setStyleName("card");
         this.horzFloorTitleContainer.setResponsive(true);
         this.horzFloorTitleContainer.setWidth("100%");
-        this.horzFloorTitleContainer.setStyleName("BACKGROUND_BLUE TEXT_WHITE");
+        this.horzFloorTitleContainer.addStyleName("BACKGROUND_BLUE TEXT_WHITE");
 
         this.btnExpandElement = new Button();
-        this.btnExpandElement.setStyleName("icon-only primary TEXT_WHITE");
+        this.btnExpandElement.addStyleName("icon-only primary TEXT_WHITE");
         this.btnExpandElement.setIcon(FontAwesome.CHEVRON_DOWN);
         this.btnExpandElement.setHeight("100%");
+        this.btnExpandElement.setWidth("60%");
 
         this.lblFloorName = new Label(title);
-        this.lblFloorName.setStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_CENTER");
+        this.lblFloorName.addStyleName("bold FONT_OVER_OVERSIZE FONT_TAHOMA TEXT_CENTER");
         this.lblFloorName.setWidth("100%");
 
         if( additionalComponent == null ){
             addComponent = new Label("");
             addComponent.setHeight("100%");
+            addComponent.setWidth("60%");
         }
         else{
             addComponent = additionalComponent;
+            addComponent.setHeight("100%");
+            addComponent.setWidth("60%");
         }
 
         // Add label and button to element container

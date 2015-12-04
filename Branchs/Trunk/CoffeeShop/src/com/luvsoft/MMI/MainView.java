@@ -35,9 +35,14 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
     private Button btnWaiterView;
     private Button btnBartenderView;
     private Button btnManagementView;
+    private OrderListView orderListView;
+    private TableListView tableListView;
 
     public MainView() {
         super();
+        orderListView = new OrderListView();
+        tableListView = new TableListView();
+        tableListView.setParentView(this);
         createView();
     }
 
@@ -64,9 +69,8 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
 
         // Add all layouts to the container
         this.addComponents(horzTitleContainer, mainLayout, popLeftMenu, popEditName);
-        this.setExpandRatio(horzTitleContainer, 1.2f);
+        this.setExpandRatio(horzTitleContainer, 2.0f);
         this.setExpandRatio(mainLayout, 10.0f);
-        //this.setComponentAlignment(orderInfoPopup, Alignment.TOP_CENTER);
 
         // Add event listener
         this.addClickListener();
@@ -107,14 +111,12 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
         btnEditName.setResponsive(true);
         btnEditName.setSizeFull();
 
-        horzTitleContainer.addComponent(btnMenu);
+        horzTitleContainer.addComponents(btnMenu, lblStaffName, btnEditName);
         horzTitleContainer.setExpandRatio(btnMenu, 0.7f);
 
-        horzTitleContainer.addComponent(lblStaffName);
         horzTitleContainer.setExpandRatio(lblStaffName, 2.6f);
         horzTitleContainer.setComponentAlignment(lblStaffName, Alignment.MIDDLE_CENTER);
 
-        horzTitleContainer.addComponent(btnEditName);
         horzTitleContainer.setExpandRatio(btnEditName, 0.7f);
         horzTitleContainer.setComponentAlignment(btnEditName, Alignment.MIDDLE_RIGHT);
         
@@ -170,14 +172,14 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
             popLeftMenu.setPopupVisible(false);
         } else if(event.getParameters().equals(CoffeeshopUI.TABLE_LIST_VIEW)) {
             mainLayout.removeAllComponents();
-            TableListView tableListView = new TableListView();
             tableListView.setParentView(this);
             tableListView.createView();
             mainLayout.addComponent(tableListView);
             popLeftMenu.setPopupVisible(false);
         } else if(event.getParameters().equals(CoffeeshopUI.ORDER_LIST_VIEW)) {
             mainLayout.removeAllComponents();
-            mainLayout.addComponent(new OrderListView());
+            orderListView.createView();
+            mainLayout.addComponent(orderListView);
             popLeftMenu.setPopupVisible(false);
 
         } else if(event.getParameters().equals(CoffeeshopUI.MANAGEMENT_VIEW)) {
@@ -287,5 +289,21 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
     @Override
     public void setParentView(ViewInterface parentView) {
         // Nothing to do
+    }
+
+    public OrderListView getOrderListView() {
+        return orderListView;
+    }
+
+    public void setOrderListView(OrderListView orderListView) {
+        this.orderListView = orderListView;
+    }
+
+    public TableListView getTableListView() {
+        return tableListView;
+    }
+
+    public void setTableListView(TableListView tableListView) {
+        this.tableListView = tableListView;
     }
 }

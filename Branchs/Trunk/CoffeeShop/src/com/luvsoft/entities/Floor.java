@@ -1,12 +1,14 @@
 package com.luvsoft.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.mongodb.BasicDBObject;
 
-public class Floor extends AbstractEntity implements Comparable<Floor> {
+public class Floor extends AbstractEntity implements Comparable<Floor>, Serializable {
+    private static final long serialVersionUID = 6493408468507998364L;
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_CODE = "Code";
     public static final String DB_FIELD_NAME_NUMBER = "Number";

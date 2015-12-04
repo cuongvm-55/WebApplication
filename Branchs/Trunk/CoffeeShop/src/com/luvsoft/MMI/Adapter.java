@@ -109,7 +109,7 @@ public class Adapter {
         return orderCtrl.getOrderListIgnoreStates(state1, state2, begDate, endDate);
     }
 
-    public static boolean updateFieldValueOfOrder(String orderId, String fieldName, String fieldVale){
+    public static boolean updateFieldValueOfOrder(String orderId, String fieldName, Object fieldVale){
         return orderCtrl.updateFieldValueOfOrder(orderId, fieldName, fieldVale);
     }
 

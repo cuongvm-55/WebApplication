@@ -3,10 +3,13 @@ package com.luvsoft.MMI.components;
 import java.util.List;
 
 import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.CoffeeshopUI;
 import com.luvsoft.MMI.OrderListView;
 import com.luvsoft.MMI.ViewInterface;
 import com.luvsoft.MMI.order.OrderDetailRecord;
 import com.luvsoft.MMI.order.OrderInfo;
+import com.luvsoft.MMI.threads.Broadcaster;
+import com.luvsoft.MMI.threads.NewOrderManager;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;
@@ -14,8 +17,6 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.server.Page;
-import com.vaadin.shared.Position;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -25,7 +26,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.DefaultFieldFactory;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
@@ -72,6 +72,9 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                     Object propertyId, Component uiContext) {
                 if (Language.STATUS.equals(propertyId)) {
                     ComboBox select = new ComboBox();
+                    select.setNullSelectionAllowed(false);
+                    select.setScrollToSelectedItem(true);
+                    select.setTextInputAllowed(false);
                     select.addItem(Language.CANCELED/*Types.State.CANCELED.toString()*/);
                     select.addItem(Language.WAITING/*Types.State.WAITING.toString()*/);
                     select.addItem(Language.COMPLETED/*Types.State.COMPLETED.toString()*/);
@@ -96,6 +99,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                 //return super.createField(container, itemId, propertyId, uiContext);
             }
         });
+
         tbOrderInfos.setEditable(true);
     }
 
@@ -104,7 +108,9 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         lbTableName = new Label();
         tbOrderInfos = new Table();
         btnConfFinish = new Button(Language.ALL_DONE);
-        lbTableName.setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+
+        lbTableName.addStyleName("bold FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+        lbTableName.addStyleName("FONT_OVER_OVERSIZE");
         lbTableName.setWidth("100%");
 
         tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
@@ -113,9 +119,11 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         tbOrderInfos.addContainerProperty(Language.STATUS, String.class, null);
         tbOrderInfos.addContainerProperty(new String("orderdetailId"), String.class, null);
         tbOrderInfos.setPageLength(tbOrderInfos.size());
+        tbOrderInfos.setResponsive(true);
         tbOrderInfos.setSizeFull();
 
-        btnConfFinish.setStyleName("customizationButton text-align-left");
+        btnConfFinish.addStyleName("customizationButton text-align-left");
+        btnConfFinish.addStyleName("BUTTON_GIGANTIC");
         btnConfFinish.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -128,18 +136,13 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                             Adapter.changeOrderDetailState(orderDetailId, Types.State.COMPLETED);
                         }
                     }
-                    // @todo: send notification about the finish of making foods
-                    OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
-                    // notify message
-                    Notification notify = new Notification("<b>Alert</b>",
-                            "<i>Đồ uống " + orderInfo.getTableName() +" đã xong!</i>",
-                            Notification.Type.TRAY_NOTIFICATION  , true);
-                    notify.setPosition(Position.BOTTOM_RIGHT);
-                    notify.show(Page.getCurrent());
 
                     // Set table status to be UNPAID
                     Adapter.changeTableState(order.getTableId(), Types.State.UNPAID);
-                    parentView.reloadView();
+
+                    OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+                    Broadcaster.broadcast(CoffeeshopUI.ORDER_COMPLETED_MESSAGE+"::"+orderInfo.getTableName());
+                    NewOrderManager.interruptWaitingOrderThread(order);
                 }
             }
         });

@@ -6,10 +6,15 @@ import com.luvsoft.MMI.components.CoffeeTableElement;
 import com.luvsoft.MMI.components.CustomizationTreeElement;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Floor;
+import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Table;
+import com.luvsoft.entities.Types.State;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
+import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
@@ -44,7 +49,21 @@ public class TableListView extends Panel implements ViewInterface {
             for (int i = 0; i < tableList.size(); i++) {
                 Table table = tableList.get(i);
                 System.out.println("TableId: " + table.getId());
-                table.setWaitingTime(i);
+                List<Order> orderList = Adapter.getOrderListIgnoreStates(State.PAID, State.CANCELED, null, null);
+                Order currentOrder = null;
+                for (Order order : orderList) {
+                    if( order.getTableId().equals(table.getId()) ) {
+                        currentOrder = order;
+                        break;
+                    }
+                }
+
+                if(currentOrder != null) {
+                    table.setWaitingTime(currentOrder.getWaitingTime());
+                } else {
+                    table.setWaitingTime(0);
+                }
+
                 table.setStaffName(staffName);
                 CoffeeTableElement tableElement = new CoffeeTableElement(table, this);
                 gridElementContent.addComponent(tableElement);
@@ -65,6 +84,36 @@ public class TableListView extends Panel implements ViewInterface {
     @Override
     public void reloadView() {
         createView();
+    }
+
+    public void haveNewOrderCompleted(String tableNumber) {
+        // notify message
+        Notification notify = new Notification("<b>"+Language.PAY_ATTENTION+"</b>",
+                "<i>" + Language.ORDER + " " + tableNumber + " " + Language.COMPLETED+"</i>",
+                Notification.Type.WARNING_MESSAGE , true);
+        notify.setPosition(Position.BOTTOM_RIGHT);
+        notify.show(Page.getCurrent());
+
+        reloadView();
+    }
+
+    public void orderWasPaid(String tableNumber) {
+        // notify message
+        Notification notify = new Notification("<b>"+Language.PAY_ATTENTION+"</b>",
+                "<i>Bàn " + tableNumber +" đã thanh toán</i>",
+                Notification.Type.WARNING_MESSAGE , true);
+        notify.setPosition(Position.BOTTOM_RIGHT);
+        notify.show(Page.getCurrent());
+
+        reloadView();
+    }
+
+    public void haveCanceledOrder() {
+        reloadView();
+    }
+
+    public void updateWaitingTime() {
+        reloadView();
     }
 
     @Override

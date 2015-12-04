@@ -12,7 +12,9 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author datnq.55
@@ -50,8 +52,8 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         this.setSizeFull();
 
         this.btnTableState = new Image();
-        this.btnTableState.setWidth("50%");
-        this.btnTableState.setHeight("50%");
+        this.btnTableState.setWidth("70%");
+        this.btnTableState.setHeight("70%");
         this.btnTableState.setStyleName("hoverImage");
         this.setButtonResource(state);
         
@@ -68,7 +70,8 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         }
 
         this.lblTableNumber = new Label(Language.TABLE + " " + table.getNumber());
-        this.lblTableNumber.setStyleName("huge bold TEXT_BLUE");
+        this.lblTableNumber.addStyleName("bold TEXT_BLUE");
+        this.lblTableNumber.addStyleName(ValoTheme.LABEL_H1);
         this.lblTableNumber.setSizeUndefined();
 
         this.addComponents(btnTableState, lblWaitingTime, lblTableNumber);
@@ -158,7 +161,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
             changeTableStateView.setParentView(tableListView);
             changeTableStateView.setCurrentTable(table);
             changeTableStateView.createView();
-            tableListView.getUI().addWindow(changeTableStateView);
+            UI.getCurrent().addWindow(changeTableStateView);
         }
     }
 

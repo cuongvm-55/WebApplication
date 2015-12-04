@@ -5,6 +5,9 @@ import java.util.List;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.CoffeeshopUI;
+import com.luvsoft.MMI.threads.Broadcaster;
+import com.luvsoft.MMI.threads.NewOrderManager;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;
@@ -50,7 +53,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
         Label lblTableNumber = new Label(Language.TABLE + " "
                 + getCurrentTable().getNumber());
         lblTableNumber
-                .addStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+                .addStyleName("bold FONT_OVER_OVERSIZE FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lblTableNumber.setWidth("100%");
 
         VerticalLayout vtcPopupContainer = new VerticalLayout();
@@ -58,11 +61,20 @@ public class ChangeTableStateView extends AbstractOrderView implements
 
         optionState = new OptionGroup();
         optionState.addItems(Language.EMPTY, Language.WAITING,
-                Language.CANCEL_ORDER);
+                Language.CANCEL_ORDER, Language.PAID, Language.UNPAID);
+        optionState.setItemEnabled(Language.PAID, false);
+        optionState.setItemEnabled(Language.UNPAID, false);
+        optionState.addStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_BLUE");
+        optionState.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
+        optionState.addStyleName(ValoTheme.OPTIONGROUP_LARGE);
+
         selectOptionState(getCurrentTable().getState());
 
         vtcPopupContainer.addComponents(lblTableNumber, optionState,
                 buildFooter());
+        vtcPopupContainer.setExpandRatio(lblTableNumber, 2.0f);
+        vtcPopupContainer.setExpandRatio(optionState, 5.0f);
+        vtcPopupContainer.setComponentAlignment(optionState, Alignment.MIDDLE_CENTER);
 
         setContent(vtcPopupContainer);
         // Add click listeners
@@ -128,11 +140,15 @@ public class ChangeTableStateView extends AbstractOrderView implements
                                         Adapter.changeOrderState(
                                                 currentOrder.getId(),
                                                 State.CANCELED);
+                                        for (String orderDetailId : currentOrder.getOrderDetailIdList()) {
+                                            Adapter.changeOrderDetailState(orderDetailId, State.CANCELED);
+                                        }
                                         Adapter.changeTableState(
                                                 getCurrentTable().getId(),
                                                 newState);
-                                        getParentView().reloadView();
+                                        NewOrderManager.interruptWaitingOrderThread(currentOrder);
                                         close();
+                                        Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+getCurrentTable().getNumber());
                                     } else if( getCurrentTable().getState() == Types.State.PAID ) {
                                         Notification notify = new Notification(
                                                 "<b>Error</b>",
@@ -154,7 +170,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
             }
             else {
                 Adapter.changeTableState(getCurrentTable().getId(), newState);
-                getParentView().reloadView();
+                Broadcaster.broadcast(CoffeeshopUI.CHANGE_TABLE_STATE);
                 close();
             }
         }
@@ -167,16 +183,19 @@ public class ChangeTableStateView extends AbstractOrderView implements
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
 
         btnConfirm = new Button(Language.CONFIRM);
-        btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnConfirm.addStyleName("BUTTON_GIGANTIC");
         btnConfirm.addStyleName("customizationButton");
+        btnConfirm.setHeightUndefined();
         btnConfirm.setClickShortcut(KeyCode.ENTER, null);
 
         btnAddOrder = new Button(Language.ADD_ORDER);
-        btnAddOrder.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnAddOrder.addStyleName("BUTTON_GIGANTIC");
         btnAddOrder.addStyleName("customizationButton");
+        btnAddOrder.setHeightUndefined();
 
         footer.addComponents(btnAddOrder, btnConfirm);
-        footer.setComponentAlignment(btnAddOrder, Alignment.MIDDLE_CENTER);
+        footer.setComponentAlignment(btnAddOrder, Alignment.MIDDLE_RIGHT);
+        footer.setComponentAlignment(btnConfirm, Alignment.MIDDLE_LEFT);
         return footer;
     }
 

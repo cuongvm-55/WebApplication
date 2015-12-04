@@ -125,7 +125,7 @@ public abstract class AbstractFacade {
      * Update field value, SET field="value" WHERE objectId="ObjectId"
      */
     public boolean updateFieldValue(String objectId, String fieldName,
-            String value) {
+            Object value) {
         try {
             BasicDBObject newDocument = new BasicDBObject();
             newDocument.append("$set", new BasicDBObject(fieldName, value));

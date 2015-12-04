@@ -3,6 +3,7 @@ package com.luvsoft.MMI.utils;
 import com.luvsoft.MMI.CoffeeshopUI;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.UI;
 
 @SuppressWarnings("serial")
 public class MenuButtonListener implements ClickListener{
@@ -14,6 +15,6 @@ public class MenuButtonListener implements ClickListener{
     }
     @Override
     public void buttonClick(ClickEvent event) {
-        CoffeeshopUI.navigator.navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + menuItem);
+        UI.getCurrent().getNavigator().navigateTo(CoffeeshopUI.MAIN_VIEW + "/" + menuItem);
     }
 }

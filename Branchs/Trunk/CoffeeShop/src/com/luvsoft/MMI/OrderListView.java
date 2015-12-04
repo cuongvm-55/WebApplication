@@ -7,8 +7,11 @@ import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;
+import com.vaadin.server.Page;
+import com.vaadin.shared.Position;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
@@ -21,19 +24,57 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 public class OrderListView extends Panel implements ViewInterface{
     private VerticalLayout vtcLayout;
-    
+    public static OrderListView orderListView;
+
     // data
     private List<Order> orderList; // Current order list
 
+    public static OrderListView getInstance() {
+        if(orderListView == null) {
+            orderListView = new OrderListView();
+        }
+        return orderListView;
+    }
+
     public OrderListView() {
         super();
-        createView();
     }
 
     @Override
     public void createView() {
         vtcLayout = new VerticalLayout();
         //vtcLayout.setSizeFull();
+        loadContent();
+        this.setContent(vtcLayout);
+        this.setSizeFull();
+    }
+
+    @Override
+    public void reloadView() {
+        createView();
+    }
+
+    public void haveNewOrder(String tableNumber) {
+        reloadView();
+
+        Notification notify = new Notification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
+                + Language.TABLE + " " + tableNumber + Language.ORDERED + "</i>",
+                Notification.Type.WARNING_MESSAGE, true);
+        notify.setPosition(Position.BOTTOM_RIGHT);
+        notify.show(Page.getCurrent());
+    }
+
+    public void haveCanceledOrder(String tableNumber) {
+        reloadView();
+
+        Notification notify = new Notification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
+                + Language.ORDER_IN_TABLE + tableNumber + Language.HAS_BEEN_CANCELED + "</i>",
+                Notification.Type.WARNING_MESSAGE, true);
+        notify.setPosition(Position.BOTTOM_RIGHT);
+        notify.show(Page.getCurrent());
+    }
+
+    private void loadContent() {
         loadOrderList();
         if( orderList.isEmpty() ){
             // No Order in orderlist
@@ -47,21 +88,11 @@ public class OrderListView extends Panel implements ViewInterface{
             OrderElement orderElement = new OrderElement(order);
             orderElement.setParentView(this);
             orderElement.populate(orderInfo);
-            //HorizontalLayout topLine = new HorizontalLayout();
-            //topLine.setSizeFull();
-            //topLine.setStyleName("top-line");
             HorizontalLayout bottomLine = new HorizontalLayout();
             bottomLine.setSizeFull();
             bottomLine.setStyleName("bottom-line");
             vtcLayout.addComponents(/*topLine,*/ orderElement, bottomLine);
         }
-        this.setContent(vtcLayout);
-        this.setSizeFull();
-    }
-
-    @Override
-    public void reloadView() {
-        createView();
     }
 
     @Override
