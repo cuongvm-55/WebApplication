@@ -1,11 +1,10 @@
 package com.luvsoft.MMI.management;
 
-import org.bson.types.ObjectId;
+import java.io.File;
 
 import com.luvsoft.MMI.Adapter;
-import com.luvsoft.MMI.ViewInterface;
 import com.luvsoft.MMI.utils.Language;
-import com.luvsoft.entities.Category;
+import com.luvsoft.entities.Configuration;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -17,7 +16,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -29,19 +27,12 @@ import com.vaadin.ui.themes.ValoTheme;
  * This class is used to implement category form
  */
 @SuppressWarnings("serial")
-public class CategoryForm extends Window implements ViewInterface{
-    private PropertysetItem categoryItem;
-    private ViewInterface parentView;
-
-    private Label lblMsg;
-    static public enum STATE{UPDATE, ADDNEW};
-    private STATE state;
-    private Category category;
-    public CategoryForm(Category _category, STATE _state){
-        category = _category;
-        state = _state;
-        String caption = ( state == STATE.ADDNEW) ? Language.NEW_CATEGORY : Language.UPDATE_CATEGORY;
-        this.setCaption(caption);
+public class ConfigForm extends Window{
+    private PropertysetItem configItem;
+    private Configuration config;
+    public ConfigForm(Configuration _config){
+        this.config = _config;
+        this.setCaption(Language.CONFIGURATION);
         this.setModal(true);
         this.setResizable(false);
         this.setClosable(true);
@@ -50,56 +41,47 @@ public class CategoryForm extends Window implements ViewInterface{
         this.setHeight("240px");
         this.center();
 
-        categoryItem = new PropertysetItem();
-        categoryItem.addItemProperty("code", new ObjectProperty<String>(category.getCode()));
-        categoryItem.addItemProperty("name", new ObjectProperty<String>(category.getName()));
+        configItem = new PropertysetItem();
+        configItem.addItemProperty("supPincode", new ObjectProperty<String>(config.getSupPincode()));
+        configItem.addItemProperty("reportOutputDir", new ObjectProperty<String>(config.getReportOutputDir()));
 
-        TextField codeField = new TextField(Language.CODE);
-        codeField.setRequired(true);
+        TextField pincodeField = new TextField(Language.SUP_PINCODE);
+        pincodeField.setRequired(true);
 
-        TextField nameField = new TextField(Language.NAME);
-        nameField.setRequired(true);
+        TextField dirField = new TextField(Language.REPORT_OUTPUT_DIR);
+        dirField.setRequired(true);
 
         // Now create the binder and bind the fields
-        FieldGroup fieldGroup = new FieldGroup(categoryItem);
-        fieldGroup.bind(codeField, "code");
-        fieldGroup.bind(nameField, "name");
+        FieldGroup fieldGroup = new FieldGroup(configItem);
+        fieldGroup.bind(pincodeField, "supPincode");
+        fieldGroup.bind(dirField, "reportOutputDir");
         fieldGroup.setBuffered(true);
         fieldGroup.addCommitHandler(new CommitHandler() {
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 // validate data
-                if( codeField.getValue().equals("") && nameField.getValue().equals("") ){
-                    throw new CommitException("Code or name cannot be empty!");
+                if( pincodeField.getValue().equals("") && dirField.getValue().equals("") ){
+                    throw new CommitException("All fields are required!");
                 }
-                else if( state == STATE.ADDNEW && Adapter.isCategoryNameExist(nameField.getValue()) ){
-                    throw new CommitException("Category is already exist!");
+                else if(pincodeField.getValue().length() != Configuration.PINCODE_LENGTH){
+                    throw new CommitException("Invalid pincode!");
+                }
+                
+                // Check report output directory
+                File theDir = new File(dirField.getValue());
+                if( !theDir.exists() ){
+                    throw new CommitException("Invalid directory!");
                 }
             }
 
             @Override
             public void postCommit(CommitEvent commitEvent) throws CommitException {
                 // save data to database
-                // refresh parent view
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
-                category.setCode(item.getItemProperty("code").getValue().toString());
-                category.setName(item.getItemProperty("name").getValue().toString());
-                switch(state){
-                case ADDNEW:
-                    category.setId((new ObjectId()).toString());
-                    if( Adapter.addNewCategory(category)){
-                        parentView.reloadView();
-                        close();
-                    }
-                    break;
-                case UPDATE:
-                    if( Adapter.updateCategory(category.getId(), category) ){
-                        parentView.reloadView();
-                        close();
-                    }
-                    break;
-                default:
-                    break;
+                config.setSupPincode(item.getItemProperty("supPincode").getValue().toString());
+                config.setReportOutputDir(item.getItemProperty("reportOutputDir").getValue().toString());
+                if( Adapter.updateConfiguration(config) ){
+                    close();
                 }
             }
         });
@@ -114,7 +96,6 @@ public class CategoryForm extends Window implements ViewInterface{
                     fieldGroup.commit();
                 } catch (CommitException e) {
                     // e.printStackTrace();
-                    lblMsg.setValue("All field are required!");
                 }
             }
         });
@@ -125,43 +106,25 @@ public class CategoryForm extends Window implements ViewInterface{
         btnCancel.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                System.out.println("Discard...");
                 fieldGroup.discard();
-                parentView.reloadView();
                 close();
             }
         });
         HorizontalLayout hzLayout = new HorizontalLayout();
+        //hzLayout.setSizeFull();
         hzLayout.addComponents(btnSave, btnCancel);
         hzLayout.setComponentAlignment(btnSave, Alignment.MIDDLE_CENTER);
         hzLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
         hzLayout.setSpacing(true);
 
-        lblMsg = new Label("");
-        lblMsg.setSizeFull();
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(codeField, nameField, hzLayout);
-        vtcLayout.setComponentAlignment(codeField, Alignment.MIDDLE_CENTER);
-        vtcLayout.setComponentAlignment(nameField, Alignment.MIDDLE_CENTER);
+        vtcLayout.addComponents(pincodeField, dirField, hzLayout);
+        vtcLayout.setComponentAlignment(pincodeField, Alignment.MIDDLE_CENTER);
+        vtcLayout.setComponentAlignment(dirField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(hzLayout, Alignment.MIDDLE_CENTER);
         vtcLayout.setSpacing(true);
         this.setContent(vtcLayout);
-    }
-
-    @Override
-    public void createView() {
-    }
-
-    @Override
-    public void reloadView() {
-    }
-
-    @Override
-    public ViewInterface getParentView() {
-        return parentView;
-    }
-    @Override
-    public void setParentView(ViewInterface parentView) {
-        this.parentView = parentView;
     }
 }

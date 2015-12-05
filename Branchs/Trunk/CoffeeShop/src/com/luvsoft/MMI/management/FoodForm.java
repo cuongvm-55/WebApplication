@@ -48,7 +48,7 @@ public class FoodForm extends Window implements ViewInterface{
     public FoodForm(Food _food, STATE _state){
         state = _state;
         food = _food;
-        String caption = ( state == STATE.ADDNEW) ? "Thêm món mới" : "Chi tiết món";
+        String caption = ( state == STATE.ADDNEW) ? Language.NEW_FOOD : Language.UPDATE_FOOD;
         this.setCaption(caption);
         this.setModal(true);
         this.setResizable(false);
@@ -63,17 +63,16 @@ public class FoodForm extends Window implements ViewInterface{
         foodItem.addItemProperty("name", new ObjectProperty<String>(food.getName()));
         foodItem.addItemProperty("price", new ObjectProperty<Double>(food.getPrice()));
 
-        //this.setItemDataSource(item);
-        TextField codeField = new TextField("Code");
+        TextField codeField = new TextField(Language.CODE);
         codeField.setRequired(true);
 
-        TextField nameField = new TextField("Name");
+        TextField nameField = new TextField(Language.NAME);
         nameField.setRequired(true);
 
-        TextField priceField = new TextField("Price");
+        TextField priceField = new TextField(Language.PRICE);
         priceField.setRequired(true);
 
-        ComboBox cbType = new ComboBox("Category");
+        ComboBox cbType = new ComboBox(Language.CATEGORY);
         List<Category> cateList = Adapter.retrieveCategoryList();
         if( cateList != null ){
             for( Category cate : cateList ){
@@ -109,9 +108,13 @@ public class FoodForm extends Window implements ViewInterface{
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 // validate data
-                System.out.println("Pre commit...");
                 if( codeField.getValue().equals("") && nameField.getValue().equals("") ){
                     throw new CommitException("Code or name cannot be empty!");
+                }
+                try{
+                   Double.parseDouble(priceField.getValue());
+                }catch(Exception e){
+                    throw new CommitException("You must enter number value for price");
                 }
             }
 
@@ -119,17 +122,10 @@ public class FoodForm extends Window implements ViewInterface{
             public void postCommit(CommitEvent commitEvent) throws CommitException {
                 // save data to database
                 // refresh parent view
-                System.out.println("Post commit...");
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
                 food.setCode(item.getItemProperty("code").getValue().toString());
                 food.setName(item.getItemProperty("name").getValue().toString());
-                double price;
-                try{
-                    price = Double.parseDouble(item.getItemProperty("price").getValue().toString());
-                    food.setPrice(price);
-                }catch(Exception e){
-                    System.out.println("You must enter number value for price");
-                }
+                food.setPrice(Double.parseDouble(item.getItemProperty("price").getValue().toString()));
 
                 // save data
                 switch(state){
@@ -200,7 +196,6 @@ public class FoodForm extends Window implements ViewInterface{
         btnCancel.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                System.out.println("Discard...");
                 fieldGroup.discard();
                 parentView.reloadView();
                 close();

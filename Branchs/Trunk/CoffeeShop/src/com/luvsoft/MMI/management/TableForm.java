@@ -40,7 +40,7 @@ public class TableForm extends Window implements ViewInterface{
     private ViewInterface parentView;
 
     private Label lblMsg;
-    
+
     static public enum STATE{UPDATE, ADDNEW};
     private STATE state;
     private Table table;
@@ -48,7 +48,7 @@ public class TableForm extends Window implements ViewInterface{
     public TableForm(Table _table, STATE _state){
         state = _state;
         table = _table;
-        String caption = ( state == STATE.ADDNEW) ? "Thêm bàn mới" : "Chi tiết bàn";
+        String caption = ( state == STATE.ADDNEW) ? Language.NEW_TABLE : Language.UPDATE_TABLE;
         this.setCaption(caption);
         this.setModal(true);
         this.setResizable(false);
@@ -62,14 +62,13 @@ public class TableForm extends Window implements ViewInterface{
         tableItem.addItemProperty("code", new ObjectProperty<String>(table.getCode()));
         tableItem.addItemProperty("number", new ObjectProperty<String>(table.getNumber()+""));
 
-        //this.setItemDataSource(item);
-        TextField codeField = new TextField("Code");
+        TextField codeField = new TextField(Language.CODE);
         codeField.setRequired(true);
 
-        TextField numberField = new TextField("Number");
+        TextField numberField = new TextField(Language.NUMBER);
         numberField.setRequired(true);
 
-        ComboBox cbType = new ComboBox("Category");
+        ComboBox cbType = new ComboBox(Language.FLOOR);
         List<Floor> floorList = Adapter.retrieveFloorList();
         if( floorList != null ){
             for( Floor floor : floorList ){
@@ -104,11 +103,9 @@ public class TableForm extends Window implements ViewInterface{
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 // validate data
-                System.out.println("Pre commit...");
                 if( codeField.getValue().equals("") || numberField.getValue().equals("") ){
                     throw new CommitException("Code or name cannot be empty!");
                 }
-                
                 try{
                     Integer.parseInt(numberField.getValue().toString());
                 }catch(Exception e){
@@ -135,10 +132,6 @@ public class TableForm extends Window implements ViewInterface{
 
                     break;
                 case UPDATE:
-                    System.out.println("Update table: " + table.getId());
-                    System.out.println("Number: " + table.getNumber());
-                    System.out.println("Code: " + table.getCode());
-                    
                     if( !Adapter.updateTable(table.getId(), _table) ){
                         System.out.println("Fail to update food: " + table.getId() );
                     }

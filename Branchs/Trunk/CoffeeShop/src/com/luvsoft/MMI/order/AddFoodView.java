@@ -69,7 +69,15 @@ public class AddFoodView extends AbstractOrderView {
     @Override
     public void createView() {
         // Get all foods from database
-        listOfCategory = Adapter.retrieveCategoryList();
+        // Do not display category that has no food
+        List<Category> cateList = Adapter.retrieveCategoryList();
+        if(cateList != null){
+            for( Category cate : cateList ){
+                if( !cate.getFoodIdList().isEmpty() ){
+                    listOfCategory.add(cate);
+                }
+            }
+        }
 
         this.orderDetailRecordList = ((OrderInfoView) this.getParentView()).getOrderDetailRecordList();
         if (this.orderDetailRecordList == null) {

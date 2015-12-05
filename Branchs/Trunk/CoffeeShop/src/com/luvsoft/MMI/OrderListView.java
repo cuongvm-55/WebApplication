@@ -1,5 +1,6 @@
 package com.luvsoft.MMI;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.luvsoft.MMI.components.OrderElement;
@@ -120,7 +121,9 @@ public class OrderListView extends Panel implements ViewInterface{
      * This function loads all "current orders" that has state WAITING
      */
     public void loadOrderList(){
-        orderList = Adapter.getOrderListWithState(Types.State.WAITING, null, null);
+        List<Types.State> states = new ArrayList<Types.State>();
+        states.add(Types.State.WAITING);
+        orderList = Adapter.getOrderListWithStates(states, null, null);
     }
     public List<Order> getOrderList() {
         return orderList;

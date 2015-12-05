@@ -32,11 +32,16 @@ public class OrderController extends AbstractController{
      * Get all order that has Status = state in date range [begin, end]
      * begin & end = null --> get all
      */
-    public List<Order> getOrderListWithState(Types.State state, Date begDate, Date endDate){
+    public List<Order> getOrderListWithStates(List<Types.State> states, Date begDate, Date endDate){
         List<Order> list = new ArrayList<Order>();
-        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$eq", state.toString()));
+        List<String> stateStrs = new ArrayList<String>();
+        for( Types.State state : states ){
+            stateStrs.add(state.toString());
+        }
+        BasicDBObject query = new BasicDBObject();
+        query.append(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$in", stateStrs));
         if( begDate != null && endDate != null ){
-            query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", begDate).add("$lte", endDate).get());
+            query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", Types.reachDayBegin(begDate)).add("$lte", Types.reachDayEnd(endDate)).get());
         }
         orderFacade.findByQuery(query, list);
         Collections.sort(list);
@@ -46,15 +51,17 @@ public class OrderController extends AbstractController{
     /*
      * Get all order that has Status different from states
      */
-    public List<Order> getOrderListIgnoreStates(Types.State state1, Types.State state2, Date begDate, Date endDate){
+    public List<Order> getOrderListIgnoreStates(List<Types.State> states, Date begDate, Date endDate){
         List<Order> list = new ArrayList<Order>();
-        List<String> stateList = new ArrayList<String>();
-        stateList.add(state1.toString());
-        stateList.add(state2.toString());
+        List<String> stateStrs = new ArrayList<String>();
+        for( Types.State state : states ){
+            stateStrs.add(state.toString());
+        }
 
-        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$nin", stateList)); 
+        BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$nin", stateStrs)); 
         if( begDate != null && endDate != null ){
-            query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", begDate).add("$lte", endDate).get());
+            query.append(Order.DB_FIELD_NAME_CREATING_TIME,
+                    BasicDBObjectBuilder.start("$gte", Types.reachDayBegin(begDate)).add("$lte", Types.reachDayEnd(endDate)).get());
         }
         orderFacade.findByQuery(query, list);
         Collections.sort(list);

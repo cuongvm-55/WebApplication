@@ -73,7 +73,20 @@ public class Language {
                 LOGIN = "Login";
                 PINCODE = "Pincode";
                 INVALID_PINCODE = "Invalid pincode.";
-
+                NEW_CATEGORY = "New category";
+                UPDATE_CATEGORY = "Update category";
+                NEW_FOOD = "New food";
+                UPDATE_FOOD = "Update food";
+                NEW_TABLE = "New table";
+                UPDATE_TABLE = "Update table";
+                NEW_FLOOR = "New floor";
+                UPDATE_FLOOR = "Update floor";
+                REPORT_OUTPUT_DIR = "Report output dir";
+                CODE = "Code";
+                NAME = "Name";
+                SUP_PINCODE = "Supervisor pincode";
+                CATEGORY = "Category";
+                NUMBER = "Number";
                 NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
 
                 // Errors
@@ -159,6 +172,20 @@ public class Language {
                 LOGIN = "Đăng nhập";
                 PINCODE = "Mật khẩu";
                 INVALID_PINCODE = "Mật khẩu không đúng.";
+                NEW_CATEGORY = "Danh mục mới";
+                UPDATE_CATEGORY = "Chỉnh sửa danh mục";
+                NEW_FOOD = "Món mới";
+                UPDATE_FOOD = "Chỉnh sửa món";
+                NEW_TABLE = "Bàn mới";
+                UPDATE_TABLE = "Chỉnh sửa bàn";
+                NEW_FLOOR = "Tầng mới";
+                UPDATE_FLOOR = "Chỉnh sửa tầng";
+                REPORT_OUTPUT_DIR = "Thư mục xuất báo cáo";
+                CODE = "Mã";
+                NAME = "Tên";
+                SUP_PINCODE = "Mật khẩu quản lí";
+                CATEGORY = "Danh mục";
+                NUMBER = "Số";
 
                 // Errors
                 ERROR = "Lỗi";
@@ -244,6 +271,20 @@ public class Language {
     public static String LOGIN;
     public static String PINCODE;
     public static String INVALID_PINCODE;
+    public static String NEW_CATEGORY;
+    public static String UPDATE_CATEGORY;
+    public static String NEW_FOOD;
+    public static String UPDATE_FOOD;
+    public static String NEW_TABLE;
+    public static String UPDATE_TABLE;
+    public static String NEW_FLOOR;
+    public static String UPDATE_FLOOR;
+    public static String REPORT_OUTPUT_DIR;
+    public static String CODE;
+    public static String NAME;
+    public static String SUP_PINCODE;
+    public static String CATEGORY;
+    public static String NUMBER;
 
     // Currency
     public static String CURRENCY_SYMBOL;

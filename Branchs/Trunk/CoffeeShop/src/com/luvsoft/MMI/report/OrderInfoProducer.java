@@ -132,7 +132,10 @@ public class OrderInfoProducer extends AbstractReportProducer{
         // Build records
         // Retrieve order list fall in the date range,
         // only retrieve PAID orders
-        List<Order> orderList = Adapter.getOrderListWithState(Types.State.PAID, reachDayBegin(fromDate), reachDayEnd(toDate));
+        List<Types.State> states = new ArrayList<Types.State>();
+        states.add(Types.State.CANCELED);
+        states.add(Types.State.PAID);
+        List<Order> orderList = Adapter.getOrderListWithStates(states, fromDate, toDate);
         if( orderList == null ){
             // Stop here is there's no Order with PAID state
             System.out.println("There's no orders with state PAID between "+fromDate.toString() + ", " + toDate.toString());
@@ -230,7 +233,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
 
     @Override
     protected String getReportName() {
-        return "D:/TestExcel/OrderDetail_";
+        return "OrderDetail_";
     }
 
     @Override

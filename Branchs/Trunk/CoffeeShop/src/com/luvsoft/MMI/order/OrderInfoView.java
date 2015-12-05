@@ -637,8 +637,10 @@ public class OrderInfoView extends AbstractOrderView {
      */
     private Order retrieveOrder() {
         System.out.println("loadOrder...");
-        List<Order> orderList = Adapter.getOrderListIgnoreStates(
-                Types.State.PAID, Types.State.CANCELED, null, null);
+        List<Types.State> states = new ArrayList<Types.State>();
+        states.add(Types.State.PAID);
+        states.add(Types.State.CANCELED);
+        List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
         System.out.println(orderList.toString());
         for (Order order : orderList) {
             if( order.getTableId().equals(this.getCurrentTable().getId()) ) {

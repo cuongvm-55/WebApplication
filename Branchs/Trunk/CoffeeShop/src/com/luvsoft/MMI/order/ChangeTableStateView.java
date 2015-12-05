@@ -1,5 +1,6 @@
 package com.luvsoft.MMI.order;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.vaadin.dialogs.ConfirmDialog;
@@ -100,9 +101,10 @@ public class ChangeTableStateView extends AbstractOrderView implements
         else if( event.getComponent() == btnConfirm ) {
             // Save to db, change the displayed state upon success
             newState = Types.StringToState(optionState.getValue().toString());
-
-            List<Order> orderList = Adapter.getOrderListIgnoreStates(
-                    Types.State.PAID, Types.State.CANCELED, null, null);
+            List<Types.State> states = new ArrayList<Types.State>();
+            states.add(Types.State.PAID);
+            states.add(Types.State.CANCELED);
+            List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
             currentOrder = null;
             for (Order order : orderList) {
                 if( order.getTableId().equals(getCurrentTable().getId()) ) {

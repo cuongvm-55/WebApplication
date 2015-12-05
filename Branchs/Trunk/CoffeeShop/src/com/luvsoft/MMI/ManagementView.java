@@ -1,10 +1,12 @@
 package com.luvsoft.MMI;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.vaadin.dialogs.ConfirmDialog;
 
+import com.luvsoft.MMI.management.ConfigForm;
 import com.luvsoft.MMI.management.FoodManagement;
 import com.luvsoft.MMI.management.TableManagement;
 import com.luvsoft.MMI.report.OrderInfoProducer;
@@ -85,6 +87,13 @@ public class ManagementView extends VerticalLayout{
         btnConfiguration.setStyleName("customizationButton FULL_SIZE FONT_OVERSIZE");
         btnConfiguration.setCaption(Language.CONFIGURATION);
         btnConfiguration.setWidth("50%");
+        btnConfiguration.addClickListener(new ClickListener() {
+            
+            @Override
+            public void buttonClick(ClickEvent event) {
+                getUI().addWindow(new ConfigForm(Adapter.getConfiguration()));
+            }
+        });
         
         this.addComponents(btnStatistic, btnFoodManagement, btnTableManagement, btnConfiguration);
         this.setSpacing(true);
@@ -222,7 +231,10 @@ public class ManagementView extends VerticalLayout{
         if(fromDate != null && toDate != null &&
            toDate.after(fromDate) || toDate.equals(fromDate) ){
             // Get all order in date range
-            List<Order> orderList = Adapter.getOrderListWithState(Types.State.PAID, fromDate, toDate);
+            List<Types.State> states = new ArrayList<Types.State>();
+            states.add(Types.State.PAID);
+            states.add(Types.State.CANCELED);
+            List<Order> orderList = Adapter.getOrderListWithStates(states, fromDate, toDate);
 
             if(orderList == null || orderList.isEmpty() ){
                 // Stop here, no data to remove

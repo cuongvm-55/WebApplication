@@ -8,10 +8,12 @@ import com.luvsoft.MMI.order.OrderDetailRecord;
 import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.controllers.CategoryController;
+import com.luvsoft.controllers.ConfigurationController;
 import com.luvsoft.controllers.FloorController;
 import com.luvsoft.controllers.FoodController;
 import com.luvsoft.controllers.OrderController;
 import com.luvsoft.entities.Category;
+import com.luvsoft.entities.Configuration;
 import com.luvsoft.entities.Floor;
 import com.luvsoft.entities.Food;
 import com.luvsoft.entities.Order;
@@ -24,6 +26,7 @@ public class Adapter {
     private static OrderController orderCtrl = new OrderController();
     private static FoodController foodCtrl = new FoodController();
     private static CategoryController categoryCtrl = new CategoryController();
+    private static ConfigurationController configCtrl = new ConfigurationController();
 
     public static OrderInfo retrieveOrderInfo(Order order){
         System.out.println("retrieveOrderInfo, orderId: " + order.getId());
@@ -99,14 +102,14 @@ public class Adapter {
         return floorCtrl.setTableStatus(tableId, state);
     }
 
-    public static List<Order> getOrderListWithState(Types.State state, Date begDate, Date endDate){
-        System.out.println("Get order list with state: " + state.toString());
-        return orderCtrl.getOrderListWithState(state, begDate, endDate);
+    public static List<Order> getOrderListWithStates(List<Types.State> states, Date begDate, Date endDate){
+        System.out.println("Get order list with state: " + states.toString());
+        return orderCtrl.getOrderListWithStates(states, begDate, endDate);
     }
 
-    public static List<Order> getOrderListIgnoreStates(Types.State state1, Types.State state2, Date begDate, Date endDate){
-        System.out.println("Get order list ignore state: " + state1.toString() + ", " + state2.toString());
-        return orderCtrl.getOrderListIgnoreStates(state1, state2, begDate, endDate);
+    public static List<Order> getOrderListIgnoreStates(List<Types.State> states, Date begDate, Date endDate){
+        System.out.println("Get order list ignore state: " + states.toString());
+        return orderCtrl.getOrderListIgnoreStates(states, begDate, endDate);
     }
 
     public static boolean updateFieldValueOfOrder(String orderId, String fieldName, Object fieldVale){
@@ -282,4 +285,18 @@ public class Adapter {
         }
         return null;
     }
+
+    public static Configuration getConfiguration(){
+        return configCtrl.getConfiguration();
+    }
+
+    public static boolean loginReq(String pincode){
+        return configCtrl.loginReq(pincode);
+    }
+    
+    public static boolean updateConfiguration(Configuration conf){
+        return configCtrl.updateConfiguration( conf);
+    }
+    
+    
 }

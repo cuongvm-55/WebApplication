@@ -66,8 +66,8 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.horzFloorTitleContainer.addComponents(this.btnExpandElement, this.lblFloorName, addComponent);
         this.horzFloorTitleContainer.setExpandRatio(this.btnExpandElement, 1.0f);
         this.horzFloorTitleContainer.setExpandRatio(this.lblFloorName, 4.0f);
-        this.horzFloorTitleContainer.setExpandRatio(addComponent, 1.0f);
-        this.horzFloorTitleContainer.setComponentAlignment(addComponent, Alignment.MIDDLE_RIGHT);
+        this.horzFloorTitleContainer.setExpandRatio(this.addComponent, 1.0f);
+        this.horzFloorTitleContainer.setComponentAlignment(this.addComponent, Alignment.MIDDLE_RIGHT);
 
         this.addComponents(this.horzFloorTitleContainer, content);
 

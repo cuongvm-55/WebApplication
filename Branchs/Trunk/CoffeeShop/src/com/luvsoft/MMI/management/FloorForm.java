@@ -40,7 +40,7 @@ public class FloorForm extends Window implements ViewInterface{
     public FloorForm(Floor _floor, STATE _state){
         floor = _floor;
         state = _state;
-        String caption = ( state == STATE.ADDNEW) ? "Tầng mới" : "Chi tiết tầng";
+        String caption = ( state == STATE.ADDNEW) ? Language.NEW_FLOOR : Language.UPDATE_FLOOR;
         this.setCaption(caption);
         this.setModal(true);
         this.setResizable(false);
@@ -54,11 +54,10 @@ public class FloorForm extends Window implements ViewInterface{
         categoryItem.addItemProperty("code", new ObjectProperty<String>(floor.getCode()));
         categoryItem.addItemProperty("number", new ObjectProperty<String>(floor.getNumber()));
 
-        //this.setItemDataSource(item);
-        TextField codeField = new TextField("Code");
+        TextField codeField = new TextField(Language.CODE);
         codeField.setRequired(true);
 
-        TextField numberField = new TextField("Number");
+        TextField numberField = new TextField(Language.NUMBER);
         numberField.setRequired(true);
 
         // Now create the binder and bind the fields
@@ -70,7 +69,6 @@ public class FloorForm extends Window implements ViewInterface{
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 // validate data
-                System.out.println("Pre commit...");
                 if( codeField.getValue().equals("") || numberField.getValue().equals("") ){
                     throw new CommitException("Code or number cannot be empty!");
                 }
@@ -88,8 +86,7 @@ public class FloorForm extends Window implements ViewInterface{
             @Override
             public void postCommit(CommitEvent commitEvent) throws CommitException {
                 // save data to database
-                // refresh parent view
-                System.out.println("Post commit...");
+                // refresh parent vieư
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
                 floor.setCode(item.getItemProperty("code").getValue().toString());
                 floor.setNumber(item.getItemProperty("number").getValue().toString());
@@ -122,7 +119,6 @@ public class FloorForm extends Window implements ViewInterface{
                 try {
                     fieldGroup.commit();
                 } catch (CommitException e) {
-                    // e.printStackTrace();
                     lblMsg.setValue("All field are required!");
                 }
             }
@@ -134,7 +130,6 @@ public class FloorForm extends Window implements ViewInterface{
         btnCancel.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                System.out.println("Discard...");
                 fieldGroup.discard();
                 parentView.reloadView();
                 close();

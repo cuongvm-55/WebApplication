@@ -1,5 +1,6 @@
 package com.luvsoft.MMI;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.luvsoft.MMI.components.CoffeeTableElement;
@@ -8,7 +9,7 @@ import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Floor;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Table;
-import com.luvsoft.entities.Types.State;
+import com.luvsoft.entities.Types;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
@@ -49,7 +50,10 @@ public class TableListView extends Panel implements ViewInterface {
             for (int i = 0; i < tableList.size(); i++) {
                 Table table = tableList.get(i);
                 System.out.println("TableId: " + table.getId());
-                List<Order> orderList = Adapter.getOrderListIgnoreStates(State.PAID, State.CANCELED, null, null);
+                List<Types.State> states = new ArrayList<Types.State>();
+                states.add(Types.State.PAID);
+                states.add(Types.State.CANCELED);
+                List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
                 Order currentOrder = null;
                 for (Order order : orderList) {
                     if( order.getTableId().equals(table.getId()) ) {

@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.luvsoft.MMI.Adapter;
+
 import jxl.Workbook;
 import jxl.write.DateFormat;
 import jxl.write.DateTime;
@@ -40,25 +42,6 @@ public abstract class AbstractReportProducer {
     // returns title
     protected abstract String getTitle();
 
-    public Date reachDayBegin(Date date){
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-
-        return cal.getTime();
-    }
-
-    public Date reachDayEnd(Date date){
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        return cal.getTime();
-    }
-
     public Label createLabelCell(int col, int row, String str){
         return new Label(col, row, str);
     }
@@ -86,7 +69,7 @@ public abstract class AbstractReportProducer {
                 // Create work book
                 // File name + current date
                 SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss"); // it's not depend on the current language
-                String fileName = getReportName() + formatter.format(new Date()) + ".xls";
+                String fileName = Adapter.getConfiguration().getReportOutputDir()+"/"+getReportName() + formatter.format(new Date()) + ".xls";
                 WritableWorkbook workBook = Workbook.createWorkbook(new File( fileName ));
 
                 // Create sheet on the desired work book

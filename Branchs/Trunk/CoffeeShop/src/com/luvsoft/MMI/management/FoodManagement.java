@@ -83,7 +83,6 @@ public class FoodManagement extends Window implements ViewInterface{
     public Component buildTree(List<Category> categories) {
         Panel wrapPanel = new Panel();
         wrapPanel.setSizeFull();
-
         VerticalLayout content = new VerticalLayout();
 
         for (Category category : categories) {
