@@ -61,7 +61,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
             OrderDetailRecord orderDetail = orderDetailList.get(i);
             tbOrderInfos.addItem(new Object[]{new Integer(i), orderDetail.getFoodName(),
                     orderDetail.getQuantity(),
-                    /*orderDetail.getIconFromStatus(orderDetail.getStatus())*/Types.StateToLanguageString(orderDetail.getStatus()),
+                    Types.StateToLanguageString(orderDetail.getStatus()),
                     orderDetail.getOrderDetailId()}, itemId);
         }
         tbOrderInfos.setVisibleColumns(Language.SEQUENCE,Language.FOOD_NAME,Language.QUANTITY,Language.STATUS);
@@ -128,8 +128,28 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
             @Override
             public void buttonClick(ClickEvent event) {
                 System.out.println("Finish click!, OrderId: " + order.getId());
-                // Set status of order to be UNPAID
-                if( Adapter.changeOrderState(order.getId(), Types.State.UNPAID) ){
+                // If all order details are CANCELED, we cancel this order
+                List<String> orderDetailIdList = order.getOrderDetailIdList();
+                boolean allOrderDetailCanceled = true;
+                for(int i=0; i<orderDetailIdList.size();i++){
+                    if( Adapter.getOrderDetailById(orderDetailIdList.get(i)).getState() != Types.State.CANCELED ){
+                        allOrderDetailCanceled = false;
+                        break;
+                    }
+                }
+                if( allOrderDetailCanceled ){
+                    // Set status of order to be CANCELED
+                    if( Adapter.changeOrderState(order.getId(), Types.State.CANCELED) ){
+                        // Set table status to be EMPTY
+                        Adapter.changeTableState(order.getTableId(), Types.State.EMPTY);
+                        parentView.reloadView();
+                    }
+                    else{
+                        System.out.println("Fail to cancel order: " + order.getId());
+                    }
+                }
+                else if( Adapter.changeOrderState(order.getId(), Types.State.UNPAID) ){
+                    // Set status of order to be UNPAID
                     // Set all order details to be COMPLETED except CANCELED one
                     for( String orderDetailId : order.getOrderDetailIdList() ){
                         if(  Adapter.getOrderDetailById(orderDetailId) != null && Adapter.getOrderDetailById(orderDetailId).getState() != Types.State.CANCELED ){

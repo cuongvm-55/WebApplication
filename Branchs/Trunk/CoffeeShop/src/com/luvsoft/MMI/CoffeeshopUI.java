@@ -52,16 +52,11 @@ public class CoffeeshopUI extends UI {
         // Create a navigator to control the view
         navigator = new Navigator(this, this);
 
-        // Adapter.createDataForMongoDB(); // just for test
-
         mainView = new MainView();
         // Create and register the view
         navigator.addView("", mainView);
         navigator.addView(CoffeeshopUI.MAIN_VIEW, mainView);
         
-        //OrderFacade orderFacade = new OrderFacade();
-        //orderFacade.removeById("560d5815b4f3a8129ce0f387");
-        //orderFacade.updateFieldValue("560d579cb4f3a8129ce0f386", "OrderDetailList", "560d55c0b4f3a8129ce0f383,560d55f7b4f3a8129ce0f384");
         Broadcaster.register(this::receiveBroadcast);
     }
 

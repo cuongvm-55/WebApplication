@@ -3,11 +3,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import com.luvsoft.MMI.Adapter;
 
 import jxl.Workbook;
 import jxl.write.DateFormat;
@@ -20,6 +17,8 @@ import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
+
+import com.luvsoft.MMI.Adapter;
 
 public abstract class AbstractReportProducer {
     public static String REPORT_DATE_TIME_FORMAT_DATE_ONLY = "dd/MM/yyyy";
