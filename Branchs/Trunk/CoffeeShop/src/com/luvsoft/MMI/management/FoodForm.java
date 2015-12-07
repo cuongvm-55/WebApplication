@@ -65,6 +65,7 @@ public class FoodForm extends Window implements ViewInterface{
 
         TextField codeField = new TextField(Language.CODE);
         codeField.setRequired(true);
+        codeField.focus();
 
         TextField nameField = new TextField(Language.NAME);
         nameField.setRequired(true);

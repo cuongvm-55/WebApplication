@@ -29,6 +29,7 @@ public class CoffeeshopUI extends UI {
     public static final String MANAGEMENT_VIEW = "management";
 
     public static final String NEW_ORDER_MESSAGE = "new_order";
+    public static final String ORDER_UPDATED_MESSAGE = "order_updated";
     public static final String ORDER_COMPLETED_MESSAGE = "order_completed";
     public static final String UPDATE_WAITING_TIME = "update_waiting_time";
     public static final String CANCELED_ORDER = "canceled_order";
@@ -88,6 +89,9 @@ public class CoffeeshopUI extends UI {
             access(() -> mainView.getTableListView().updateWaitingTime());
         } else if(messageId.equals(CoffeeshopUI.NEW_ORDER_MESSAGE)) {
             access(() -> mainView.getOrderListView().haveNewOrder(messageData));
+            access(() -> mainView.getTableListView().reloadView());
+        } else if(messageId.equals(CoffeeshopUI.ORDER_UPDATED_MESSAGE)){
+            access(() -> mainView.getOrderListView().haveNewOrderUpdated(messageData));
             access(() -> mainView.getTableListView().reloadView());
         } else if(messageId.equals(CoffeeshopUI.ORDER_COMPLETED_MESSAGE)) {
             access(() -> mainView.getTableListView().haveNewOrderCompleted(messageData));

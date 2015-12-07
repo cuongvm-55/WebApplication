@@ -47,6 +47,7 @@ public class ConfigForm extends Window{
 
         TextField pincodeField = new TextField(Language.SUP_PINCODE);
         pincodeField.setRequired(true);
+        pincodeField.focus();
 
         TextField dirField = new TextField(Language.REPORT_OUTPUT_DIR);
         dirField.setRequired(true);

@@ -23,8 +23,8 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -39,7 +39,6 @@ public class ManagementView extends VerticalLayout{
     private Button btnFoodManagement;
     private Button btnTableManagement;
     private Button btnConfiguration;
-    private PopupView  datePickerPopup;
 
     public ManagementView() {
         // TODO Add your components at here
@@ -60,7 +59,15 @@ public class ManagementView extends VerticalLayout{
         btnStatistic.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                datePickerPopup.setPopupVisible(true);
+                Window window = new Window();
+                window.setModal(true);
+                window.setResizable(false);
+                window.setDraggable(false);
+                window.setWidth("400px");
+                window.setHeight("300px");
+                window.center();
+                window.setContent(createDatePickerLayout());
+                getUI().addWindow(window);
             }
         });
         btnFoodManagement.setStyleName("customizationButton FULL_SIZE FONT_OVERSIZE");
@@ -101,11 +108,9 @@ public class ManagementView extends VerticalLayout{
         this.setComponentAlignment(btnFoodManagement, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(btnTableManagement, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(btnConfiguration, Alignment.MIDDLE_CENTER);
-
-        createDatePickerPopup();
     }
     
-    private void createDatePickerPopup(){
+    private VerticalLayout createDatePickerLayout(){
         Label lblChooseDate = new Label(Language.CHOOSE_DATE);
         Label lblFromDate = new Label(Language.FROM_DATE);
         Label lblToDate = new Label(Language.TO_DATE);
@@ -143,8 +148,6 @@ public class ManagementView extends VerticalLayout{
             @Override
             public void buttonClick(ClickEvent event) {
                 System.out.println("Remove data...");
-                // close popup
-                datePickerPopup.setPopupVisible(false);
                 ConfirmDialog.show( getUI(), Language.CONFIRM_DELETE_TITLE, Language.CONFIRM_DELETE_CONTENT,
                         Language.ASK_FOR_CONFIRM, Language.ASK_FOR_DENIED, new ConfirmDialog.Listener() {
                             public void onClose(ConfirmDialog dialog) {
@@ -187,9 +190,6 @@ public class ManagementView extends VerticalLayout{
                     // Export data
                     OrderInfoProducer producer = new OrderInfoProducer(begDate, endDate);
                     if( producer.export() ){
-                        // close popup
-                        datePickerPopup.setPopupVisible(false);
-
                         // notify message
                         Notification notify = new Notification("<b>Thông báo</b>",
                                 "<i>Báo cáo đã xuất thành công!</i>",
@@ -219,11 +219,7 @@ public class ManagementView extends VerticalLayout{
         layout.setComponentAlignment(toLayout, Alignment.MIDDLE_CENTER);
         layout.setComponentAlignment(control, Alignment.MIDDLE_CENTER);
         layout.setSpacing(true);
-        datePickerPopup = new PopupView(null, layout);
-        datePickerPopup.setStyleName("popupStyle");
-        datePickerPopup.setPopupVisible(false);
-        datePickerPopup.setHideOnMouseOut(false);
-        this.addComponent(datePickerPopup);
+        return layout;
     }
 
     private boolean removeOrderDataInDateRange(Date fromDate, Date toDate){

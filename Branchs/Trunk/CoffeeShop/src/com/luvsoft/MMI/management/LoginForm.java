@@ -5,6 +5,7 @@ import com.luvsoft.MMI.MainView;
 import com.luvsoft.MMI.ManagementView;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Configuration;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -45,6 +46,7 @@ public class LoginForm extends Window{
         Label lblPincode = new Label(Language.PINCODE);
         tfPincode = new PasswordField();
         tfPincode.setMaxLength(Configuration.PINCODE_LENGTH);
+        tfPincode.focus();
         hzLayout.addComponents(lblPincode, tfPincode);
         hzLayout.setComponentAlignment(lblPincode, Alignment.MIDDLE_CENTER);
         hzLayout.setComponentAlignment(tfPincode, Alignment.MIDDLE_CENTER);
@@ -53,6 +55,7 @@ public class LoginForm extends Window{
         Button btnLogin = new Button(Language.LOGIN);
         btnLogin.addStyleName(ValoTheme.BUTTON_HUGE);
         btnLogin.addStyleName("customizationButton");
+        btnLogin.setClickShortcut(KeyCode.ENTER, null);
         btnLogin.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {

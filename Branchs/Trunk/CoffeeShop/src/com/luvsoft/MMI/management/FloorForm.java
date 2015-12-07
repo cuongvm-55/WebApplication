@@ -56,6 +56,7 @@ public class FloorForm extends Window implements ViewInterface{
 
         TextField codeField = new TextField(Language.CODE);
         codeField.setRequired(true);
+        codeField.focus();
 
         TextField numberField = new TextField(Language.NUMBER);
         numberField.setRequired(true);

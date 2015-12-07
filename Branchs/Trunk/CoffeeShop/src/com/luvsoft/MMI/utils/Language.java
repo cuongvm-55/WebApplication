@@ -99,6 +99,7 @@ public class Language {
                 PAY_ATTENTION = "Pay Attention";
                 ORDER_IN_TABLE = "Order in table ";
                 HAS_BEEN_CANCELED = " has been canceled";
+                HAS_BEEN_UPDATED = " has been changed";
                 ORDERED = " ordered";
 
                 DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -197,6 +198,7 @@ public class Language {
                 PAY_ATTENTION = "Chú Ý";
                 ORDER_IN_TABLE = "Đặt món ở bàn ";
                 HAS_BEEN_CANCELED = " đã bị HỦY";
+                HAS_BEEN_UPDATED = " đã thay đổi";
                 ORDERED = " đã đặt món";
 
                 DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
@@ -305,6 +307,7 @@ public class Language {
     public static String HAVE_NEW_ORDER;
     public static String ORDER_IN_TABLE;
     public static String HAS_BEEN_CANCELED;
+    public static String HAS_BEEN_UPDATED;
     public static String ORDERED;
     public static String ORDER;
 
