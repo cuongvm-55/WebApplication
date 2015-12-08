@@ -22,7 +22,7 @@ import com.vaadin.ui.UI;
 @Title("CoffeeShop")
 @Push
 public class CoffeeshopUI extends UI {
-
+    public static final String LOGIN_VIEW = "login";
     public static final String MAIN_VIEW = "main";
     public static final String TABLE_LIST_VIEW = "tablelist";
     public static final String ORDER_LIST_VIEW = "orderlist";
@@ -52,12 +52,16 @@ public class CoffeeshopUI extends UI {
         setLocale(new Locale("vi", "VN"));
         // Create a navigator to control the view
         navigator = new Navigator(this, this);
+        LoginView lgView = new LoginView();
 
+        // main view
         mainView = new MainView();
-        // Create and register the view
-        navigator.addView("", mainView);
         navigator.addView(CoffeeshopUI.MAIN_VIEW, mainView);
         
+        // Create and register the view
+        navigator.addView("", lgView);
+        navigator.addView(CoffeeshopUI.LOGIN_VIEW, lgView);
+
         Broadcaster.register(this::receiveBroadcast);
     }
 

@@ -84,10 +84,12 @@ public class Language {
                 REPORT_OUTPUT_DIR = "Report output dir";
                 CODE = "Code";
                 NAME = "Name";
+                OPERATOR_PINCODE = "Operator pincode";
                 SUP_PINCODE = "Supervisor pincode";
                 CATEGORY = "Category";
                 NUMBER = "Number";
                 NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
+                ALL_FIELDS_ARE_REQUIRED = "All fields are required!";
 
                 // Errors
                 ERROR = "Error";
@@ -172,7 +174,7 @@ public class Language {
                 DELETE_FLOOR = "Xóa tầng";
                 LOGIN = "Đăng nhập";
                 PINCODE = "Mật khẩu";
-                INVALID_PINCODE = "Mật khẩu không đúng.";
+                INVALID_PINCODE = "Mật khẩu không đúng!";
                 NEW_CATEGORY = "Danh mục mới";
                 UPDATE_CATEGORY = "Chỉnh sửa danh mục";
                 NEW_FOOD = "Món mới";
@@ -184,9 +186,11 @@ public class Language {
                 REPORT_OUTPUT_DIR = "Thư mục xuất báo cáo";
                 CODE = "Mã";
                 NAME = "Tên";
+                OPERATOR_PINCODE = "Mật khẩu nhân viên";
                 SUP_PINCODE = "Mật khẩu quản lí";
                 CATEGORY = "Danh mục";
                 NUMBER = "Số";
+                ALL_FIELDS_ARE_REQUIRED = "Bạn phải nhập đầy đủ thông tin!";
 
                 // Errors
                 ERROR = "Lỗi";
@@ -284,9 +288,11 @@ public class Language {
     public static String REPORT_OUTPUT_DIR;
     public static String CODE;
     public static String NAME;
+    public static String OPERATOR_PINCODE;
     public static String SUP_PINCODE;
     public static String CATEGORY;
     public static String NUMBER;
+    public static String ALL_FIELDS_ARE_REQUIRED;
 
     // Currency
     public static String CURRENCY_SYMBOL;

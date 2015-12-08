@@ -13,9 +13,9 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupView;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.PopupView.PopupVisibilityEvent;
 import com.vaadin.ui.PopupView.PopupVisibilityListener;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -31,7 +31,6 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
     private Button btnEditName;
 
     private PopupView popLeftMenu;
-    private PopupView popEditName;
     private Button btnWaiterView;
     private Button btnBartenderView;
     private Button btnManagementView;
@@ -43,7 +42,10 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
         orderListView = new OrderListView();
         tableListView = new TableListView();
         tableListView.setParentView(this);
-        createView();
+        lblStaffName = new Label();
+        mainLayout = new VerticalLayout();
+        mainLayout.setSizeFull();
+
     }
 
     /*
@@ -53,22 +55,15 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
     public void createView() {
         this.setSizeFull();
 
-        createTitleComponent("Trần Văn Thắng");
-
-        mainLayout = new VerticalLayout();
-        mainLayout.setSizeFull();
+        createTitleComponent();
 
         createLeftMenuPopup();
-        createEditNamePopup();
 
-        // The first screen should displays table list
-        TableListView tableListView = new TableListView();
-        tableListView.setParentView(this);
-        tableListView.createView();
-        mainLayout.addComponent(tableListView);
+        // add table list to MainView
+        buildTableList();
 
         // Add all layouts to the container
-        this.addComponents(horzTitleContainer, mainLayout, popLeftMenu, popEditName);
+        this.addComponents(horzTitleContainer, mainLayout, popLeftMenu);
         this.setExpandRatio(horzTitleContainer, 2.0f);
         this.setExpandRatio(mainLayout, 10.0f);
 
@@ -76,6 +71,13 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
         this.addClickListener();
     }
 
+    private void buildTableList(){
+        // The first screen should displays table list
+        TableListView tableListView = new TableListView();
+        tableListView.setParentView(this);
+        tableListView.createView();
+        mainLayout.addComponent(tableListView);
+    }
     @Override
     public void reloadView() {
         // Nothing to do
@@ -85,7 +87,7 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
     /*
      * Create a title bar
      */
-    private void createTitleComponent(String title)
+    private void createTitleComponent()
     {
         // Title container
         horzTitleContainer = new HorizontalLayout();
@@ -100,7 +102,8 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
         btnMenu.setResponsive(true);
         btnMenu.setSizeFull();
 
-        lblStaffName = new Label(title);
+        String staffName = getSession().getAttribute("user") != null ? getSession().getAttribute("user").toString() : "";
+        lblStaffName.setValue(staffName);
         lblStaffName.setResponsive(true);
         lblStaffName.setStyleName("bold TEXT_BLUE FONT_OVER_OVERSIZE FONT_TAHOMA TEXT_CENTER");
         lblStaffName.setSizeUndefined();
@@ -163,13 +166,19 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
      */
     @Override
     public void enter(ViewChangeEvent event) {
+        // Check login session here
+        if( getSession().getAttribute("user") == null ){
+            UI.getCurrent().getNavigator().navigateTo(CoffeeshopUI.LOGIN_VIEW);
+            return;
+        }
+        this.removeAllComponents();
+        createView();
         if(event.getParameters() == null || event.getParameters().isEmpty()) {
             mainLayout.removeAllComponents();
             TableListView tableListView = new TableListView();
             tableListView.setParentView(this);
             tableListView.createView();
             mainLayout.addComponent(tableListView);
-            popLeftMenu.setPopupVisible(false);
         } else if(event.getParameters().equals(CoffeeshopUI.TABLE_LIST_VIEW)) {
             mainLayout.removeAllComponents();
             tableListView.setParentView(this);
@@ -181,7 +190,6 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
             orderListView.createView();
             mainLayout.addComponent(orderListView);
             popLeftMenu.setPopupVisible(false);
-
         } else if(event.getParameters().equals(CoffeeshopUI.MANAGEMENT_VIEW)) {
             mainLayout.removeAllComponents();
             getUI().addWindow(new LoginForm(this));
@@ -206,62 +214,9 @@ public class MainView extends VerticalLayout implements View, ViewInterface {
             }
         });
 
-        btnEditName.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                // Show edit name popup
-                if(popEditName.isPopupVisible()) {
-                    popEditName.setPopupVisible(false);
-                } else {
-                    popEditName.setPopupVisible(true);
-                }
-            }
-        });
-
         btnWaiterView.addClickListener(new MenuButtonListener(CoffeeshopUI.TABLE_LIST_VIEW));
         btnBartenderView.addClickListener(new MenuButtonListener(CoffeeshopUI.ORDER_LIST_VIEW));
         btnManagementView.addClickListener(new MenuButtonListener(CoffeeshopUI.MANAGEMENT_VIEW));
-    }
-
-    private void createEditNamePopup() {
-        VerticalLayout popupContent = new VerticalLayout();
-        popupContent.setHeightUndefined();
-
-        TextField txtName = new TextField();
-        txtName.setValue(lblStaffName.getValue());
-        txtName.setWidth("100%");
-        txtName.setStyleName("huge");
-
-        Button btnConfirm = new Button(Language.CONFIRM);
-        btnConfirm.setStyleName("huge customizationButton");
-
-        popupContent.addComponents(txtName, btnConfirm);
-        popupContent.setComponentAlignment(btnConfirm, Alignment.MIDDLE_CENTER);
-
-        popEditName = new PopupView(null, popupContent);
-        popEditName.setStyleName("popupStyle");
-        popEditName.setPopupVisible(false);
-        popEditName.setHideOnMouseOut(false);
-
-        popEditName.addPopupVisibilityListener(new PopupVisibilityListener() {
-            @Override
-            public void popupVisibilityChange(PopupVisibilityEvent event) {
-                if(popEditName.isPopupVisible()) {
-                    mainLayout.setEnabled(false);
-                } else {
-                    mainLayout.setEnabled(true);
-                }
-                
-            }
-        });
-
-        btnConfirm.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                lblStaffName.setValue(txtName.getValue());
-                popEditName.setPopupVisible(false);
-            }
-        });
     }
 
     public VerticalLayout getMainLayout() {

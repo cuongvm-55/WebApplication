@@ -82,7 +82,7 @@ public class LoginForm extends Window{
 
     private void login(){
         String pincode = tfPincode.getValue();
-        if( Adapter.loginReq(pincode) ){
+        if( Adapter.loginSUPReq(pincode) ){
             parent.getMainLayout().addComponent(new ManagementView());
             close();
         }
