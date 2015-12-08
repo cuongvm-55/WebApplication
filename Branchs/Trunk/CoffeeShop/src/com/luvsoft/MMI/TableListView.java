@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.luvsoft.MMI.components.CoffeeTableElement;
 import com.luvsoft.MMI.components.CustomizationTreeElement;
+import com.luvsoft.MMI.management.TableForm;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Floor;
 import com.luvsoft.entities.Order;
@@ -14,6 +15,8 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
@@ -78,7 +81,15 @@ public class TableListView extends VerticalLayout implements ViewInterface {
             btnAddTbl.setHeight("100%");
             btnAddTbl.setIcon(FontAwesome.PLUS_CIRCLE);
             btnAddTbl.setStyleName("icon-only primary TEXT_WHITE");
-            
+            btnAddTbl.addClickListener(new ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    TableForm form = new TableForm(new Table(), TableForm.STATE.ADDNEW);
+                    form.setParentView(TableListView.this);
+                    getUI().addWindow(form);
+                }
+            });
+
             CustomizationTreeElement treeElement = new CustomizationTreeElement(gridElementContent, Language.FLOOR + " " + floorList.get(j).getNumber(), btnAddTbl);
             this.addComponent(treeElement);
         }

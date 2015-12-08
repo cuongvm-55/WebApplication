@@ -38,32 +38,41 @@ public class ConfigForm extends Window{
         this.setClosable(true);
         this.setDraggable(false);
         this.setWidth("340px");
-        this.setHeight("240px");
+        this.setHeight("260px");
         this.center();
 
         configItem = new PropertysetItem();
+        configItem.addItemProperty("opPincode", new ObjectProperty<String>(config.getOperatorPincode()));
         configItem.addItemProperty("supPincode", new ObjectProperty<String>(config.getSupPincode()));
         configItem.addItemProperty("reportOutputDir", new ObjectProperty<String>(config.getReportOutputDir()));
 
-        TextField pincodeField = new TextField(Language.SUP_PINCODE);
-        pincodeField.setRequired(true);
+        TextField opPincodeField = new TextField(Language.OPERATOR_PINCODE);
+        opPincodeField.setRequired(true);
+        opPincodeField.focus();
+        
+        TextField supPincodeField = new TextField(Language.SUP_PINCODE);
+        supPincodeField.setRequired(true);
 
         TextField dirField = new TextField(Language.REPORT_OUTPUT_DIR);
         dirField.setRequired(true);
 
         // Now create the binder and bind the fields
         FieldGroup fieldGroup = new FieldGroup(configItem);
-        fieldGroup.bind(pincodeField, "supPincode");
+        fieldGroup.bind(opPincodeField, "opPincode");
+        fieldGroup.bind(supPincodeField, "supPincode");
         fieldGroup.bind(dirField, "reportOutputDir");
         fieldGroup.setBuffered(true);
         fieldGroup.addCommitHandler(new CommitHandler() {
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 // validate data
-                if( pincodeField.getValue().equals("") && dirField.getValue().equals("") ){
+                if( opPincodeField.getValue().equals("") 
+                        || supPincodeField.getValue().equals("")
+                        || dirField.getValue().equals("") ){
                     throw new CommitException("All fields are required!");
                 }
-                else if(pincodeField.getValue().length() != Configuration.PINCODE_LENGTH){
+                else if(supPincodeField.getValue().length() != Configuration.PINCODE_LENGTH
+                        || opPincodeField.getValue().length() != Configuration.PINCODE_LENGTH){
                     throw new CommitException("Invalid pincode!");
                 }
                 
@@ -78,6 +87,7 @@ public class ConfigForm extends Window{
             public void postCommit(CommitEvent commitEvent) throws CommitException {
                 // save data to database
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
+                config.setOperatorPincode(item.getItemProperty("opPincode").getValue().toString());
                 config.setSupPincode(item.getItemProperty("supPincode").getValue().toString());
                 config.setReportOutputDir(item.getItemProperty("reportOutputDir").getValue().toString());
                 if( Adapter.updateConfiguration(config) ){
@@ -120,8 +130,9 @@ public class ConfigForm extends Window{
 
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(pincodeField, dirField, hzLayout);
-        vtcLayout.setComponentAlignment(pincodeField, Alignment.MIDDLE_CENTER);
+        vtcLayout.addComponents(opPincodeField, supPincodeField, dirField, hzLayout);
+        vtcLayout.setComponentAlignment(opPincodeField, Alignment.MIDDLE_CENTER);
+        vtcLayout.setComponentAlignment(supPincodeField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(dirField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(hzLayout, Alignment.MIDDLE_CENTER);
         vtcLayout.setSpacing(true);

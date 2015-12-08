@@ -279,8 +279,10 @@ public class AddFoodView extends AbstractOrderView {
                         // Merge new order details list to old order details list
                         boolean shouldCreateNewOne = true;
 
+                        // If id of records are matched and change flag different from READONLY
                         for (OrderDetailRecord record : orderDetailRecordList) {
-                            if (orderDetailExtension.getOrderDetailRecord().getFoodId().equals(record.getFoodId())) {
+                            if (orderDetailExtension.getOrderDetailRecord().getFoodId().equals(record.getFoodId())
+                                    && record.getChangeFlag() != ChangedFlag.READONLY) {
                                 shouldCreateNewOne = false;
                                 ChangedFlag currentFlag = record.getChangeFlag();
                                 if( currentFlag == ChangedFlag.UNMODIFIED ) {

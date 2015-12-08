@@ -24,6 +24,7 @@ public class ConfigurationController {
             Configuration conf = new Configuration();
             ObjectId id = new ObjectId();
             conf.setId(id.toString());
+            conf.setOperatorPincode(Configuration.DEFAULT_OPERATOR_PINCODE);
             conf.setSupPincode(Configuration.DEFAULT_SUP_PINCODE);
             conf.setReportOutputDir(Configuration.DEFAULT_REPORT_OUTPUT_DIR);
             if( !confFacade.save(conf) ){
@@ -40,11 +41,16 @@ public class ConfigurationController {
      * @param pincode
      * @return
      */
-    public boolean loginReq(String pincode){
+    public boolean loginSUPReq(String pincode){
         return pincode.length() == Configuration.PINCODE_LENGTH
                 && pincode.equals(getConfiguration().getSupPincode());
     }
-    
+
+    public boolean loginOperatorReq(String pincode){
+        return pincode.length() == Configuration.PINCODE_LENGTH
+                && pincode.equals(getConfiguration().getOperatorPincode());
+    }
+
     public boolean updateConfiguration(Configuration conf){
         return confFacade.update(conf.getId(), conf);
     }

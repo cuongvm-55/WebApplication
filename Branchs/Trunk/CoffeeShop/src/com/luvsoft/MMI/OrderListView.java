@@ -68,6 +68,15 @@ public class OrderListView extends Panel implements ViewInterface{
         notify.show(Page.getCurrent());
     }
 
+    public void haveNewOrderUpdated(String tableNumber) {
+        reloadView();
+
+        Notification notify = new Notification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
+                + Language.ORDER_IN_TABLE + tableNumber + Language.HAS_BEEN_UPDATED + "</i>",
+                Notification.Type.WARNING_MESSAGE, true);
+        notify.setPosition(Position.BOTTOM_RIGHT);
+        notify.show(Page.getCurrent());
+    }
     private void loadContent() {
         loadOrderList();
         if( orderList.isEmpty() ){

@@ -290,8 +290,11 @@ public class Adapter {
         return configCtrl.getConfiguration();
     }
 
-    public static boolean loginReq(String pincode){
-        return configCtrl.loginReq(pincode);
+    public static boolean loginSUPReq(String pincode){
+        return configCtrl.loginSUPReq(pincode);
+    }
+    public static boolean loginOperatorReq(String pincode){
+        return configCtrl.loginOperatorReq(pincode);
     }
     
     public static boolean updateConfiguration(Configuration conf){

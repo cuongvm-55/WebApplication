@@ -14,7 +14,8 @@ public class OrderDetailRecord{
         UNMODIFIED,
         MODIFIED,
         ADDNEW,
-        DELETED
+        DELETED,
+        READONLY // record will be set to readonly when its status = finished
     };
     private ChangedFlag changeFlag; 
 

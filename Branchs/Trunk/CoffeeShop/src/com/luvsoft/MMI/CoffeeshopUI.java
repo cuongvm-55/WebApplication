@@ -27,13 +27,14 @@ import com.vaadin.ui.themes.ValoTheme;
 @Title("CoffeeShop")
 @Push
 public class CoffeeshopUI extends UI {
-
+    public static final String LOGIN_VIEW = "login";
     public static final String MAIN_VIEW = "main";
     public static final String TABLE_LIST_VIEW = "tablelist";
     public static final String ORDER_LIST_VIEW = "orderlist";
     public static final String MANAGEMENT_VIEW = "management";
 
     public static final String NEW_ORDER_MESSAGE = "new_order";
+    public static final String ORDER_UPDATED_MESSAGE = "order_updated";
     public static final String ORDER_COMPLETED_MESSAGE = "order_completed";
     public static final String UPDATE_WAITING_TIME = "update_waiting_time";
     public static final String CANCELED_ORDER = "canceled_order";
@@ -50,7 +51,6 @@ public class CoffeeshopUI extends UI {
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = CoffeeshopUI.class)
     public static class Servlet extends VaadinServlet {
-
         @Override
         protected void servletInitialized() throws ServletException {
             super.servletInitialized();
@@ -84,16 +84,19 @@ public class CoffeeshopUI extends UI {
         lang.setLanguage(LANGUAGE.VIETNAMESE);
         setLocale(new Locale("vi", "VN"));
         addStyleName(ValoTheme.UI_WITH_MENU);
-
         // Create a navigator to control the view
         navigator = new Navigator(this, this);
+        LoginView lgView = new LoginView();
 
+        // main view
         mainView = new MainView();
         mainView.setMenu(menu);
-        mainView.createView();
-        // Create and register the view
-        navigator.addView("", mainView);
+
         navigator.addView(CoffeeshopUI.MAIN_VIEW, mainView);
+        
+        // Create and register the view
+        navigator.addView("", lgView);
+        navigator.addView(CoffeeshopUI.LOGIN_VIEW, lgView);
 
         Broadcaster.register(this::receiveBroadcast);
     }
@@ -143,6 +146,9 @@ public class CoffeeshopUI extends UI {
             access(() -> mainView.getTableListView().updateWaitingTime());
         } else if(messageId.equals(CoffeeshopUI.NEW_ORDER_MESSAGE)) {
             access(() -> mainView.getOrderListView().haveNewOrder(messageData));
+            access(() -> mainView.getTableListView().reloadView());
+        } else if(messageId.equals(CoffeeshopUI.ORDER_UPDATED_MESSAGE)){
+            access(() -> mainView.getOrderListView().haveNewOrderUpdated(messageData));
             access(() -> mainView.getTableListView().reloadView());
         } else if(messageId.equals(CoffeeshopUI.ORDER_COMPLETED_MESSAGE)) {
             access(() -> mainView.getTableListView().haveNewOrderCompleted(messageData));

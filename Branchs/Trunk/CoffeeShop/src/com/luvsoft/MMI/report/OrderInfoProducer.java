@@ -37,7 +37,8 @@ public class OrderInfoProducer extends AbstractReportProducer{
 
         TOTAL_AMOUNT(9), // Total = nbOfRecords * amount
         PAID_AMOUNT(10),  // Real amount received from customer
-        STAFF_NAME(11);  // Staff name
+        STAFF_NAME(11),  // Staff name
+        NOTE(12); // Note
         private final int num;
         private FIELD_HEADER(int index){
             num = index;
@@ -99,7 +100,8 @@ public class OrderInfoProducer extends AbstractReportProducer{
         Label lbPaidAmount = createLabelCell(FIELD_HEADER.PAID_AMOUNT.getValue(), 5, "Thực Thu");
         Label lbCreatingTime = createLabelCell(FIELD_HEADER.CREATING_TIME.getValue(), 5, "Thời Gian");
         Label lbStaffName = createLabelCell(FIELD_HEADER.STAFF_NAME.getValue(), 5, "Tên Nhân Viên");
-        
+        Label lbNote = createLabelCell(FIELD_HEADER.NOTE.getValue(), 5, "Ghi chú");
+
         lbNo.setCellFormat(times12format);
         lbTableName.setCellFormat(times12format);
         lbFoodName.setCellFormat(times12format);
@@ -112,6 +114,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
         lbPaidAmount.setCellFormat(times12format);
         lbCreatingTime.setCellFormat(times12format);
         lbStaffName.setCellFormat(times12format);
+        lbNote.setCellFormat(times12format);
 
         if( contents == null ){
             contents = new ArrayList<WritableCell>();
@@ -128,6 +131,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
         contents.add(lbTotalAmount);
         contents.add(lbPaidAmount);
         contents.add(lbStaffName);
+        contents.add(lbNote);
 
         // Build records
         // Retrieve order list fall in the date range,
@@ -223,6 +227,11 @@ public class OrderInfoProducer extends AbstractReportProducer{
                     Label lblStaffName = createLabelCell(FIELD_HEADER.STAFF_NAME.getValue(), row, order.getStaffName());
                     lblStaffName.setCellFormat(totalFormat);
                     contents.add(lblStaffName);
+
+                    // Note
+                    Label lblNote = createLabelCell(FIELD_HEADER.NOTE.getValue(), row, order.getNote());
+                    lblNote.setCellFormat(totalFormat);
+                    contents.add(lblNote);
                 }
 
                 row++;
