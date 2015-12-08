@@ -96,8 +96,9 @@ public class AddFoodView extends AbstractOrderView {
         container.setSizeFull();
 
         Label lblTableNumber = new Label(Language.TABLE + " " + getCurrentTable().getNumber());
-        lblTableNumber
-                .addStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_CENTER BACKGROUND_BLUE TEXT_WHITE");
+        lblTableNumber.addStyleName("FONT_TAHOMA TEXT_CENTER BACKGROUND_BLUE TEXT_WHITE");
+        lblTableNumber.addStyleName(ValoTheme.LABEL_BOLD);
+        lblTableNumber.addStyleName(ValoTheme.LABEL_HUGE);
         lblTableNumber.setWidth("100%");
 
         Component content = buildContent();
@@ -163,11 +164,13 @@ public class AddFoodView extends AbstractOrderView {
         Button btnMinus = new Button();
         btnMinus.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnMinus.addStyleName(ValoTheme.BUTTON_SMALL);
+        btnMinus.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         btnMinus.setIcon(FontAwesome.MINUS_CIRCLE);
 
         Button btnPlus = new Button();
         btnPlus.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnPlus.addStyleName(ValoTheme.BUTTON_SMALL);
+        btnPlus.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         btnPlus.setIcon(FontAwesome.PLUS_CIRCLE);
 
         // Enable or disable minus and plus button depend on check box status
@@ -256,7 +259,7 @@ public class AddFoodView extends AbstractOrderView {
 
         Button btnConfirm = new Button(Language.CONFIRM);
         btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnConfirm.addStyleName("customizationButton");
+        btnConfirm.addStyleName(ValoTheme.BUTTON_PRIMARY);
 
         btnConfirm.addClickListener(new ClickListener() {
 

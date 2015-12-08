@@ -3,19 +3,24 @@ package com.luvsoft.MMI;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 
 import com.luvsoft.MMI.threads.Broadcaster;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.Language.LANGUAGE;
+import com.luvsoft.MMI.utils.ValoThemeSessionInitListener;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 @Theme("tests-valo-facebook")
@@ -38,26 +43,76 @@ public class CoffeeshopUI extends UI {
     public Navigator navigator;
     public MainView mainView;
 
+    private boolean testMode = false;
+
+    CssLayout menu = new CssLayout();
+
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = CoffeeshopUI.class)
     public static class Servlet extends VaadinServlet {
+
+        @Override
+        protected void servletInitialized() throws ServletException {
+            super.servletInitialized();
+            getService().addSessionInitListener(
+                    new ValoThemeSessionInitListener());
+        }
     }
 
     @Override
     protected void init(VaadinRequest request) {
+        if (request.getParameter("test") != null) {
+            testMode = true;
+
+            if (browserCantRenderFontsConsistently()) {
+                getPage().getStyles().add(
+                        ".v-app.v-app.v-app {font-family: Sans-Serif;}");
+            }
+        }
+
+        if (getPage().getWebBrowser().isIE()
+                && getPage().getWebBrowser().getBrowserMajorVersion() == 9) {
+            menu.setWidth("320px");
+        }
+
+        if (!testMode) {
+            Responsive.makeResponsive(this);
+        }
+
         // Set Language is VietNamese
         Language lang = new Language();
         lang.setLanguage(LANGUAGE.VIETNAMESE);
         setLocale(new Locale("vi", "VN"));
+        addStyleName(ValoTheme.UI_WITH_MENU);
+
         // Create a navigator to control the view
         navigator = new Navigator(this, this);
 
         mainView = new MainView();
+        mainView.setMenu(menu);
+        mainView.createView();
         // Create and register the view
         navigator.addView("", mainView);
         navigator.addView(CoffeeshopUI.MAIN_VIEW, mainView);
-        
+
         Broadcaster.register(this::receiveBroadcast);
+    }
+
+    private boolean browserCantRenderFontsConsistently() {
+        // PhantomJS renders font correctly about 50% of the time, so
+        // disable it to have consistent screenshots
+        // https://github.com/ariya/phantomjs/issues/10592
+
+        // IE8 also has randomness in its font rendering...
+
+        return getPage().getWebBrowser().getBrowserApplication()
+                .contains("PhantomJS")
+                || (getPage().getWebBrowser().isIE() && getPage()
+                        .getWebBrowser().getBrowserMajorVersion() <= 9);
+    }
+
+    static boolean isTestMode() {
+        return ((CoffeeshopUI) getCurrent()).testMode;
     }
 
     @Override

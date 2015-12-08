@@ -51,10 +51,10 @@ public class ChangeTableStateView extends AbstractOrderView implements
         setDraggable(false);
         setSizeFull();
 
-        Label lblTableNumber = new Label(Language.TABLE + " "
-                + getCurrentTable().getNumber());
-        lblTableNumber
-                .addStyleName("bold FONT_OVER_OVERSIZE FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+        Label lblTableNumber = new Label(Language.TABLE + " "+ getCurrentTable().getNumber());
+        lblTableNumber.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+        lblTableNumber.addStyleName(ValoTheme.LABEL_BOLD);
+        lblTableNumber.addStyleName(ValoTheme.LABEL_HUGE);
         lblTableNumber.setWidth("100%");
 
         VerticalLayout vtcPopupContainer = new VerticalLayout();
@@ -65,15 +65,14 @@ public class ChangeTableStateView extends AbstractOrderView implements
                 Language.CANCEL_ORDER, Language.PAID, Language.UNPAID);
         optionState.setItemEnabled(Language.PAID, false);
         optionState.setItemEnabled(Language.UNPAID, false);
-        optionState.addStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_BLUE");
-        optionState.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
+        optionState.addStyleName("bold FONT_LARGE FONT_TAHOMA TEXT_BLUE");
         optionState.addStyleName(ValoTheme.OPTIONGROUP_LARGE);
 
         selectOptionState(getCurrentTable().getState());
 
         vtcPopupContainer.addComponents(lblTableNumber, optionState,
                 buildFooter());
-        vtcPopupContainer.setExpandRatio(lblTableNumber, 2.0f);
+        vtcPopupContainer.setExpandRatio(lblTableNumber, 1.0f);
         vtcPopupContainer.setExpandRatio(optionState, 5.0f);
         vtcPopupContainer.setComponentAlignment(optionState, Alignment.MIDDLE_CENTER);
 
@@ -172,8 +171,8 @@ public class ChangeTableStateView extends AbstractOrderView implements
             }
             else {
                 Adapter.changeTableState(getCurrentTable().getId(), newState);
-                Broadcaster.broadcast(CoffeeshopUI.CHANGE_TABLE_STATE);
                 close();
+                Broadcaster.broadcast(CoffeeshopUI.CHANGE_TABLE_STATE);
             }
         }
     }
@@ -185,14 +184,16 @@ public class ChangeTableStateView extends AbstractOrderView implements
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
 
         btnConfirm = new Button(Language.CONFIRM);
-        btnConfirm.addStyleName("BUTTON_GIGANTIC");
-        btnConfirm.addStyleName("customizationButton");
+        btnConfirm.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnConfirm.addStyleName("margin-left1");
         btnConfirm.setHeightUndefined();
         btnConfirm.setClickShortcut(KeyCode.ENTER, null);
 
         btnAddOrder = new Button(Language.ADD_ORDER);
-        btnAddOrder.addStyleName("BUTTON_GIGANTIC");
-        btnAddOrder.addStyleName("customizationButton");
+        btnAddOrder.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnAddOrder.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnAddOrder.addStyleName("margin-right1");
         btnAddOrder.setHeightUndefined();
 
         footer.addComponents(btnAddOrder, btnConfirm);

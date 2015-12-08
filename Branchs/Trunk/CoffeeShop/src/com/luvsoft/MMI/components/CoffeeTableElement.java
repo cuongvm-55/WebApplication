@@ -48,13 +48,13 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     private void initCoffeeTableElement() {
         Types.State state = table.getState();
 
-        this.setStyleName("card");
+        this.addStyleName("card");
         this.setSizeFull();
 
         this.btnTableState = new Image();
         this.btnTableState.setWidth("70%");
         this.btnTableState.setHeight("70%");
-        this.btnTableState.setStyleName("hoverImage");
+        this.btnTableState.addStyleName("hoverImage");
         this.setButtonResource(state);
         
         this.lblWaitingTime = new Label();
@@ -70,8 +70,9 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         }
 
         this.lblTableNumber = new Label(Language.TABLE + " " + table.getNumber());
-        this.lblTableNumber.addStyleName("bold TEXT_BLUE");
-        this.lblTableNumber.addStyleName(ValoTheme.LABEL_H1);
+        this.lblTableNumber.addStyleName("TEXT_BLUE");
+        this.lblTableNumber.addStyleName(ValoTheme.LABEL_HUGE);
+        this.lblTableNumber.addStyleName(ValoTheme.LABEL_BOLD);
         this.lblTableNumber.setSizeUndefined();
 
         this.addComponents(btnTableState, lblWaitingTime, lblTableNumber);
@@ -89,21 +90,29 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
      */
     private void setWaitingTime(int waitingTime) {
         if (0 < waitingTime) {
-            this.lblWaitingTime.setStyleName("huge bold TEXT_RED");
+            this.lblWaitingTime.addStyleName("TEXT_RED");
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue(Language.WAITING + " " + waitingTime
                     + " " + Language.MINUTE);
         } else {
-            this.lblWaitingTime.setStyleName("huge bold TEXT_WHITE");
+            this.lblWaitingTime.addStyleName("TEXT_WHITE");
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue("NO TIME");
         }
     }
 
     private void setPaymentState(Types.State state) {
         if(state == Types.State.PAID) {
-            this.lblWaitingTime.setStyleName("huge bold TEXT_RED");
+            this.lblWaitingTime.addStyleName("TEXT_RED");
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue(Language.PAID);
         } else if(state == Types.State.UNPAID) {
-            this.lblWaitingTime.setStyleName("huge bold TEXT_RED");
+            this.lblWaitingTime.addStyleName("TEXT_RED");
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue(Language.UNPAID);
         }
     }

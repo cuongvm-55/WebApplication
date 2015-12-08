@@ -28,6 +28,7 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class OrderElement extends VerticalLayout implements ViewInterface {
@@ -109,8 +110,9 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         tbOrderInfos = new Table();
         btnConfFinish = new Button(Language.ALL_DONE);
 
-        lbTableName.addStyleName("bold FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
-        lbTableName.addStyleName("FONT_OVER_OVERSIZE");
+        lbTableName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+        lbTableName.addStyleName(ValoTheme.LABEL_BOLD);
+        lbTableName.addStyleName(ValoTheme.LABEL_HUGE);
         lbTableName.setWidth("100%");
 
         tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
@@ -122,8 +124,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         tbOrderInfos.setResponsive(true);
         tbOrderInfos.setSizeFull();
 
-        btnConfFinish.addStyleName("customizationButton text-align-left");
-        btnConfFinish.addStyleName("BUTTON_GIGANTIC");
+        btnConfFinish.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnConfFinish.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {

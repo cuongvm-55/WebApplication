@@ -9,6 +9,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class CustomizationTreeElement extends VerticalLayout implements ClickListener{
@@ -39,6 +40,7 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.horzFloorTitleContainer = new HorizontalLayout();
         this.horzFloorTitleContainer.setResponsive(true);
         this.horzFloorTitleContainer.setWidth("100%");
+        this.horzFloorTitleContainer.setHeight("40px");
         this.horzFloorTitleContainer.addStyleName("BACKGROUND_BLUE TEXT_WHITE");
 
         this.btnExpandElement = new Button();
@@ -48,7 +50,9 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.btnExpandElement.setWidth("60%");
 
         this.lblFloorName = new Label(title);
-        this.lblFloorName.addStyleName("bold FONT_OVER_OVERSIZE FONT_TAHOMA TEXT_CENTER");
+        this.lblFloorName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE");
+        this.lblFloorName.addStyleName(ValoTheme.LABEL_BOLD);
+        this.lblFloorName.addStyleName(ValoTheme.LABEL_HUGE);
         this.lblFloorName.setWidth("100%");
 
         if( additionalComponent == null ){
@@ -68,6 +72,7 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.horzFloorTitleContainer.setExpandRatio(this.lblFloorName, 4.0f);
         this.horzFloorTitleContainer.setExpandRatio(this.addComponent, 1.0f);
         this.horzFloorTitleContainer.setComponentAlignment(this.addComponent, Alignment.MIDDLE_RIGHT);
+        this.horzFloorTitleContainer.setComponentAlignment(this.lblFloorName, Alignment.MIDDLE_CENTER);
 
         this.addComponents(this.horzFloorTitleContainer, content);
 

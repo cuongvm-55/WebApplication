@@ -57,11 +57,11 @@
   // CLASS CSS
   //========================================
 
-  .v-popupview-popup-leftMenuStyle {
-     top:0px;
-     width:60%;
-     height:100%;
-  }
+   .v-popupview-popup-leftMenuStyle {
+      top:0px;
+      width:60%;
+      height:100%;
+   }
 
    .v-popupview-popup-popupStyle {
       left: 30% !important;
@@ -76,9 +76,24 @@
      color:#ffffff;
   }
 
-  .elementContainerStyle {
-     margin-top: 20px;
-  }
+    .margin-left1 {
+        margin-left: 1px;
+    }
+    .margin-right1 {
+        margin-right: 1px;
+    }
+
+    .margin-bottom1 {
+        margin-bottom: 1px;
+    }
+
+    .elementContainerStyle {
+        margin-bottom: 20px;
+    }
+
+    .v-ui.valo-menu-responsive[width-range~="0-800px"] .table-list-view {
+        margin-top: 20px;
+    }
     .v-table-cell-wrapper {
         white-space: normal;
     }
@@ -87,6 +102,9 @@
         display: none;
     }
 
+    .v-filterselect {
+        width: 100px !important;
+    }
     .text-align-left{
         text-align: left;
     }
@@ -139,5 +157,25 @@
     }
     .margintop100{
         margin-top: 100px;
+    }
+
+    .margintop10{
+        margin-top: 10px;
+    }
+
+    .valo-content > .v-layout {
+        max-width: 100%;
+    }
+
+    .v-ui.valo-menu-responsive[width-range~="0-800px"] .valo-menu-title {
+        height: 40px !important;
+    }
+
+    .valo-menu-toggle {
+        height: 34px !important;
+    }
+
+    .v-ui.valo-menu-responsive[width-range~="0-800px"] .valo-menuitems {
+        top: 40px !important;
     }
 }

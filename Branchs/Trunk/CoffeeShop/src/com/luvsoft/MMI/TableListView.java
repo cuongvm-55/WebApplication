@@ -16,11 +16,10 @@ import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-public class TableListView extends Panel implements ViewInterface {
+public class TableListView extends VerticalLayout implements ViewInterface {
     private List<Floor> floorList;
     private List<Table> tableList;
     private ViewInterface parentView;
@@ -30,8 +29,9 @@ public class TableListView extends Panel implements ViewInterface {
 
     @Override
     public void createView() {
-        this.setSizeFull();
-        VerticalLayout vtcContentContainer = new VerticalLayout();
+        this.setWidth("100%");
+        this.setHeightUndefined();
+        this.addStyleName("table-list-view");
         floorList = Adapter.retrieveFloorList();
         if( floorList == null ){
             System.out.println("There's no floor!");
@@ -80,9 +80,8 @@ public class TableListView extends Panel implements ViewInterface {
             btnAddTbl.setStyleName("icon-only primary TEXT_WHITE");
             
             CustomizationTreeElement treeElement = new CustomizationTreeElement(gridElementContent, Language.FLOOR + " " + floorList.get(j).getNumber(), btnAddTbl);
-            vtcContentContainer.addComponent(treeElement);
+            this.addComponent(treeElement);
         }
-        this.setContent(vtcContentContainer);
     }
 
     @Override

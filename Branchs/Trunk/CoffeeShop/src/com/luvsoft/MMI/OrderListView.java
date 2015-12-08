@@ -30,21 +30,14 @@ public class OrderListView extends Panel implements ViewInterface{
     // data
     private List<Order> orderList; // Current order list
 
-    public static OrderListView getInstance() {
-        if(orderListView == null) {
-            orderListView = new OrderListView();
-        }
-        return orderListView;
-    }
-
     public OrderListView() {
         super();
     }
 
     @Override
     public void createView() {
+        addStyleName("table-list-view");
         vtcLayout = new VerticalLayout();
-        //vtcLayout.setSizeFull();
         loadContent();
         this.setContent(vtcLayout);
         this.setSizeFull();

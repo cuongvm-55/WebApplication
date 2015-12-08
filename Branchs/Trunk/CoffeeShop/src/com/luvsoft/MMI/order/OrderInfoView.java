@@ -199,11 +199,11 @@ public class OrderInfoView extends AbstractOrderView {
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
 
         tbOrderDetails.setColumnExpandRatio(Language.SEQUENCE, 0.5f);
-        tbOrderDetails.setColumnExpandRatio(Language.FOOD_NAME, 3.0f);
-        tbOrderDetails.setColumnExpandRatio(Language.STATUS, 1.5f);
-        tbOrderDetails.setColumnExpandRatio(Language.QUANTITY, 0.5f);
-        tbOrderDetails.setColumnExpandRatio(Language.PRICE, 0.5f);
-        tbOrderDetails.setColumnExpandRatio(Language.DELETE, 0.5f);
+        tbOrderDetails.setColumnExpandRatio(Language.FOOD_NAME, 2.0f);
+        tbOrderDetails.setColumnExpandRatio(Language.STATUS, 1.4f);
+        tbOrderDetails.setColumnExpandRatio(Language.QUANTITY, 0.9f);
+        tbOrderDetails.setColumnExpandRatio(Language.PRICE, 1.0f);
+        tbOrderDetails.setColumnExpandRatio(Language.DELETE, 0.7f);
     }
 
     private void updateTable() {
@@ -406,7 +406,8 @@ public class OrderInfoView extends AbstractOrderView {
         // add food button
         Button btnAddFood = new Button(Language.ADD_FOOD);
         btnAddFood.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnAddFood.addStyleName("customizationButton");
+        btnAddFood.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+        btnAddFood.addStyleName("margin-bottom1");
         btnAddFood.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -421,12 +422,13 @@ public class OrderInfoView extends AbstractOrderView {
         HorizontalLayout confirmButtonsContainer = new HorizontalLayout();
         // confirm button
         btnConfirmPaid = new Button(Language.CONFIRM_PAID);
-        btnConfirmPaid.addStyleName("customizationButton");
+        btnConfirmPaid.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnConfirmPaid.addStyleName(ValoTheme.BUTTON_HUGE);
 
         btnConfirmOrder = new Button(Language.CONFIRM_ORDER);
         btnConfirmOrder.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnConfirmOrder.addStyleName("customizationButton");
+        btnConfirmOrder.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnConfirmOrder.addStyleName("margin-left1");
         // Don't allow some button when no order exist
         if( isNewOrder && orderDetailRecordList.isEmpty()
                 && txtNote.getValue().isEmpty() ) {
