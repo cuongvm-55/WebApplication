@@ -32,6 +32,7 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
     private TableListView tableListView;
 
     private CssLayout menu;
+    private Label title;
 
     public MainView() {
         super();
@@ -84,8 +85,7 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
         showMenu.setIcon(FontAwesome.LIST);
         menu.addComponent(showMenu);
 
-        final Label title = new Label(
-                "<h3>Nhân viên: <strong>"+strStaffName+"</strong></h3>", ContentMode.HTML);
+        title = new Label("<h3>Nhân viên: <strong>"+strStaffName+"</strong></h3>", ContentMode.HTML);
         title.setSizeUndefined();
         top.addComponent(title);
         top.setExpandRatio(title, 1);
@@ -129,10 +129,13 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
             return;
         }
 
-        strStaffName = getSession().getAttribute("user") != null ? getSession().getAttribute("user").toString() : "";
+        if(strStaffName == null) {
+            strStaffName = getSession().getAttribute("user") != null ? getSession().getAttribute("user").toString() : "";
+            title.setValue("<h3>Nhân viên: <strong>"+strStaffName+"</strong></h3>");
+        }
+
         if(event.getParameters() == null || event.getParameters().isEmpty()) {
             getContentContainer().removeAllComponents();
-            createView();
             tableListView.createView();
             getContentContainer().addComponent(tableListView);
             menu.removeStyleName("valo-menu-visible");

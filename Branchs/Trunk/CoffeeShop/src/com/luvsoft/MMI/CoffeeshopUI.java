@@ -91,6 +91,7 @@ public class CoffeeshopUI extends UI {
         // main view
         mainView = new MainView();
         mainView.setMenu(menu);
+        mainView.createView();
 
         navigator.addView(CoffeeshopUI.MAIN_VIEW, mainView);
         
