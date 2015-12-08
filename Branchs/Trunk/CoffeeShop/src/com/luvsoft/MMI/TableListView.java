@@ -97,6 +97,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
 
     @Override
     public void reloadView() {
+        removeAllComponents();
         createView();
     }
 
