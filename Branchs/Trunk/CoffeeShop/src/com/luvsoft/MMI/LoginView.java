@@ -1,13 +1,14 @@
 package com.luvsoft.MMI;
 
 import com.luvsoft.MMI.utils.Language;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
@@ -15,8 +16,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
 
-public class LoginView extends CustomComponent implements View{
-
+public class LoginView extends CustomComponent implements View, Button.ClickListener{
     /**
      * 
      */
@@ -29,7 +29,6 @@ public class LoginView extends CustomComponent implements View{
     private final Button loginButton;
 
     private final VerticalLayout fields;
-    @SuppressWarnings("serial")
     public LoginView() {
         setSizeFull();
 
@@ -38,6 +37,7 @@ public class LoginView extends CustomComponent implements View{
         user.setWidth("300px");
         user.setRequired(true);
         user.setInvalidAllowed(false);
+        user.addValidator(new StringLengthValidator("", 1, 256, false));
 
         // Create the password input field
         password = new PasswordField("Mật khẩu:");
@@ -45,16 +45,12 @@ public class LoginView extends CustomComponent implements View{
         password.setRequired(true);
         password.setValue("");
         password.setNullRepresentation("");
+        //password.addValidator(new PasswordValidator());
 
         // Create login button
         loginButton = new Button("Login");
         loginButton.setClickShortcut(KeyCode.ENTER, null);
-        loginButton.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
-                login();
-            }
-        });
+        loginButton.addClickListener(this);
 
         // Add both to a panel
         fields = new VerticalLayout(user, password, loginButton);
@@ -73,7 +69,6 @@ public class LoginView extends CustomComponent implements View{
 
     @Override
     public void enter(ViewChangeEvent event) {
-        getSession().setAttribute("user", null);
         user.focus();
     }
 
@@ -98,6 +93,41 @@ public class LoginView extends CustomComponent implements View{
             this.password.focus();
             fields.setCaption(Language.INVALID_PINCODE);
         }
+    }
+
+//    // Validator for validating the passwords
+//    @SuppressWarnings("serial")
+//    private static final class PasswordValidator extends
+//            AbstractValidator<String> {
+//
+//        public PasswordValidator() {
+//            super("The password provided is not valid");
+//        }
+//
+//        @Override
+//        protected boolean isValidValue(String value) {
+//            if (value != null
+//                    && (value.length() != Configuration.PINCODE_LENGTH || !value.matches(".*\\d.*"))) {
+//                return false;
+//            }
+//            return true;
+//        }
+//
+//        @Override
+//        public Class<String> getType() {
+//            return String.class;
+//        }
+//        
+//        @Override
+//        public String getErrorMessage() {
+//            // TODO Auto-generated method stub
+//            return Language.INVALID_PINCODE;
+//        }
+//    }
+    
+    @Override
+    public void buttonClick(ClickEvent event) {
+        login();
     }
 
 }

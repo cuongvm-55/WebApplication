@@ -77,6 +77,8 @@ public class OrderInfoView extends AbstractOrderView {
 
     // Flag: is new order?
     private boolean isNewOrder;
+    private boolean isNewFoodAdded;
+    private boolean allOrderDetailCanceled;
 
     public OrderInfoView() {
         super();
@@ -167,9 +169,22 @@ public class OrderInfoView extends AbstractOrderView {
                 + Language.CURRENCY_SYMBOL);
         textFieldpaidAmount.setValue(paidAmount + "");
 
+        boolean _isNewFoodAdded = false;
+        for( OrderDetailRecord record : orderDetailRecordList ){
+            if( record.getStatus() != Types.State.COMPLETED ){
+                _isNewFoodAdded = true;
+                break;
+            }
+        }
         if( !orderDetailRecordList.isEmpty() ) {
-            btnConfirmOrder.setEnabled(true);
-            btnConfirmPaid.setEnabled(true);
+            if( _isNewFoodAdded ){
+                btnConfirmOrder.setEnabled(true);
+                btnConfirmPaid.setEnabled(false); // Do not allow to paid when there's an waiting order detail
+            }
+            else{
+                btnConfirmOrder.setEnabled(true);
+                btnConfirmPaid.setEnabled(true);
+            }
         }
     }
 
@@ -450,12 +465,31 @@ public class OrderInfoView extends AbstractOrderView {
         btnConfirmOrder.addStyleName(ValoTheme.BUTTON_HUGE);
         btnConfirmOrder.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnConfirmOrder.addStyleName("margin-left1");
+        
+        boolean _isNewFoodAdded = false;
+        for( OrderDetailRecord record : orderDetailRecordList ){
+            if( record.getStatus() != Types.State.COMPLETED ){
+                _isNewFoodAdded = true;
+                break;
+            }
+        }
         // Don't allow some button when no order exist
         if( isNewOrder && orderDetailRecordList.isEmpty()
                 && txtNote.getValue().isEmpty() ) {
             btnConfirmOrder.setEnabled(false);
             btnConfirmPaid.setEnabled(false);
         }
+        else{
+            if( _isNewFoodAdded ){
+                btnConfirmOrder.setEnabled(true);
+                btnConfirmPaid.setEnabled(false); // Do not allow to paid when there's an waiting order detail
+            }
+            else{
+                btnConfirmOrder.setEnabled(true);
+                btnConfirmPaid.setEnabled(true);
+            }
+        }
+        
         confirmButtonsContainer.addComponents(btnConfirmPaid, btnConfirmOrder);
 
         footer.addComponents(btnAddFood, confirmButtonsContainer);
@@ -467,163 +501,74 @@ public class OrderInfoView extends AbstractOrderView {
         btnConfirmOrder.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                ////////////////////////////////////////////////////////////////////////
-                // Save note
-                ///////////////////////////////////////////////////////////////////////
-                if( currentOrder != null
-                        && !currentOrder.getNote().equals(txtNote.getValue()) ) {
-                    currentOrder.setNote(txtNote.getValue());
-                    Adapter.updateFieldValueOfOrder(currentOrder.getId(),
-                            Order.DB_FIELD_NAME_NOTE, txtNote.getValue());
-                }
-
-                ////////////////////////////////////////////////////////////////////////
-                // Update order details
-                ///////////////////////////////////////////////////////////////////////
-                isOrderDetailListChanged = false;
-                List<String> orderDetailIdList = new ArrayList<String>();
-                boolean allOrderDetailCanceled = true;
-                for (OrderDetailRecord record : orderDetailRecordList) {
-                    OrderDetail odDetail = new OrderDetail();
-                    String id = record.getOrderDetailId();
-                    if( id.equals("") ) {
-                        id = new ObjectId().toString();
-                    }
-                    orderDetailIdList.add(id);
-                    odDetail.setId(id);
-                    odDetail.setFoodId(record.getFoodId());
-                    odDetail.setQuantity(record.getQuantity());
-                    odDetail.setState(record.getStatus());
-
-                    // check if all record is CANCELED
-                    if( record.getStatus() != Types.State.CANCELED ){
-                        allOrderDetailCanceled = false;
-                    }
-                    System.out.println("record.getChangeFlag() "
-                            + record.getChangeFlag());
-
-                    switch ( record.getChangeFlag() ) {
-                    case MODIFIED:
-                        {
-                            // update MODIFIED records
-                            System.out.println("Modified");
-                            if( !Adapter.updateOrderDetail(odDetail.getId(),
-                                    odDetail) ) {
-                                System.out
-                                        .println("Fail to update order detail, Id: "
-                                                + odDetail.getId());
-                                isOrderDetailListChanged = false;
-                            }
-                            else {
-                                // set order state to WAITING
-                                currentOrder.setStatus(Types.State.WAITING);
-                                // set table state to WAITING
-                                Adapter.changeTableState(
-                                        currentOrder.getTableId(),
-                                        Types.State.WAITING);
-                                isOrderDetailListChanged = true;
-                            }
-                            break;
-                        }
-                    case ADDNEW:
-                        {
-                            System.out.println("Add New");
-                            // create ADDNEW records
-                            if( !Adapter.addNewOrderDetail(odDetail) ) {
-                                System.out
-                                        .println("Fail to add new order detail, Id: "
-                                                + odDetail.getId());
-                                isOrderDetailListChanged = false;
-                            }
-                            else {
-                                System.out.println("odDetail.getId() "
-                                        + odDetail.getId());
-                                // set order state to WAITING
-                                currentOrder.setStatus(Types.State.WAITING);
-                                // set table state to WAITING
-                                Adapter.changeTableState(
-                                        currentOrder.getTableId(),
-                                        Types.State.WAITING);
-                                isOrderDetailListChanged = true;
-                            }
-                            break;
-                         }
-                    case DELETED:
-                        {
-                            System.out.println("Delete");
-                            // delete DELETED records
-                            if( !Adapter.removeOrderDetail(odDetail.getId()) ) {
-                                System.out
-                                        .println("Fail to delete order detail, Id: "
-                                                + odDetail.getId());
-                                isOrderDetailListChanged = false;
-                            }
-                            else {
-                                orderDetailIdList.remove(orderDetailIdList
-                                        .size() - 1);
-                                isOrderDetailListChanged = true;
-                            }
-                            isOrderDetailListChanged = true;
-                            break;
-                        }
-                    default:
-                        break;
-                    }
-                }
-
-                // If there's no new food was selected, return
-                if( !isOrderDetailListChanged ) {
-                    System.out.println("No changes, return");
+                // update order details infomation
+                if( !saveOrderDetailsData() ){
                     close();
                     return;
                 }
 
                 ////////////////////////////////////////////////////////////////////////
                 // Update order
-                ///////////////////////////////////////////////////////////////////////
-                currentOrder.setOrderDetailIdList(orderDetailIdList);
-                // If all order details are canceled, mark order as CANCELED
-                if( allOrderDetailCanceled ){
-                    currentOrder.setStatus(Types.State.CANCELED);
-                }
-                // Update order if staffName is different
-                if( !staffName.equals(currentOrder.getStaffName()) ) {
-                    currentOrder.setStaffName(staffName);
-                }
-
-                if( isNewOrder ) {
-                    if( Adapter.addNewOrder(currentOrder) ) {
+                ////////////////////////////////////////////////////////////////////////
+                if (isNewOrder) {
+                    if (Adapter.addNewOrder(currentOrder)) {
                         System.out.println("Add new Order: " + currentOrder.toString());
+
+                        if( currentOrder.getStatus() == Types.State.WAITING ){
+                            // set table state to WAITING
+                            Adapter.changeTableState(currentOrder.getTableId(),
+                                    Types.State.WAITING);
+                        }
+
                         // Broadcast order change event
-                        Broadcaster.broadcast(CoffeeshopUI.NEW_ORDER_MESSAGE+"::"+getCurrentTable().getNumber());
-                        NewOrderManager waitingTimeThread = new NewOrderManager(currentOrder);
+                        Broadcaster.broadcast(CoffeeshopUI.NEW_ORDER_MESSAGE + "::"
+                                + getCurrentTable().getNumber());
+
+                        // Waiting time thread
+                        NewOrderManager waitingTimeThread = new NewOrderManager(
+                                currentOrder);
                         waitingTimeThread.start();
-                    }
-                    else {
+                    } else {
                         System.out.println("Fail to add orderId: "
                                 + currentOrder.getId());
                     }
-                }
-                else {
-                    if( Adapter.updateOrder(currentOrder.getId(),
-                            currentOrder) ) {
+                } else {
+                    if (Adapter.updateOrder(currentOrder.getId(), currentOrder)) {
                         System.out.println("Update Order: " + currentOrder.toString());
-                        // Broadcast order change event
-                        Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE+"::"+getCurrentTable().getNumber());
-                        NewOrderManager waitingTimeThread = new NewOrderManager(currentOrder);
-                        waitingTimeThread.start();
-                        
-                    }
-                    else {
+                        if( isOrderDetailListChanged ){
+                            // Broadcast order change event
+                            Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
+                                    + getCurrentTable().getNumber());
+                        }
+
+                        // In case add new food, add new waiting time thread if there's no thread exist for this order
+                        if( isNewFoodAdded ){
+                            boolean isThreadTimeExist = false;
+                            for(NewOrderManager orderMgr : NewOrderManager.listWaitingOrderThreads){
+                                if( orderMgr.getCurrentOrder().getId().equals(currentOrder.getId()) ){
+                                    isThreadTimeExist = true;
+                                    break;
+                                }
+                            }
+                            if( !isThreadTimeExist ){
+                                NewOrderManager waitingTimeThread = new NewOrderManager(
+                                        currentOrder);
+                                waitingTimeThread.start();
+                            }
+                            // set order state to WAITING
+                            Adapter.changeOrderState(currentOrder.getId(), Types.State.WAITING);
+                            // set table state to WAITING
+                            Adapter.changeTableState(currentOrder.getTableId(),
+                                    Types.State.WAITING);
+                        }
+                    } else {
                         System.out.println("Fail to update orderId: ");
                     }
                 }
 
                 // Clear data
                 currentOrder = null;
-                orderDetailIdList = null;
                 orderDetailRecordList = null;
-
                 close();
             }
         });
@@ -663,6 +608,122 @@ public class OrderInfoView extends AbstractOrderView {
         });
 
         return footer;
+    }
+    
+    /**
+     * This method save/update order details information
+     * Call when confirm order or confirm paid
+     * @return
+     */
+    private boolean saveOrderDetailsData(){
+        ////////////////////////////////////////////////////////////////////////
+        // Save note
+        ///////////////////////////////////////////////////////////////////////
+        if( !currentOrder.getNote().equals(txtNote.getValue()) ) {
+            currentOrder.setNote(txtNote.getValue());
+        }
+
+        // Update order if staffName is different
+        if (!staffName.equals(currentOrder.getStaffName())) {
+            currentOrder.setStaffName(staffName);
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // Update order details
+        ///////////////////////////////////////////////////////////////////////
+        isOrderDetailListChanged = false;
+        List<String> orderDetailIdList = new ArrayList<String>();
+        orderDetailIdList.clear();
+        allOrderDetailCanceled = false;
+        isNewFoodAdded = false;
+        for (OrderDetailRecord record : orderDetailRecordList) {
+            OrderDetail odDetail = new OrderDetail();
+            String id = record.getOrderDetailId();
+            if (id.equals("")) {
+                id = new ObjectId().toString();
+            }
+            orderDetailIdList.add(id);
+            odDetail.setId(id);
+            odDetail.setFoodId(record.getFoodId());
+            odDetail.setQuantity(record.getQuantity());
+            odDetail.setState(record.getStatus());
+
+            // check if all record is CANCELED
+            if (record.getStatus() != Types.State.CANCELED) {
+                allOrderDetailCanceled = false;
+            }
+            System.out.println("record.getChangeFlag() "
+                    + record.getChangeFlag());
+
+            switch (record.getChangeFlag()) {
+            case MODIFIED: {
+                // update MODIFIED records
+                System.out.println("Modified");
+                if (!Adapter.updateOrderDetail(odDetail.getId(), odDetail)) {
+                    isOrderDetailListChanged = true;
+                }
+                else{
+                    System.out.println("Fail to update order detail, Id: "
+                            + odDetail.getId());
+                }
+                break;
+            }
+            case ADDNEW: {
+                System.out.println("Add New");
+                // create ADDNEW records
+                if (Adapter.addNewOrderDetail(odDetail)) {
+                    isOrderDetailListChanged = true;
+                    isNewFoodAdded = true;
+                }
+                else{
+                    System.out.println("Fail to add new order detail, Id: "
+                        + odDetail.getId());
+                }
+
+                break;
+            }
+            case DELETED: {
+                System.out.println("Delete");
+                // delete DELETED records
+                if (Adapter.removeOrderDetail(odDetail.getId())) {
+                    orderDetailIdList.remove(orderDetailIdList.size() - 1);
+                    isOrderDetailListChanged = true;
+                }
+                else{
+                    System.out.println("Fail to delete order detail, Id: "
+                            + odDetail.getId());
+                }
+
+                break;
+            }
+            default:
+                break;
+            }
+        }
+        // If there's no new food was selected, return
+        if (isOrderDetailListChanged) {
+            currentOrder.setOrderDetailIdList(orderDetailIdList);
+        }
+        else{
+            if( isNewOrder ){
+                // Ignore this order
+                return false;
+            }
+        }
+
+        // If all order details are canceled or deleted, mark order as CANCELED
+        if (allOrderDetailCanceled || currentOrder.getOrderDetailIdList().isEmpty()) {
+            if( isNewOrder ){
+                // Ignore this order
+                return false;
+            }
+            currentOrder.setStatus(Types.State.CANCELED);
+            // set table state to WAITING
+            Adapter.changeTableState(currentOrder.getTableId(),
+                    Types.State.EMPTY);
+        }
+
+        return true;
     }
 
     /*

@@ -15,6 +15,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
@@ -94,12 +95,40 @@ public class CoffeeshopUI extends UI {
         mainView.createView();
 
         navigator.addView(CoffeeshopUI.MAIN_VIEW, mainView);
-        
+        navigator.addView("", mainView);
+
         // Create and register the view
-        navigator.addView("", lgView);
         navigator.addView(CoffeeshopUI.LOGIN_VIEW, lgView);
 
-        Broadcaster.register(this::receiveBroadcast);
+        //
+        // We use a view change handler to ensure the user is always redirected
+        // to the login view if the user is not logged in.
+        //
+        getNavigator().addViewChangeListener(new ViewChangeListener() {
+            @Override
+            public boolean beforeViewChange(ViewChangeEvent event) {
+                // Check if a user has logged in
+                boolean isLoggedIn = getSession().getAttribute("user") != null;
+                boolean isLoginView = event.getNewView() instanceof LoginView;
+                if (!isLoggedIn && !isLoginView) {
+                    // Redirect to login view always if a user has not yet
+                    // logged in
+                    getNavigator().navigateTo(CoffeeshopUI.LOGIN_VIEW);
+                    return false;
+                } else if (isLoggedIn && isLoginView) {
+                    // If someone tries to access to login view while logged in,
+                    // then cancel
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public void afterViewChange(ViewChangeEvent event) {
+
+            }
+        });
     }
 
     private boolean browserCantRenderFontsConsistently() {
