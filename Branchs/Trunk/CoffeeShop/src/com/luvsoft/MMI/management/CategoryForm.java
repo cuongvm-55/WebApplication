@@ -41,7 +41,7 @@ public class CategoryForm extends Window implements ViewInterface{
         category = _category;
         state = _state;
         String caption = ( state == STATE.ADDNEW) ? Language.NEW_CATEGORY : Language.UPDATE_CATEGORY;
-        this.setCaption(caption);
+        // this.setCaption(caption);
         this.setModal(true);
         this.setResizable(false);
         this.setClosable(true);
@@ -107,7 +107,7 @@ public class CategoryForm extends Window implements ViewInterface{
         // Control buttons
         Button btnSave = new Button(Language.SAVE);
         btnSave.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnSave.addStyleName("customizationButton");
+        btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnSave.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -122,7 +122,7 @@ public class CategoryForm extends Window implements ViewInterface{
 
         Button btnCancel = new Button(Language.CANCEL);
         btnCancel.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnCancel.addStyleName("customizationButton");
+        btnCancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnCancel.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -137,11 +137,16 @@ public class CategoryForm extends Window implements ViewInterface{
         hzLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
         hzLayout.setSpacing(true);
 
+        Label lblCaption = new Label(caption);
+        lblCaption.addStyleName(ValoTheme.LABEL_BOLD);
+        lblCaption.addStyleName(ValoTheme.LABEL_HUGE);
+        lblCaption.addStyleName("TEXT_CENTER");
+
         lblMsg = new Label("");
         lblMsg.setSizeFull();
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(codeField, nameField, hzLayout);
+        vtcLayout.addComponents(lblCaption, codeField, nameField, hzLayout);
         vtcLayout.setComponentAlignment(codeField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(nameField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(hzLayout, Alignment.MIDDLE_CENTER);

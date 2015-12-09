@@ -65,9 +65,8 @@ public class FoodManagement extends Window implements ViewInterface{
         // control buttons
         footer = buildFooter();
         layout.addComponents(lblWindowName, panel, footer);
-        layout.setExpandRatio(panel, 1.0f);
-        layout.setExpandRatio(panel, 7.0f);
-        layout.setExpandRatio(footer, 2.0f);
+        layout.setExpandRatio(lblWindowName, 1.2f);
+        layout.setExpandRatio(panel, 10.0f);
         this.setContent(layout);
     }
 
@@ -86,21 +85,6 @@ public class FoodManagement extends Window implements ViewInterface{
         VerticalLayout content = new VerticalLayout();
 
         for (Category category : categories) {
-            CheckBox cbModify = new CheckBox();
-            cbModify.setCaption("Sửa");
-            cbModify.addStyleName(ValoTheme.CHECKBOX_LARGE);
-            cbModify.setData(category);
-            cbModify.addValueChangeListener(new ValueChangeListener() {
-                @Override
-                public void valueChange(ValueChangeEvent event) {
-                    boolean value = (boolean) event.getProperty().getValue();
-                    if( value ){
-                        CategoryForm form = new CategoryForm(category, CategoryForm.STATE.UPDATE);
-                        form.setParentView(FoodManagement.this);
-                        getUI().addWindow(form);
-                    }
-                }
-            });
             // Check box "To be deleted category"
             CheckBox cbDel = new CheckBox();
             cbDel.setCaption("Xóa");
@@ -120,9 +104,25 @@ public class FoodManagement extends Window implements ViewInterface{
                     }
                 }
             });
-            
+            Button btnModify = new Button("Sửa");
+            btnModify.addStyleName(ValoTheme.BUTTON_LARGE);
+            btnModify.addStyleName(ValoTheme.BUTTON_LINK);
+            btnModify.addStyleName("TEXT_WHITE");
+            btnModify.setData(category);
+            btnModify.addClickListener(new ClickListener() {
+                
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    CategoryForm form = new CategoryForm(category, CategoryForm.STATE.UPDATE);
+                    form.setParentView(FoodManagement.this);
+                    getUI().addWindow(form);
+                }
+            });
+
             HorizontalLayout hzLayout = new HorizontalLayout();
-            hzLayout.addComponents(cbModify, cbDel);
+            hzLayout.addComponents(btnModify, cbDel);
+            hzLayout.setComponentAlignment(cbDel, Alignment.MIDDLE_CENTER);
+            hzLayout.setComponentAlignment(btnModify, Alignment.MIDDLE_CENTER);
             hzLayout.setSpacing(true);
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
                     buildContentElement(category), category.getName(), hzLayout);
@@ -180,7 +180,8 @@ public class FoodManagement extends Window implements ViewInterface{
         Button btnEdit = new Button();
         btnEdit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnEdit.addStyleName(ValoTheme.BUTTON_LARGE);
-        btnEdit.setIcon(FontAwesome.EDIT);
+        btnEdit.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+        btnEdit.setIcon(FontAwesome.PENCIL);
         btnEdit.setData(food.getId());
         btnEdit.addClickListener(new ClickListener() {
             @Override
@@ -216,7 +217,8 @@ public class FoodManagement extends Window implements ViewInterface{
 
         Button btnAddFood = new Button(Language.ADD_FOOD);
         btnAddFood.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnAddFood.addStyleName("customizationButton");
+        btnAddFood.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnAddFood.addStyleName("margin-right1 margin-bottom1");
         btnAddFood.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -227,7 +229,8 @@ public class FoodManagement extends Window implements ViewInterface{
         });
         Button btnRemoveFood = new Button(Language.DELETE_FOODS);
         btnRemoveFood.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnRemoveFood.addStyleName("customizationButton");
+        btnRemoveFood.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnRemoveFood.addStyleName("margin-bottom1");
         btnRemoveFood.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -259,7 +262,8 @@ public class FoodManagement extends Window implements ViewInterface{
         
         Button btnAddCategory = new Button(Language.ADD_CATEGORY);
         btnAddCategory.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnAddCategory.addStyleName("customizationButton");
+        btnAddCategory.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnAddCategory.addStyleName("margin-right1");
         btnAddCategory.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -271,7 +275,7 @@ public class FoodManagement extends Window implements ViewInterface{
 
         Button btnRemoveCategory = new Button(Language.DELETE_CATEGORY);
         btnRemoveCategory.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnRemoveCategory.addStyleName("customizationButton");
+        btnRemoveCategory.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnRemoveCategory.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -322,9 +326,8 @@ public class FoodManagement extends Window implements ViewInterface{
         layout.setSizeFull();
         buildContent();
         layout.addComponents(lblWindowName, panel, footer);
-        layout.setExpandRatio(panel, 1.0f);
-        layout.setExpandRatio(panel, 7.0f);
-        layout.setExpandRatio(footer, 2.0f);
+        layout.setExpandRatio(lblWindowName, 1.2f);
+        layout.setExpandRatio(panel, 10.0f);
         this.setContent(layout);
     }
 

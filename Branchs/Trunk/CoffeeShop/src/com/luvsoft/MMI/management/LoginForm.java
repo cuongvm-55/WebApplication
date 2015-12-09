@@ -54,7 +54,7 @@ public class LoginForm extends Window{
 
         Button btnLogin = new Button(Language.LOGIN);
         btnLogin.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnLogin.addStyleName("customizationButton");
+        btnLogin.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnLogin.setClickShortcut(KeyCode.ENTER, null);
         btnLogin.addClickListener(new ClickListener() {
             @Override

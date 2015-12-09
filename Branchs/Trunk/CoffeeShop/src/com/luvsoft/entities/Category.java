@@ -1,12 +1,14 @@
 package com.luvsoft.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.mongodb.BasicDBObject;
 
-public class Category extends AbstractEntity{
+public class Category extends AbstractEntity implements Serializable {
+    private static final long serialVersionUID = -4581044646108147940L;
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_CODE = "Code";
     public static final String DB_FIELD_NAME_NAME = "Name";

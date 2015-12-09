@@ -49,13 +49,12 @@ public class FoodForm extends Window implements ViewInterface{
         state = _state;
         food = _food;
         String caption = ( state == STATE.ADDNEW) ? Language.NEW_FOOD : Language.UPDATE_FOOD;
-        this.setCaption(caption);
         this.setModal(true);
         this.setResizable(false);
         this.setClosable(true);
         this.setDraggable(false);
         this.setWidth("340px");
-        this.setHeight("310px");
+        this.setHeight("400px");
         this.center();
         
         foodItem = new PropertysetItem();
@@ -178,7 +177,7 @@ public class FoodForm extends Window implements ViewInterface{
         // Control buttons
         Button btnSave = new Button(Language.SAVE);
         btnSave.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnSave.addStyleName("customizationButton");
+        btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnSave.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -193,7 +192,7 @@ public class FoodForm extends Window implements ViewInterface{
 
         Button btnCancel = new Button(Language.CANCEL);
         btnCancel.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnCancel.addStyleName("customizationButton");
+        btnCancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnCancel.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -212,15 +211,20 @@ public class FoodForm extends Window implements ViewInterface{
         lblMsg = new Label("");
         lblMsg.setSizeFull();
         
+        Label lblCaption = new Label(caption);
+        lblCaption.addStyleName(ValoTheme.LABEL_HUGE);
+        lblCaption.addStyleName(ValoTheme.LABEL_BOLD);
+        lblCaption.addStyleName("TEXT_CENTER");
+
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(codeField, nameField, priceField, cbType, hzLayout);
+        vtcLayout.addComponents(lblCaption, codeField, nameField, priceField, cbType, hzLayout);
         vtcLayout.setComponentAlignment(codeField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(nameField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(priceField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(cbType, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(hzLayout, Alignment.MIDDLE_CENTER);
-        //this.setComponentAlignment(lblMsg, Alignment.MIDDLE_CENTER);
+
         vtcLayout.setSpacing(true);
         this.setContent(vtcLayout);
     }

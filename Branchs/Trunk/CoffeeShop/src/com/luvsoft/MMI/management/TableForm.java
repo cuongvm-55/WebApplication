@@ -49,7 +49,6 @@ public class TableForm extends Window implements ViewInterface{
         state = _state;
         table = _table;
         String caption = ( state == STATE.ADDNEW) ? Language.NEW_TABLE : Language.UPDATE_TABLE;
-        this.setCaption(caption);
         this.setModal(true);
         this.setResizable(false);
         this.setClosable(true);
@@ -173,7 +172,7 @@ public class TableForm extends Window implements ViewInterface{
         // Control buttons
         Button btnSave = new Button(Language.SAVE);
         btnSave.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnSave.addStyleName("customizationButton");
+        btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnSave.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -188,7 +187,7 @@ public class TableForm extends Window implements ViewInterface{
 
         Button btnCancel = new Button(Language.CANCEL);
         btnCancel.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnCancel.addStyleName("customizationButton");
+        btnCancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnCancel.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -207,10 +206,15 @@ public class TableForm extends Window implements ViewInterface{
 
         lblMsg = new Label("");
         lblMsg.setSizeFull();
-        
+
+        Label lblCaption = new Label(caption);
+        lblCaption.addStyleName(ValoTheme.LABEL_HUGE);
+        lblCaption.addStyleName(ValoTheme.LABEL_BOLD);
+        lblCaption.addStyleName("TEXT_CENTER");
+
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(codeField, numberField, cbType, hzLayout);
+        vtcLayout.addComponents(lblCaption, codeField, numberField, cbType, hzLayout);
         vtcLayout.setComponentAlignment(codeField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(numberField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(cbType, Alignment.MIDDLE_CENTER);

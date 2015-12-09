@@ -1,10 +1,12 @@
 package com.luvsoft.entities;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import com.mongodb.BasicDBObject;
 
-public class Configuration extends AbstractEntity{
+public class Configuration extends AbstractEntity implements Serializable {
+    private static final long serialVersionUID = -1984105867554184839L;
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_OPERATOR_PINCODE = "OperatorPincode";
     public static final String DB_FIELD_NAME_SUP_PINCODE = "SUPPinCode";

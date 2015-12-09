@@ -25,7 +25,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 @Theme("tests-valo-facebook")
-@Title("CoffeeShop")
+@Title("Huyền Coffee")
 @Push
 public class CoffeeshopUI extends UI {
     public static final String LOGIN_VIEW = "login";
