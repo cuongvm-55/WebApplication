@@ -1,10 +1,12 @@
 package com.luvsoft.entities;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import com.mongodb.BasicDBObject;
 
-public class Table extends AbstractEntity{
+public class Table extends AbstractEntity implements Serializable, Comparable<Table> {
+    private static final long serialVersionUID = 4727294623902070131L;
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_CODE = "Code";
     public static final String DB_FIELD_NAME_NUMBER = "Number";
@@ -117,5 +119,9 @@ public class Table extends AbstractEntity{
                 + ", state=" + state + "]";
     }
 
-	
+    @Override
+    public int compareTo(Table compareTable) {
+        int compareNumber = Integer.parseInt(compareTable.getNumber());
+        return Integer.parseInt(this.number) - compareNumber;
+    }
 }

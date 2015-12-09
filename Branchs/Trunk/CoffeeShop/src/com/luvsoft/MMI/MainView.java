@@ -7,6 +7,7 @@ import com.luvsoft.MMI.utils.MenuButtonListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -15,6 +16,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -30,6 +32,7 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
     private Button btnManagementView;
     private OrderListView orderListView;
     private TableListView tableListView;
+    private MenuBar mnbSettings;
 
     private CssLayout menu;
     private Label title;
@@ -85,10 +88,14 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
         showMenu.setIcon(FontAwesome.LIST);
         menu.addComponent(showMenu);
 
-        title = new Label("<h3>Nhân viên: <strong>"+strStaffName+"</strong></h3>", ContentMode.HTML);
+        title = new Label("<h3>Huyền Coffee</h3>", ContentMode.HTML);
         title.setSizeUndefined();
         top.addComponent(title);
         top.setExpandRatio(title, 1);
+
+        mnbSettings = new MenuBar();
+        mnbSettings.addStyleName("user-menu");
+        menu.addComponent(mnbSettings);
 
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.setPrimaryStyleName("valo-menuitems");
@@ -131,7 +138,8 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
 
         if(strStaffName == null) {
             strStaffName = getSession().getAttribute("user") != null ? getSession().getAttribute("user").toString() : "";
-            title.setValue("<h3>Nhân viên: <strong>"+strStaffName+"</strong></h3>");
+            System.out.println("STAFF NAME .......... " + strStaffName);
+            mnbSettings.addItem(strStaffName, new ThemeResource("../tests-valo/img/profile-pic-300px.jpg"), null);
         }
 
         if(event.getParameters() == null || event.getParameters().isEmpty()) {

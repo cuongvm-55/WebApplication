@@ -1,6 +1,7 @@
 package com.luvsoft.MMI;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -76,6 +77,7 @@ public class Adapter {
             Table table = floorCtrl.getTableById(tableId);
             list.add(table);
         }
+        Collections.sort(list);
         return list;
     }
 
@@ -92,7 +94,7 @@ public class Adapter {
                             listOfFood.add(food);
                 }
             }
-                    category.setListOfFoodByCategory(listOfFood);
+            category.setListOfFoodByCategory(listOfFood);
          } 
          return list;
 }
@@ -300,6 +302,4 @@ public class Adapter {
     public static boolean updateConfiguration(Configuration conf){
         return configCtrl.updateConfiguration( conf);
     }
-    
-    
 }

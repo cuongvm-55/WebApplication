@@ -1,5 +1,6 @@
 package com.luvsoft.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,7 +8,8 @@ import java.util.List;
 
 import com.mongodb.BasicDBObject;
 
-public class Order extends AbstractEntity implements Comparable<Order> {
+public class Order extends AbstractEntity implements Comparable<Order>, Serializable {
+    private static final long serialVersionUID = -3731403878156493984L;
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_ORDER_DETAIL_LIST = "OrderDetailList";
     public static final String DB_FIELD_NAME_STATUS = "Status"; // Wait, Paid, NotPaid

@@ -64,9 +64,8 @@ public class TableManagement extends Window implements ViewInterface{
         // control buttons
         footer = buildFooter();
         layout.addComponents(lblWindowName, panel, footer);
-        layout.setExpandRatio(panel, 1.0f);
-        layout.setExpandRatio(panel, 7.0f);
-        layout.setExpandRatio(footer, 2.0f);
+        layout.setExpandRatio(lblWindowName, 1.2f);
+        layout.setExpandRatio(panel, 10.0f);
         this.setContent(layout);
     }
 
@@ -86,21 +85,21 @@ public class TableManagement extends Window implements ViewInterface{
         VerticalLayout content = new VerticalLayout();
 
         for (Floor floor : floors) {
-            CheckBox cbModify = new CheckBox();
-            cbModify.setCaption("Sửa");
-            cbModify.addStyleName(ValoTheme.CHECKBOX_LARGE);
-            cbModify.setData(floor);
-            cbModify.addValueChangeListener(new ValueChangeListener() {
+            Button btnEdit = new Button("Sửa");
+            btnEdit.addStyleName(ValoTheme.BUTTON_LARGE);
+            btnEdit.addStyleName(ValoTheme.BUTTON_LINK);
+            btnEdit.addStyleName("TEXT_WHITE");
+            btnEdit.setData(floor);
+            btnEdit.addClickListener(new ClickListener() {
+                
                 @Override
-                public void valueChange(ValueChangeEvent event) {
-                    boolean value = (boolean) event.getProperty().getValue();
-                    if( value ){
-                        FloorForm form = new FloorForm(floor, FloorForm.STATE.UPDATE);
-                        form.setParentView(TableManagement.this);
-                        getUI().addWindow(form);
-                    }
+                public void buttonClick(ClickEvent event) {
+                    FloorForm form = new FloorForm(floor, FloorForm.STATE.UPDATE);
+                    form.setParentView(TableManagement.this);
+                    getUI().addWindow(form);
                 }
             });
+
             // Check box "To be deleted category"
             CheckBox cbDel = new CheckBox();
             cbDel.setCaption("Xóa");
@@ -122,7 +121,9 @@ public class TableManagement extends Window implements ViewInterface{
             });
             
             HorizontalLayout hzLayout = new HorizontalLayout();
-            hzLayout.addComponents(cbModify, cbDel);
+            hzLayout.addComponents(btnEdit, cbDel);
+            hzLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_CENTER);
+            hzLayout.setComponentAlignment(cbDel, Alignment.MIDDLE_CENTER);
             hzLayout.setSpacing(true);
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
                     buildContentElement(floor), Language.FLOOR + " " + floor.getNumber(), hzLayout);
@@ -178,7 +179,8 @@ public class TableManagement extends Window implements ViewInterface{
         Button btnEdit = new Button();
         btnEdit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnEdit.addStyleName(ValoTheme.BUTTON_LARGE);
-        btnEdit.setIcon(FontAwesome.EDIT);
+        btnEdit.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+        btnEdit.setIcon(FontAwesome.PENCIL);
         btnEdit.setData(table.getId());
         btnEdit.addClickListener(new ClickListener() {
             @Override
@@ -212,7 +214,8 @@ public class TableManagement extends Window implements ViewInterface{
 
         Button btnAddTable = new Button(Language.ADD_TABLE);
         btnAddTable.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnAddTable.addStyleName("customizationButton");
+        btnAddTable.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnAddTable.addStyleName("margin-right1 margin-bottom1");
         btnAddTable.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -223,7 +226,8 @@ public class TableManagement extends Window implements ViewInterface{
         });
         Button btnRemoveTable = new Button(Language.DELETE_TABLES);
         btnRemoveTable.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnRemoveTable.addStyleName("customizationButton");
+        btnRemoveTable.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnRemoveTable.addStyleName("margin-bottom1");
         btnRemoveTable.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -254,7 +258,8 @@ public class TableManagement extends Window implements ViewInterface{
         
         Button btnAddFloor = new Button(Language.ADD_FLOOR);
         btnAddFloor.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnAddFloor.addStyleName("customizationButton");
+        btnAddFloor.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnAddFloor.addStyleName("margin-right1");
         btnAddFloor.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -266,7 +271,7 @@ public class TableManagement extends Window implements ViewInterface{
 
         Button btnRemoveFloor = new Button(Language.DELETE_FLOOR);
         btnRemoveFloor.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnRemoveFloor.addStyleName("customizationButton");
+        btnRemoveFloor.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnRemoveFloor.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -317,9 +322,8 @@ public class TableManagement extends Window implements ViewInterface{
         layout.setSizeFull();
         buildContent();
         layout.addComponents(lblWindowName, panel, footer);
-        layout.setExpandRatio(panel, 1.0f);
-        layout.setExpandRatio(panel, 7.0f);
-        layout.setExpandRatio(footer, 2.0f);
+        layout.setExpandRatio(lblWindowName, 1.2f);
+        layout.setExpandRatio(panel, 10.0f);
         this.setContent(layout);
     }
 

@@ -16,6 +16,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -32,13 +33,12 @@ public class ConfigForm extends Window{
     private Configuration config;
     public ConfigForm(Configuration _config){
         this.config = _config;
-        this.setCaption(Language.CONFIGURATION);
         this.setModal(true);
         this.setResizable(false);
         this.setClosable(true);
         this.setDraggable(false);
         this.setWidth("340px");
-        this.setHeight("260px");
+        this.setHeight("300px");
         this.center();
 
         configItem = new PropertysetItem();
@@ -98,7 +98,7 @@ public class ConfigForm extends Window{
         // Control buttons
         Button btnSave = new Button(Language.SAVE);
         btnSave.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnSave.addStyleName("customizationButton");
+        btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnSave.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -112,7 +112,7 @@ public class ConfigForm extends Window{
 
         Button btnCancel = new Button(Language.CANCEL);
         btnCancel.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnCancel.addStyleName("customizationButton");
+        btnCancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnCancel.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -128,9 +128,14 @@ public class ConfigForm extends Window{
         hzLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
         hzLayout.setSpacing(true);
 
+        Label lblCaption = new Label(Language.CONFIGURATION);
+        lblCaption.addStyleName(ValoTheme.LABEL_HUGE);
+        lblCaption.addStyleName(ValoTheme.LABEL_BOLD);
+        lblCaption.addStyleName("TEXT_CENTER");
+
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(opPincodeField, supPincodeField, dirField, hzLayout);
+        vtcLayout.addComponents(lblCaption, opPincodeField, supPincodeField, dirField, hzLayout);
         vtcLayout.setComponentAlignment(opPincodeField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(supPincodeField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(dirField, Alignment.MIDDLE_CENTER);

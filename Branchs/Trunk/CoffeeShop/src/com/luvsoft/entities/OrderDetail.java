@@ -1,10 +1,12 @@
 package com.luvsoft.entities;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import com.mongodb.BasicDBObject;
 
-public class OrderDetail extends AbstractEntity{
+public class OrderDetail extends AbstractEntity implements Serializable {
+    private static final long serialVersionUID = 2116621444779694747L;
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_FOOD_ID = "FoodId";
     public static final String DB_FIELD_NAME_QUANTITY = "Quantity";

@@ -112,6 +112,9 @@ public class ManagementView extends VerticalLayout{
     
     private VerticalLayout createDatePickerLayout(){
         Label lblChooseDate = new Label(Language.CHOOSE_DATE);
+        lblChooseDate.addStyleName(ValoTheme.LABEL_BOLD);
+        lblChooseDate.addStyleName(ValoTheme.LABEL_HUGE);
+        lblChooseDate.addStyleName("TEXT_CENTER");
         Label lblFromDate = new Label(Language.FROM_DATE);
         Label lblToDate = new Label(Language.TO_DATE);
 
@@ -142,7 +145,7 @@ public class ManagementView extends VerticalLayout{
         toDate.setDateFormat(Language.DATE_TIME_FORMAT_DATE_ONLY);
 
         Button btnClearData = new Button(Language.CLEAR_DATA);
-        btnClearData.addStyleName("customizationButton");
+        btnClearData.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnClearData.addStyleName(ValoTheme.BUTTON_HUGE);
         btnClearData.addClickListener(new ClickListener() {
             @Override
@@ -173,7 +176,7 @@ public class ManagementView extends VerticalLayout{
         });
 
         Button btnCreateReport = new Button(Language.CREATE_REPORT);
-        btnCreateReport.addStyleName("customizationButton");
+        btnCreateReport.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnCreateReport.addStyleName(ValoTheme.BUTTON_HUGE);
         btnCreateReport.addClickListener(new ClickListener() {
             @Override
