@@ -1,7 +1,9 @@
 package com.luvsoft.MMI.management;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -175,7 +177,7 @@ public class FoodManagement extends Window implements ViewInterface{
         Label lblprice = new Label();
         lblprice.addStyleName(ValoTheme.LABEL_LARGE + " "
                 + ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE");
-        lblprice.setValue(food.getPrice() +"");
+        lblprice.setValue(NumberFormat.getInstance(Locale.ITALY).format(food.getPrice()));
 
         Button btnEdit = new Button();
         btnEdit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);

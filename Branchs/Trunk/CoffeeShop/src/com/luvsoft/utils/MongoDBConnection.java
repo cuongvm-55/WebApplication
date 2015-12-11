@@ -18,7 +18,7 @@ public class MongoDBConnection {
     /*
      * @name connectMongoDB function
      */
-    public void connectMongoDB() {
+    public static void connectMongoDB() {
         try{
             MongoClientURI uri = new MongoClientURI(MONGOCONNECTION_LOCALHOST);
             mongoClient = new MongoClient(uri);
@@ -36,7 +36,7 @@ public class MongoDBConnection {
     public static MongoDBConnection getInstance(){
     	if( instance == null ){
     		instance = new MongoDBConnection();
-    		instance.connectMongoDB();
+    		MongoDBConnection.connectMongoDB();
     	}
     	return instance;
     }

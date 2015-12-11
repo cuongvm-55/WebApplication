@@ -89,6 +89,8 @@ public class CoffeeshopUI extends UI {
         navigator = new Navigator(this, this);
         LoginView lgView = new LoginView();
 
+        Broadcaster.register(this::receiveBroadcast);
+
         // main view
         mainView = new MainView();
         mainView.setMenu(menu);

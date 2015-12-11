@@ -10,11 +10,13 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 public class LoginView extends CustomComponent implements View, Button.ClickListener{
     /**
@@ -32,6 +34,9 @@ public class LoginView extends CustomComponent implements View, Button.ClickList
     public LoginView() {
         setSizeFull();
 
+        Label lblWelcome = new Label("Chào Mừng Bạn Đã Đến Với Phần Mềm Quản Lý Huyền Coffee");
+        lblWelcome.addStyleName(ValoTheme.LABEL_HUGE);
+        lblWelcome.addStyleName("TEXT_CENTER");
         // Create the user input field
         user = new TextField("Nhập tên của bạn:");
         user.setWidth("300px");
@@ -48,7 +53,8 @@ public class LoginView extends CustomComponent implements View, Button.ClickList
         //password.addValidator(new PasswordValidator());
 
         // Create login button
-        loginButton = new Button("Login");
+        loginButton = new Button("Đăng Nhập");
+        loginButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
         loginButton.setClickShortcut(KeyCode.ENTER, null);
         loginButton.addClickListener(this);
 
@@ -60,10 +66,12 @@ public class LoginView extends CustomComponent implements View, Button.ClickList
         fields.setSizeUndefined();
 
         // The view root layout
-        VerticalLayout viewLayout = new VerticalLayout(fields);
+        VerticalLayout viewLayout = new VerticalLayout(lblWelcome, fields);
         viewLayout.setSizeFull();
         viewLayout.setComponentAlignment(fields, Alignment.MIDDLE_CENTER);
+        viewLayout.setComponentAlignment(lblWelcome, Alignment.BOTTOM_CENTER);
         viewLayout.setStyleName(Reindeer.LAYOUT_BLUE);
+        viewLayout.setExpandRatio(fields, 1.0f);
         setCompositionRoot(viewLayout);
     }
 

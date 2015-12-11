@@ -145,7 +145,7 @@ public class Language {
                 ADD_FOOD = "Thêm Món";
                 ADD_ORDER = "Đặt Món";
                 CONFIRM_PAID = "Xác Nhận T.Toán";
-                CONFIRM_ORDER = "Xác Nhận H.Đơn";
+                CONFIRM_ORDER = "Xác Nhận Đ.Món";
                 CONFIRM = "Xác Nhận";
                 TOTAL_AMOUNT = "Tổng: ";
                 PAID_AMOUNT = "Thực thu: ";

@@ -1,8 +1,10 @@
 package com.luvsoft.MMI.order;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.bson.types.ObjectId;
 
@@ -52,6 +54,7 @@ public class OrderInfoView extends AbstractOrderView {
                                  // amount can not be modified
     private Label lbPaidAmount; // label real amount that customer pay for the
                                 // bill, the amount can be modified
+                                // we consider that currency format in VN is almost the same as ITALY
 
     private Button btnConfirmOrder;
     private Button btnConfirmPaid;
@@ -79,6 +82,7 @@ public class OrderInfoView extends AbstractOrderView {
     private boolean isNewOrder;
     private boolean isNewFoodAdded;
     private boolean allOrderDetailCanceled;
+    private String previousTextValue = "";
 
     public OrderInfoView() {
         super();
@@ -118,6 +122,7 @@ public class OrderInfoView extends AbstractOrderView {
             if( orderInfo != null ) {
                 orderDetailRecordList = orderInfo.getOrderDetailRecordList();
             }
+            previousTextValue = currentOrder.getNote();
             isNewOrder = false;
         }
         else {
@@ -165,13 +170,12 @@ public class OrderInfoView extends AbstractOrderView {
 
         paidAmount = totalAmount; // default value of paid amount is equal total
                                   // amount
-        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
-                + Language.CURRENCY_SYMBOL);
-        textFieldpaidAmount.setValue(paidAmount + "");
+        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
 
         boolean _isNewFoodAdded = false;
         for( OrderDetailRecord record : orderDetailRecordList ){
-            if( record.getStatus() != Types.State.COMPLETED ){
+            if( record.getStatus() != Types.State.COMPLETED && record.getChangeFlag() == ChangedFlag.ADDNEW ){
                 _isNewFoodAdded = true;
                 break;
             }
@@ -278,9 +282,8 @@ public class OrderInfoView extends AbstractOrderView {
                     if( record.getStatus() != State.CANCELED ) {
                         totalAmount -= record.getPrice() * record.getQuantity();
                         paidAmount -= record.getPrice() * record.getQuantity();
-                        textFieldpaidAmount.setValue(paidAmount + "");
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT
-                                + totalAmount + " " + Language.CURRENCY_SYMBOL);
+                        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
                     }
                     tbOrderDetails.removeItem(event.getButton().getData());
                     tbOrderDetails.setImmediate(true);
@@ -301,9 +304,8 @@ public class OrderInfoView extends AbstractOrderView {
                         totalAmount -= record.getPrice() * record.getQuantity();
                         paidAmount -= record.getPrice() * record.getQuantity();
 
-                        textFieldpaidAmount.setValue(paidAmount + "");
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT
-                                + totalAmount + " " + Language.CURRENCY_SYMBOL);
+                        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
                         record.setPreviousStatus(Types.State.CANCELED);
 
                     }
@@ -312,9 +314,8 @@ public class OrderInfoView extends AbstractOrderView {
                         totalAmount += record.getPrice() * record.getQuantity();
                         paidAmount += record.getPrice() * record.getQuantity();
 
-                        textFieldpaidAmount.setValue(paidAmount + "");
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT
-                                + totalAmount + " " + Language.CURRENCY_SYMBOL);
+                        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
 
                         btnRemove.removeStyleName("TEXT_RED");
                         txtQuantity.removeStyleName("TEXT_RED");
@@ -324,7 +325,11 @@ public class OrderInfoView extends AbstractOrderView {
                     // We do not change flag to Modified if this record is a new
                     // one
                     if( record.getChangeFlag() != ChangedFlag.ADDNEW ) {
-                        record.setChangeFlag(ChangedFlag.MODIFIED);
+                        if( record.getOriginalStatus() != record.getStatus() ) {
+                            record.setTempStatusChangeFlag(ChangedFlag.MODIFIED);
+                        } else {
+                            record.setTempStatusChangeFlag(ChangedFlag.UNMODIFIED);
+                        }
                     }
                 }
             });
@@ -345,15 +350,18 @@ public class OrderInfoView extends AbstractOrderView {
                     int offset = quantity - record.getQuantity();
                     totalAmount += record.getPrice() * offset;
                     paidAmount += record.getPrice() * offset;
-                    textFieldpaidAmount.setValue(paidAmount + "");
-                    lbTotalAmount.setValue(Language.TOTAL_AMOUNT
-                            + totalAmount + " " + Language.CURRENCY_SYMBOL);
+                    textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
+                    lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
 
                     record.setQuantity(quantity);
                     // We do not change flag to Modified if this record is a new
                     // one
                     if( record.getChangeFlag() != ChangedFlag.ADDNEW ) {
-                        record.setChangeFlag(ChangedFlag.MODIFIED);
+                        if( record.getOriginalQuantity() != record.getQuantity() ) {
+                            record.setTempQuantityChangeFlag(ChangedFlag.MODIFIED);
+                        } else {
+                            record.setTempQuantityChangeFlag(ChangedFlag.UNMODIFIED);
+                        }
                     }
                 }
             });
@@ -383,8 +391,7 @@ public class OrderInfoView extends AbstractOrderView {
 
         // total amount label
         lbTotalAmount = new Label();
-        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + totalAmount + " "
-                + Language.CURRENCY_SYMBOL);
+        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
         lbTotalAmount.addStyleName("bold large FONT_TAHOMA");
 
         // paid amount label
@@ -400,11 +407,9 @@ public class OrderInfoView extends AbstractOrderView {
         textFieldpaidAmount.setHeight("25");
         textFieldpaidAmount.setWidth("100");
         textFieldpaidAmount.setMaxLength(15);
-        textFieldpaidAmount.setValue(paidAmount + "");
-        textFieldpaidAmount
-                .addStyleName("v-textfield-dashing bold TEXT_RED FONT_TAHOMA");
-        layout.addComponents(lbTotalAmount, lbPaidAmount, textFieldpaidAmount,
-                lbCurrencySymbol);
+        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
+        textFieldpaidAmount.addStyleName("v-textfield-dashing bold TEXT_RED FONT_TAHOMA");
+        layout.addComponents(lbTotalAmount, lbPaidAmount, textFieldpaidAmount,lbCurrencySymbol);
         layout.setSpacing(true);
 
         container.addComponents(lbTableName, txtNote, tbOrderDetails, layout, buildFooter());
@@ -468,7 +473,7 @@ public class OrderInfoView extends AbstractOrderView {
         
         boolean _isNewFoodAdded = false;
         for( OrderDetailRecord record : orderDetailRecordList ){
-            if( record.getStatus() != Types.State.COMPLETED ){
+            if( record.getStatus() != Types.State.COMPLETED && record.getChangeFlag() == ChangedFlag.ADDNEW ){
                 _isNewFoodAdded = true;
                 break;
             }
@@ -535,7 +540,7 @@ public class OrderInfoView extends AbstractOrderView {
                 } else {
                     if (Adapter.updateOrder(currentOrder.getId(), currentOrder)) {
                         System.out.println("Update Order: " + currentOrder.toString());
-                        if( isOrderDetailListChanged ){
+                        if( isOrderDetailListChanged || !previousTextValue.equals(txtNote.getValue()) ){
                             // Broadcast order change event
                             Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
                                     + getCurrentTable().getNumber());
@@ -648,6 +653,11 @@ public class OrderInfoView extends AbstractOrderView {
             odDetail.setQuantity(record.getQuantity());
             odDetail.setState(record.getStatus());
 
+            if(record.getTempStatusChangeFlag() == ChangedFlag.MODIFIED || record.getTempQuantityChangeFlag() == ChangedFlag.MODIFIED) {
+                if(record.getChangeFlag().equals(ChangedFlag.UNMODIFIED)) {
+                    record.setChangeFlag(ChangedFlag.MODIFIED);
+                }
+            }
             // check if all record is CANCELED
             if (record.getStatus() != Types.State.CANCELED) {
                 allOrderDetailCanceled = false;
@@ -659,7 +669,7 @@ public class OrderInfoView extends AbstractOrderView {
             case MODIFIED: {
                 // update MODIFIED records
                 System.out.println("Modified");
-                if (!Adapter.updateOrderDetail(odDetail.getId(), odDetail)) {
+                if (Adapter.updateOrderDetail(odDetail.getId(), odDetail)) {
                     isOrderDetailListChanged = true;
                 }
                 else{

@@ -27,6 +27,7 @@ import com.vaadin.ui.DefaultFieldFactory;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -42,6 +43,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
     private List<OrderDetailRecord> orderDetailList;
     private Order order;
     private OrderListView parentView;
+    private TextArea txtNote;
 
     public OrderElement(Order _order){
         super();
@@ -57,6 +59,8 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
             return;
         }
         lbTableName.setValue(orderInfo.getTableName());
+        txtNote.setValue(orderInfo.getNote());
+
         for( int i = 0; i < orderDetailList.size(); i++ ){
             Integer itemId = new Integer(i);
             OrderDetailRecord orderDetail = orderDetailList.get(i);
@@ -115,6 +119,11 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         lbTableName.addStyleName(ValoTheme.LABEL_HUGE);
         lbTableName.setWidth("100%");
 
+        // Note text field
+        txtNote = new TextArea(Language.NOTE);
+        txtNote.addStyleName("bold large FONT_TAHOMA");
+        txtNote.setSizeFull();
+
         tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
         tbOrderInfos.addContainerProperty(Language.FOOD_NAME, String.class, null);
         tbOrderInfos.addContainerProperty(Language.QUANTITY, Integer.class, null);
@@ -168,7 +177,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
             }
         });
 
-        this.addComponents(lbTableName, tbOrderInfos, btnConfFinish);
+        this.addComponents(lbTableName, txtNote, tbOrderInfos, btnConfFinish);
         this.setComponentAlignment(tbOrderInfos, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(btnConfFinish, Alignment.MIDDLE_CENTER);
     }

@@ -8,7 +8,9 @@ public class OrderDetailRecord{
     private String foodId;
     private Types.State status;
     private Types.State previousStatus;
+    private Types.State originalStatus;
     private int quantity;
+    private int originalQuantity;
     private double price;
     static enum ChangedFlag{
         UNMODIFIED,
@@ -17,7 +19,9 @@ public class OrderDetailRecord{
         DELETED,
         READONLY // record will be set to readonly when its status = finished
     };
-    private ChangedFlag changeFlag; 
+    private ChangedFlag changeFlag;
+    private ChangedFlag tempStatusChangeFlag;
+    private ChangedFlag tempQuantityChangeFlag;
 
     static Types.State[] states = {State.WAITING, State.COMPLETED, State.CANCELED};
     
@@ -29,7 +33,10 @@ public class OrderDetailRecord{
         quantity = 0;
         price = 0.00f;
         changeFlag = ChangedFlag.UNMODIFIED;
-        previousStatus = State.CANCELED;
+        setTempQuantityChangeFlag(ChangedFlag.UNMODIFIED);
+        setTempQuantityChangeFlag(ChangedFlag.UNMODIFIED);
+        previousStatus = State.UNDEFINED;
+        setOriginalQuantity(-1);
     }
 
     public String getFoodName() {
@@ -52,12 +59,28 @@ public class OrderDetailRecord{
         this.previousStatus = previousStatus;
     }
 
+    public Types.State getOriginalStatus() {
+        return originalStatus;
+    }
+
+    public void setOriginalStatus(Types.State originalStatus) {
+        this.originalStatus = originalStatus;
+    }
+
     public int getQuantity() {
         return quantity;
     }
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+    public int getOriginalQuantity() {
+        return originalQuantity;
+    }
+
+    public void setOriginalQuantity(int originalQuantity) {
+        this.originalQuantity = originalQuantity;
+    }
+
     public double getPrice() {
         return price;
     }
@@ -86,6 +109,22 @@ public class OrderDetailRecord{
 
     public void setChangeFlag(ChangedFlag changeFlag) {
         this.changeFlag = changeFlag;
+    }
+
+    public ChangedFlag getTempStatusChangeFlag() {
+        return tempStatusChangeFlag;
+    }
+
+    public void setTempStatusChangeFlag(ChangedFlag tempStatusChangeFlag) {
+        this.tempStatusChangeFlag = tempStatusChangeFlag;
+    }
+
+    public ChangedFlag getTempQuantityChangeFlag() {
+        return tempQuantityChangeFlag;
+    }
+
+    public void setTempQuantityChangeFlag(ChangedFlag tempQuantityChangeFlag) {
+        this.tempQuantityChangeFlag = tempQuantityChangeFlag;
     }
 
     @Override

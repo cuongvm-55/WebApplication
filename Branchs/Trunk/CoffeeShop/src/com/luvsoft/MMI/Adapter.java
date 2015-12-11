@@ -54,6 +54,8 @@ public class Adapter {
             record.setQuantity(orderDetail.getQuantity());
             record.setStatus(orderDetail.getState());
             record.setPreviousStatus(orderDetail.getState());
+            record.setOriginalStatus(orderDetail.getState());
+            record.setOriginalQuantity(orderDetail.getQuantity());
             orderDetailRecordList.add(record);
         }
         orderInfo.setOrderDetailRecordList(orderDetailRecordList);
