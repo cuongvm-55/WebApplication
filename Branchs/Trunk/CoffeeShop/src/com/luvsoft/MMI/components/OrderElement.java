@@ -138,6 +138,11 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
             @Override
             public void buttonClick(ClickEvent event) {
                 System.out.println("Finish click!, OrderId: " + order.getId());
+                // Save the note
+                if( !order.getNote().equals(txtNote.getValue()) ){
+                    Adapter.updateFieldValueOfOrder(order.getId(), Order.DB_FIELD_NAME_NOTE, txtNote.getValue());
+                }
+
                 // If all order details are CANCELED, we cancel this order
                 List<String> orderDetailIdList = order.getOrderDetailIdList();
                 boolean allOrderDetailCanceled = true;

@@ -178,4 +178,9 @@
     .v-ui.valo-menu-responsive[width-range~="0-800px"] .valo-menuitems {
         top: 40px !important;
     }
+    
+    .v-table-row.v-table-row-highlight-red,
+    .v-table-row-odd.v-table-row-highlight-red {
+        color:#e62020;
+    }
 }

@@ -87,6 +87,8 @@ public class LoginForm extends Window{
             close();
         }
         else{
+            tfPincode.clear();
+            tfPincode.focus();
             lblMsg.addStyleName("TEXT_RED");
             lblMsg.setValue(Language.INVALID_PINCODE);
         }

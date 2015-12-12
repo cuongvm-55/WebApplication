@@ -32,6 +32,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
 
     @Override
     public void createView() {
+        removeAllComponents();
         this.setWidth("100%");
         this.setHeightUndefined();
         this.addStyleName("table-list-view");
@@ -97,7 +98,6 @@ public class TableListView extends VerticalLayout implements ViewInterface {
 
     @Override
     public void reloadView() {
-        removeAllComponents();
         createView();
     }
 

@@ -1,5 +1,8 @@
 package com.luvsoft.entities;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,6 +10,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import com.luvsoft.MMI.utils.Language;
 public class Types {
@@ -134,8 +138,7 @@ public class Types {
         try {
             return formatter.parse(str);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println("Fail to parse date form str: " + str);
         }
         return null;
     }
@@ -173,4 +176,23 @@ public class Types {
         return cal.getTime();
     }
 
+    public static NumberFormat getNumberFormat(){
+        NumberFormat nf = DecimalFormat.getInstance((Locale.ITALY));
+        DecimalFormatSymbols customSymbol = new DecimalFormatSymbols();
+        customSymbol.setDecimalSeparator(',');
+        customSymbol.setGroupingSeparator('.');
+        ((DecimalFormat)nf).setDecimalFormatSymbols(customSymbol);
+        nf.setGroupingUsed(true);
+        return nf;
+    }
+    
+    public static double getDoubleValueFromFormattedStr(String str){
+        try{
+            return getNumberFormat().parse(str).doubleValue();
+        }
+        catch(Exception e){
+            System.out.println("Fail to parse string: " + str + " to double.");
+        }
+        return 0.00d;
+    }
 }

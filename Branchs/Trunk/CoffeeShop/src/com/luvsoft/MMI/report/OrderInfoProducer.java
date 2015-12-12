@@ -203,7 +203,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
                 nbrAmount.setCellFormat(contentFormat);
                 contents.add(nbrAmount);
 
-                Label lblStatus = createLabelCell(FIELD_HEADER.STATUS.getValue(), row, rc.getStatus().toString());
+                Label lblStatus = createLabelCell(FIELD_HEADER.STATUS.getValue(), row, Types.StateToLanguageString(rc.getStatus()) );
                 lblStatus.setCellFormat(contentFormat);
                 contents.add(lblStatus);
                 if(rc.getStatus() == Types.State.COMPLETED){

@@ -1,10 +1,8 @@
 package com.luvsoft.MMI.order;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.bson.types.ObjectId;
 
@@ -18,6 +16,7 @@ import com.luvsoft.entities.Order;
 import com.luvsoft.entities.OrderDetail;
 import com.luvsoft.entities.Types;
 import com.luvsoft.entities.Types.State;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
@@ -34,6 +33,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -65,7 +65,6 @@ public class OrderInfoView extends AbstractOrderView {
     private VerticalLayout container;
     private TextArea txtNote;
     private TextField textFieldpaidAmount;
-    private String staffName;
 
     // Data
     private Order currentOrder;
@@ -114,8 +113,6 @@ public class OrderInfoView extends AbstractOrderView {
 
         buildTable();
 
-        staffName = getCurrentTable().getStaffName();
-
         currentOrder = retrieveOrder();
         if( currentOrder != null ) {
             orderInfo = Adapter.retrieveOrderInfo(currentOrder);
@@ -132,7 +129,7 @@ public class OrderInfoView extends AbstractOrderView {
             currentOrder.setId(new ObjectId().toString());
             currentOrder.setStatus(Types.State.WAITING);
             currentOrder.setNote("");
-            currentOrder.setStaffName(staffName);
+            //currentOrder.setStaffName(staffName);
             currentOrder.setTableId(getCurrentTable().getId());
             currentOrder.setCreatingTime(new Date());
 
@@ -170,26 +167,11 @@ public class OrderInfoView extends AbstractOrderView {
 
         paidAmount = totalAmount; // default value of paid amount is equal total
                                   // amount
-        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
-        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
+        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+        textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
 
-        boolean _isNewFoodAdded = false;
-        for( OrderDetailRecord record : orderDetailRecordList ){
-            if( record.getStatus() != Types.State.COMPLETED && record.getChangeFlag() == ChangedFlag.ADDNEW ){
-                _isNewFoodAdded = true;
-                break;
-            }
-        }
-        if( !orderDetailRecordList.isEmpty() ) {
-            if( _isNewFoodAdded ){
-                btnConfirmOrder.setEnabled(true);
-                btnConfirmPaid.setEnabled(false); // Do not allow to paid when there's an waiting order detail
-            }
-            else{
-                btnConfirmOrder.setEnabled(true);
-                btnConfirmPaid.setEnabled(true);
-            }
-        }
+        // Set state of buttons depend on current order detail list
+        setControlButtonsState();
     }
 
     private void buildTable() {
@@ -206,7 +188,7 @@ public class OrderInfoView extends AbstractOrderView {
                 null);
         tbOrderDetails.addContainerProperty(Language.QUANTITY, TextField.class,
                 null);
-        tbOrderDetails.addContainerProperty(Language.PRICE, Float.class, null);
+        tbOrderDetails.addContainerProperty(Language.PRICE, Double.class, null);
         tbOrderDetails
                 .addContainerProperty(Language.DELETE, Button.class, null);
         tbOrderDetails
@@ -231,8 +213,8 @@ public class OrderInfoView extends AbstractOrderView {
         for (int i = 0; i < orderDetailRecordList.size(); i++) {
             OrderDetailRecord record = orderDetailRecordList.get(i);
 
-            // If status of record is COMPLETED, mark as READONLY
-            if(record.getStatus() == Types.State.COMPLETED){
+            // If status of record is COMPLETED or CANCELED, mark as READONLY
+            if(record.getStatus() == Types.State.COMPLETED || record.getStatus() == Types.State.CANCELED){
                 record.setChangeFlag(ChangedFlag.READONLY);
             }
 
@@ -271,7 +253,7 @@ public class OrderInfoView extends AbstractOrderView {
             // If item is not available, we will add new one
             if( tbOrderDetails.addItem(new Object[] { i, record.getFoodName(),
                     // Types.StateToLanguageString(record.getStatus()),
-                    cbStatus, txtQuantity, new Float(record.getPrice()),
+                    cbStatus, txtQuantity, new Double(record.getPrice()),
                     btnRemove, record.getOrderDetailId() }, i) == null ) {
                 System.out.println("Fail to add new item to tbOrderDetails.");
             }
@@ -282,8 +264,8 @@ public class OrderInfoView extends AbstractOrderView {
                     if( record.getStatus() != State.CANCELED ) {
                         totalAmount -= record.getPrice() * record.getQuantity();
                         paidAmount -= record.getPrice() * record.getQuantity();
-                        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+                        textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
                     }
                     tbOrderDetails.removeItem(event.getButton().getData());
                     tbOrderDetails.setImmediate(true);
@@ -304,8 +286,8 @@ public class OrderInfoView extends AbstractOrderView {
                         totalAmount -= record.getPrice() * record.getQuantity();
                         paidAmount -= record.getPrice() * record.getQuantity();
 
-                        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+                        textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
                         record.setPreviousStatus(Types.State.CANCELED);
 
                     }
@@ -314,8 +296,8 @@ public class OrderInfoView extends AbstractOrderView {
                         totalAmount += record.getPrice() * record.getQuantity();
                         paidAmount += record.getPrice() * record.getQuantity();
 
-                        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+                        textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
 
                         btnRemove.removeStyleName("TEXT_RED");
                         txtQuantity.removeStyleName("TEXT_RED");
@@ -334,6 +316,19 @@ public class OrderInfoView extends AbstractOrderView {
                 }
             });
 
+            tbOrderDetails.setCellStyleGenerator(new Table.CellStyleGenerator() {
+                @Override
+                public String getStyle(Table source, Object itemId,
+                        Object propertyId) {
+                    Item item = tbOrderDetails.getItem(itemId);
+                    ComboBox states = (ComboBox) item.getItemProperty(Language.STATUS).getValue();
+                    if( states.getValue().equals(Types.StateToLanguageString(Types.State.CANCELED))){
+                        return "highlight-red";
+                    }
+                    return null;
+                }
+              });
+            
             txtQuantity.addTextChangeListener(new TextChangeListener() {
                 @Override
                 public void textChange(TextChangeEvent event) {
@@ -350,8 +345,8 @@ public class OrderInfoView extends AbstractOrderView {
                     int offset = quantity - record.getQuantity();
                     totalAmount += record.getPrice() * offset;
                     paidAmount += record.getPrice() * offset;
-                    textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
-                    lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+                    textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
+                    lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
 
                     record.setQuantity(quantity);
                     // We do not change flag to Modified if this record is a new
@@ -391,7 +386,7 @@ public class OrderInfoView extends AbstractOrderView {
 
         // total amount label
         lbTotalAmount = new Label();
-        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + NumberFormat.getInstance(Locale.ITALY).format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
         lbTotalAmount.addStyleName("bold large FONT_TAHOMA");
 
         // paid amount label
@@ -407,7 +402,7 @@ public class OrderInfoView extends AbstractOrderView {
         textFieldpaidAmount.setHeight("25");
         textFieldpaidAmount.setWidth("100");
         textFieldpaidAmount.setMaxLength(15);
-        textFieldpaidAmount.setValue(NumberFormat.getInstance(Locale.ITALY).format(paidAmount));
+        textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
         textFieldpaidAmount.addStyleName("v-textfield-dashing bold TEXT_RED FONT_TAHOMA");
         layout.addComponents(lbTotalAmount, lbPaidAmount, textFieldpaidAmount,lbCurrencySymbol);
         layout.setSpacing(true);
@@ -470,31 +465,10 @@ public class OrderInfoView extends AbstractOrderView {
         btnConfirmOrder.addStyleName(ValoTheme.BUTTON_HUGE);
         btnConfirmOrder.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnConfirmOrder.addStyleName("margin-left1");
-        
-        boolean _isNewFoodAdded = false;
-        for( OrderDetailRecord record : orderDetailRecordList ){
-            if( record.getStatus() != Types.State.COMPLETED && record.getChangeFlag() == ChangedFlag.ADDNEW ){
-                _isNewFoodAdded = true;
-                break;
-            }
-        }
-        // Don't allow some button when no order exist
-        if( isNewOrder && orderDetailRecordList.isEmpty()
-                && txtNote.getValue().isEmpty() ) {
-            btnConfirmOrder.setEnabled(false);
-            btnConfirmPaid.setEnabled(false);
-        }
-        else{
-            if( _isNewFoodAdded ){
-                btnConfirmOrder.setEnabled(true);
-                btnConfirmPaid.setEnabled(false); // Do not allow to paid when there's an waiting order detail
-            }
-            else{
-                btnConfirmOrder.setEnabled(true);
-                btnConfirmPaid.setEnabled(true);
-            }
-        }
-        
+
+        // Set state of buttons depend on current order detail list
+        setControlButtonsState();
+
         confirmButtonsContainer.addComponents(btnConfirmPaid, btnConfirmOrder);
 
         footer.addComponents(btnAddFood, confirmButtonsContainer);
@@ -583,8 +557,21 @@ public class OrderInfoView extends AbstractOrderView {
             @Override
             public void buttonClick(ClickEvent event) {
                 if( currentOrder != null ) {
-                    currentOrder.setPaidMoney(Float
-                            .parseFloat(textFieldpaidAmount.getValue()));
+                    // Save note
+                    if( !currentOrder.getNote().equals(txtNote.getValue()) ) {
+                    currentOrder.setNote(txtNote.getValue());
+                    }
+
+                    // Update order if staffName is different
+                    if( getSession() != null &&
+                            getSession().getAttribute("user") != null ){
+                        String staffName = getSession().getAttribute("user").toString();
+                        if (!staffName.equals(currentOrder.getStaffName())) {
+                            currentOrder.setStaffName(staffName);
+                        }
+                    }
+                    
+                    currentOrder.setPaidMoney(Types.getDoubleValueFromFormattedStr(textFieldpaidAmount.getValue()));
                     currentOrder.setPaidTime(new Date());
                     currentOrder.setStatus(Types.State.PAID);
 
@@ -615,6 +602,44 @@ public class OrderInfoView extends AbstractOrderView {
         return footer;
     }
     
+    private void setControlButtonsState(){
+        boolean hasWaitingOrderDetail = false;
+        boolean hasCompleltedOrderDetail = false;
+        for( OrderDetailRecord record : orderDetailRecordList ){
+            if( record.getStatus() == Types.State.WAITING ){
+                hasWaitingOrderDetail = true;
+                break;
+            }
+            
+            if( record.getStatus() == Types.State.COMPLETED){
+                hasCompleltedOrderDetail = true;
+            }
+        }
+
+        if( !orderDetailRecordList.isEmpty() ) {
+            btnConfirmOrder.setEnabled(true);
+            if( hasWaitingOrderDetail ){
+                // there's an waiting order detail
+                btnConfirmPaid.setEnabled(false);
+                textFieldpaidAmount.setEnabled(false);
+            }
+            else if( hasCompleltedOrderDetail ){
+                // No waiting one, all are canceled or completed
+                btnConfirmPaid.setEnabled(true);
+                textFieldpaidAmount.setEnabled(true);
+            }
+            else{
+                // all are canceled
+                btnConfirmPaid.setEnabled(false);
+                textFieldpaidAmount.setEnabled(false);
+            }
+        }
+        else{
+            btnConfirmOrder.setEnabled(false);
+            btnConfirmPaid.setEnabled(false);
+            textFieldpaidAmount.setEnabled(false);
+        }
+    }
     /**
      * This method save/update order details information
      * Call when confirm order or confirm paid
@@ -629,8 +654,12 @@ public class OrderInfoView extends AbstractOrderView {
         }
 
         // Update order if staffName is different
-        if (!staffName.equals(currentOrder.getStaffName())) {
-            currentOrder.setStaffName(staffName);
+        if( getSession() != null &&
+                getSession().getAttribute("user") != null ){
+            String staffName = getSession().getAttribute("user").toString();
+            if (!staffName.equals(currentOrder.getStaffName())) {
+                currentOrder.setStaffName(staffName);
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -639,7 +668,7 @@ public class OrderInfoView extends AbstractOrderView {
         isOrderDetailListChanged = false;
         List<String> orderDetailIdList = new ArrayList<String>();
         orderDetailIdList.clear();
-        allOrderDetailCanceled = false;
+        allOrderDetailCanceled = true;
         isNewFoodAdded = false;
         for (OrderDetailRecord record : orderDetailRecordList) {
             OrderDetail odDetail = new OrderDetail();
@@ -683,7 +712,11 @@ public class OrderInfoView extends AbstractOrderView {
                 // create ADDNEW records
                 if (Adapter.addNewOrderDetail(odDetail)) {
                     isOrderDetailListChanged = true;
-                    isNewFoodAdded = true;
+                    
+                    // Consider only if the new order detail has state waiting
+                    if( odDetail.getState() == Types.State.WAITING ){
+                        isNewFoodAdded = true;
+                    }
                 }
                 else{
                     System.out.println("Fail to add new order detail, Id: "
@@ -710,27 +743,20 @@ public class OrderInfoView extends AbstractOrderView {
                 break;
             }
         }
-        // If there's no new food was selected, return
+        // If there's no new food was selected
         if (isOrderDetailListChanged) {
             currentOrder.setOrderDetailIdList(orderDetailIdList);
-        }
-        else{
-            if( isNewOrder ){
-                // Ignore this order
-                return false;
+            // If all order details are canceled or deleted, mark order as CANCELED
+            if (allOrderDetailCanceled || currentOrder.getOrderDetailIdList().isEmpty()) {
+                // set table state to WAITING
+                Adapter.changeTableState(currentOrder.getTableId(),
+                        Types.State.EMPTY);
+                if( isNewOrder ){
+                    // Ignore this order
+                    return false;
+                }
+                currentOrder.setStatus(Types.State.CANCELED);
             }
-        }
-
-        // If all order details are canceled or deleted, mark order as CANCELED
-        if (allOrderDetailCanceled || currentOrder.getOrderDetailIdList().isEmpty()) {
-            if( isNewOrder ){
-                // Ignore this order
-                return false;
-            }
-            currentOrder.setStatus(Types.State.CANCELED);
-            // set table state to WAITING
-            Adapter.changeTableState(currentOrder.getTableId(),
-                    Types.State.EMPTY);
         }
 
         return true;
