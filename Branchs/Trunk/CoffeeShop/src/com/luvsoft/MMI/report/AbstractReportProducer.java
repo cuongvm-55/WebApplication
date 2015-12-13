@@ -21,7 +21,7 @@ import jxl.write.WriteException;
 import com.luvsoft.MMI.Adapter;
 
 public abstract class AbstractReportProducer {
-    public static String REPORT_DATE_TIME_FORMAT_DATE_ONLY = "dd/MM/yyyy";
+    public static String REPORT_DATE_TIME_FORMAT_NO_SECONDS = "dd/MM/yyyy HH:mm";
     public static String REPORT_DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
     // returns all header cells
     protected abstract boolean buildHeader(List<WritableCell> headers);
@@ -52,12 +52,12 @@ public abstract class AbstractReportProducer {
     public DateTime createDateCell(int col, int row, Date date, boolean isHeader){
         DateFormat customDateFormat;
         if( isHeader ){
-            customDateFormat = new DateFormat(REPORT_DATE_TIME_FORMAT_DATE_ONLY); 
+            customDateFormat = new DateFormat(REPORT_DATE_TIME_FORMAT_NO_SECONDS);
         }
         else{
-            customDateFormat = new DateFormat(REPORT_DATE_TIME_FORMAT); 
+            customDateFormat = new DateFormat(REPORT_DATE_TIME_FORMAT);
         }
-        
+
         WritableCellFormat dateFormat = new WritableCellFormat (customDateFormat); 
         return new DateTime(col, row, date, dateFormat);
     }

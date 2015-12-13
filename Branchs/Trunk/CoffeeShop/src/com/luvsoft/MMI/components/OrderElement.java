@@ -143,6 +143,14 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                     Adapter.updateFieldValueOfOrder(order.getId(), Order.DB_FIELD_NAME_NOTE, txtNote.getValue());
                 }
 
+                // Update order if staffName is different
+                if( getSession() != null &&
+                        getSession().getAttribute("user") != null ){
+                    String staffName = getSession().getAttribute("user").toString();
+                    if (!staffName.equals(order.getStaffNameConfirmOrderFinish())) {
+                        Adapter.updateFieldValueOfOrder(order.getId(), Order.DB_FIELD_NAME_STAFF_NAME_CONFIRM_ORDER_FINISH, staffName);
+                    }
+                }
                 // If all order details are CANCELED, we cancel this order
                 List<String> orderDetailIdList = order.getOrderDetailIdList();
                 boolean allOrderDetailCanceled = true;

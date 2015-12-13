@@ -18,7 +18,8 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
     public static final String DB_FIELD_NAME_PAID_TIME = "PaidTime";
     public static final String DB_FIELD_NAME_TABLE_ID = "TableId";
     public static final String DB_FIELD_NAME_NOTE = "Note";
-    public static final String DB_FIELD_NAME_STAFF_NAME = "StaffName";
+    public static final String DB_FIELD_NAME_STAFF_NAME_CONFIRM_PAID = "StaffNameConfirmPaid";
+    public static final String DB_FIELD_NAME_STAFF_NAME_CONFIRM_ORDER_FINISH = "StaffNameConfirmOrderFinish";
     public static final String DB_FIELD_NAME_CREATING_TIME = "CreatingTime";
 
     private String id;
@@ -30,7 +31,8 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
     private Date paidTime;
     private String tableId;
     private String note;
-    private String staffName;
+    private String staffNameConfirmPaid;
+    private String staffNameConfirmOrderFinish;
 
     public Order()
     {
@@ -43,7 +45,8 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         waitingTime = 0;
         tableId = "";
         note = "";
-        staffName = "";
+        staffNameConfirmPaid = "";
+        staffNameConfirmOrderFinish = "";
     }
 
     public Order(BasicDBObject object)
@@ -61,7 +64,8 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         map.put(DB_FIELD_NAME_PAID_MONEY, paidMoney);
         map.put(DB_FIELD_NAME_WAITING_TIME, waitingTime);
         map.put(DB_FIELD_NAME_STATUS, status.toString());
-        map.put(DB_FIELD_NAME_STAFF_NAME, staffName);
+        map.put(DB_FIELD_NAME_STAFF_NAME_CONFIRM_PAID, staffNameConfirmPaid);
+        map.put(DB_FIELD_NAME_STAFF_NAME_CONFIRM_ORDER_FINISH, staffNameConfirmOrderFinish);
         // Date time need to save as TimeStamp type
         map.put(DB_FIELD_NAME_PAID_TIME, paidTime);
         map.put(DB_FIELD_NAME_CREATING_TIME, creatingTime);
@@ -99,7 +103,8 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
 
         tableId = getString(DB_FIELD_NAME_TABLE_ID, dbObject);
         note = getString(DB_FIELD_NAME_NOTE, dbObject);
-        staffName = getString(DB_FIELD_NAME_STAFF_NAME, dbObject);
+        staffNameConfirmPaid = getString(DB_FIELD_NAME_STAFF_NAME_CONFIRM_PAID, dbObject);
+        staffNameConfirmOrderFinish = getString(DB_FIELD_NAME_STAFF_NAME_CONFIRM_ORDER_FINISH, dbObject);
         waitingTime = getInt(DB_FIELD_NAME_WAITING_TIME, dbObject);
     }
 
@@ -175,21 +180,31 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         this.note = note;
     }
 
-    public String getStaffName() {
-        return staffName;
+    public String getStaffNameConfirmPaid() {
+        return staffNameConfirmPaid;
     }
 
-    public void setStaffName(String staffName) {
-        this.staffName = staffName;
+    public void setStaffNameConfirmPaid(String staffNameConfirmPaid) {
+        this.staffNameConfirmPaid = staffNameConfirmPaid;
+    }
+
+    public String getStaffNameConfirmOrderFinish() {
+        return staffNameConfirmOrderFinish;
+    }
+
+    public void setStaffNameConfirmOrderFinish(String staffNameConfirmOrderFinish) {
+        this.staffNameConfirmOrderFinish = staffNameConfirmOrderFinish;
     }
 
     @Override
     public String toString() {
         return "Order [id=" + id + ", orderDetailIdList=" + orderDetailIdList
                 + ", status=" + status + ", paidMoney=" + paidMoney
-                + ", waitingTime=" + waitingTime + ", paidTime=" + paidTime
-                + ", tableId=" + tableId + ", note=" + note + ", staffName="
-                + staffName + "]";
+                + ", creatingTime=" + creatingTime + ", waitingTime="
+                + waitingTime + ", paidTime=" + paidTime + ", tableId="
+                + tableId + ", note=" + note + ", staffNameConfirmPaid="
+                + staffNameConfirmPaid + ", staffNameConfirmOrderFinish="
+                + staffNameConfirmOrderFinish + "]";
     }
 
     @Override

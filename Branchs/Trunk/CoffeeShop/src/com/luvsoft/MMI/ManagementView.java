@@ -1,10 +1,12 @@
 package com.luvsoft.MMI;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.vaadin.dialogs.ConfirmDialog;
+import org.vaadin.thomas.timefield.TimeField;
 
 import com.luvsoft.MMI.management.ConfigForm;
 import com.luvsoft.MMI.management.FoodManagement;
@@ -118,13 +120,19 @@ public class ManagementView extends VerticalLayout{
         Label lblFromDate = new Label(Language.FROM_DATE);
         Label lblToDate = new Label(Language.TO_DATE);
 
+        TimeField fromTime = new TimeField();
+        fromTime.setHours(0);
+        fromTime.setMinutes(0);
         DateField fromDate = new DateField();
         DateField toDate = new DateField();
         HorizontalLayout frLayout = new HorizontalLayout();
         //frLayout.setSizeFull();
-        frLayout.addComponents(lblFromDate, fromDate);
-        frLayout.setExpandRatio(lblFromDate, 4.0f);
-        frLayout.setExpandRatio(fromDate, 6.0f);
+        fromDate.setShowISOWeekNumbers(true);
+        toDate.setShowISOWeekNumbers(true);
+        frLayout.addComponents(lblFromDate, fromDate, fromTime);
+        frLayout.setExpandRatio(lblFromDate, 3.0f);
+        frLayout.setExpandRatio(fromDate, 4.0f);
+        frLayout.setExpandRatio(fromTime, 3.0f);
         frLayout.setComponentAlignment(lblFromDate, Alignment.MIDDLE_CENTER);
         frLayout.setComponentAlignment(fromDate, Alignment.MIDDLE_CENTER);
         fromDate.setValue(new Date());
@@ -133,10 +141,13 @@ public class ManagementView extends VerticalLayout{
         frLayout.setSpacing(true);
 
         HorizontalLayout toLayout = new HorizontalLayout();
-        //toLayout.setSizeFull();
-        toLayout.addComponents(lblToDate, toDate);
-        toLayout.setExpandRatio(lblToDate, 4.0f);
-        toLayout.setExpandRatio(toDate, 6.0f);
+        TimeField toTime = new TimeField();
+        toTime.setHours(23);
+        toTime.setMinutes(59);
+        toLayout.addComponents(lblToDate, toDate, toTime);
+        toLayout.setExpandRatio(lblToDate, 3.0f);
+        toLayout.setExpandRatio(toDate, 4.0f);
+        toLayout.setExpandRatio(toTime, 3.0f);
         toLayout.setComponentAlignment( lblToDate, Alignment.MIDDLE_CENTER);
         toLayout.setComponentAlignment(toDate, Alignment.MIDDLE_CENTER);
         toLayout.setSpacing(true);
@@ -155,9 +166,22 @@ public class ManagementView extends VerticalLayout{
                         Language.ASK_FOR_CONFIRM, Language.ASK_FOR_DENIED, new ConfirmDialog.Listener() {
                             public void onClose(ConfirmDialog dialog) {
                                 if (dialog.isConfirmed()) {
-                                    System.out.println("user confirmed");
-                                    if( removeOrderDataInDateRange(fromDate.getValue(), toDate.getValue()) ){
-                                     // notify message
+                                    // Get begin time
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.setTime(fromDate.getValue());
+                                    cal.set(Calendar.HOUR_OF_DAY, fromTime.getHours());
+                                    cal.set(Calendar.MINUTE, fromTime.getMinutes());
+                                    cal.set(Calendar.SECOND, 0);
+                                    Date begDate = cal.getTime();
+
+                                    // Get end time
+                                    cal.setTime(toDate.getValue());
+                                    cal.set(Calendar.HOUR_OF_DAY, toTime.getHours());
+                                    cal.set(Calendar.MINUTE, toTime.getMinutes());
+                                    cal.set(Calendar.SECOND, 58);
+                                    Date endDate = cal.getTime();
+                                    if( removeOrderDataInDateRange(begDate, endDate) ){
+                                        // notify message
                                         Notification notify = new Notification("<b>Thông báo</b>",
                                                 "<i>Đã xóa dữ liệu thành công!</i>",
                                                 Notification.Type.TRAY_NOTIFICATION  , true);
@@ -181,15 +205,24 @@ public class ManagementView extends VerticalLayout{
         btnCreateReport.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                Date begDate = fromDate.getValue();
-                Date endDate = toDate.getValue();
+                // Get begin time
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(fromDate.getValue());
+                cal.set(Calendar.HOUR_OF_DAY, fromTime.getHours());
+                cal.set(Calendar.MINUTE, fromTime.getMinutes());
+                cal.set(Calendar.SECOND, 0);
+                Date begDate = cal.getTime();
+
+                // Get end time
+                cal.setTime(toDate.getValue());
+                cal.set(Calendar.HOUR_OF_DAY, toTime.getHours());
+                cal.set(Calendar.MINUTE, toTime.getMinutes());
+                cal.set(Calendar.SECOND, 58);
+                Date endDate = cal.getTime();
+
                 if( begDate != null && endDate != null &&
                         endDate.after(begDate) || endDate.equals(begDate) )
                 {
-                    System.out.println("Export report...");
-                    System.out.println("From Date: " + begDate.toString());
-                    System.out.println("To Date: " + endDate.toString());
-                    
                     // Export data
                     OrderInfoProducer producer = new OrderInfoProducer(begDate, endDate);
                     if( producer.export() ){

@@ -160,8 +160,8 @@ public class Language {
                 TABLE_MANAGEMENT = "Quản Lí Bàn";
                 CONFIGURATION = "Cấu Hình";
                 CHOOSE_DATE = "Chọn khoảng thời gian";
-                FROM_DATE = "Từ Ngày: ";
-                TO_DATE = "Đến ngày: ";
+                FROM_DATE = "Từ: ";
+                TO_DATE = "Đến: ";
                 CLEAR_DATA = "Xóa Dữ Liệu";
                 CREATE_REPORT = "Tạo Báo Cáo";
                 DELETE = "Xóa";

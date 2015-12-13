@@ -41,7 +41,7 @@ public class OrderController extends AbstractController{
         BasicDBObject query = new BasicDBObject();
         query.append(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$in", stateStrs));
         if( begDate != null && endDate != null ){
-            query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", Types.reachDayBegin(begDate)).add("$lte", Types.reachDayEnd(endDate)).get());
+            query.append(Order.DB_FIELD_NAME_CREATING_TIME, BasicDBObjectBuilder.start("$gte", begDate).add("$lte", endDate).get());
         }
         orderFacade.findByQuery(query, list);
         Collections.sort(list);
@@ -61,7 +61,7 @@ public class OrderController extends AbstractController{
         BasicDBObject query = new BasicDBObject(Order.DB_FIELD_NAME_STATUS, new BasicDBObject("$nin", stateStrs)); 
         if( begDate != null && endDate != null ){
             query.append(Order.DB_FIELD_NAME_CREATING_TIME,
-                    BasicDBObjectBuilder.start("$gte", Types.reachDayBegin(begDate)).add("$lte", Types.reachDayEnd(endDate)).get());
+                    BasicDBObjectBuilder.start("$gte", begDate).add("$lte", endDate).get());
         }
         orderFacade.findByQuery(query, list);
         Collections.sort(list);

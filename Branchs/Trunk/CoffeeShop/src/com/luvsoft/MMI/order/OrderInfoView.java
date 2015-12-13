@@ -566,8 +566,8 @@ public class OrderInfoView extends AbstractOrderView {
                     if( getSession() != null &&
                             getSession().getAttribute("user") != null ){
                         String staffName = getSession().getAttribute("user").toString();
-                        if (!staffName.equals(currentOrder.getStaffName())) {
-                            currentOrder.setStaffName(staffName);
+                        if (!staffName.equals(currentOrder.getStaffNameConfirmPaid())) {
+                            currentOrder.setStaffNameConfirmPaid(staffName);
                         }
                     }
                     
@@ -657,8 +657,8 @@ public class OrderInfoView extends AbstractOrderView {
         if( getSession() != null &&
                 getSession().getAttribute("user") != null ){
             String staffName = getSession().getAttribute("user").toString();
-            if (!staffName.equals(currentOrder.getStaffName())) {
-                currentOrder.setStaffName(staffName);
+            if (!staffName.equals(currentOrder.getStaffNameConfirmOrderFinish())) {
+                currentOrder.setStaffNameConfirmOrderFinish(staffName);
             }
         }
 

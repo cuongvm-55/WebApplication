@@ -37,8 +37,10 @@ public class OrderInfoProducer extends AbstractReportProducer{
 
         TOTAL_AMOUNT(9), // Total = nbOfRecords * amount
         PAID_AMOUNT(10),  // Real amount received from customer
-        STAFF_NAME(11),  // Staff name
-        NOTE(12); // Note
+        STAFF_NAME_CONFIRM_ORDER_FINISH(11),  // Staff name confirm order finish
+        STAFF_NAME_CONFIRM_PAID(12),  // Staff name confirm paid
+        PAID_TIME(13),  // Paid time
+        NOTE(14); // Note
         private final int num;
         private FIELD_HEADER(int index){
             num = index;
@@ -46,8 +48,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
         
         public int getValue(){ return num;}
     };
-    
-    
+
     public OrderInfoProducer(Date _fromDate, Date _toDate){
         this.fromDate = _fromDate;
         this.toDate = _toDate;
@@ -98,8 +99,10 @@ public class OrderInfoProducer extends AbstractReportProducer{
         Label lbEmpty = createLabelCell(FIELD_HEADER.EMPTY.getValue(), 5, "");
         Label lbTotalAmount = createLabelCell(FIELD_HEADER.TOTAL_AMOUNT.getValue(), 5, "Tổng Tiền");
         Label lbPaidAmount = createLabelCell(FIELD_HEADER.PAID_AMOUNT.getValue(), 5, "Thực Thu");
-        Label lbCreatingTime = createLabelCell(FIELD_HEADER.CREATING_TIME.getValue(), 5, "Thời Gian");
-        Label lbStaffName = createLabelCell(FIELD_HEADER.STAFF_NAME.getValue(), 5, "Tên Nhân Viên");
+        Label lbCreatingTime = createLabelCell(FIELD_HEADER.CREATING_TIME.getValue(), 5, "T.Gian Tạo H.Đơn");
+        Label lbPaidTime = createLabelCell(FIELD_HEADER.PAID_TIME.getValue(), 5, "T.Gian T.Toán");
+        Label lbStaffNameConfirmOrderFinish = createLabelCell(FIELD_HEADER.STAFF_NAME_CONFIRM_ORDER_FINISH.getValue(), 5, "NV X.Nhận Xong Món");
+        Label lbStaffNameConfirmPaid = createLabelCell(FIELD_HEADER.STAFF_NAME_CONFIRM_PAID.getValue(), 5, "NV X.Nhận T.Toán");
         Label lbNote = createLabelCell(FIELD_HEADER.NOTE.getValue(), 5, "Ghi chú");
 
         lbNo.setCellFormat(times12format);
@@ -113,7 +116,9 @@ public class OrderInfoProducer extends AbstractReportProducer{
         lbTotalAmount.setCellFormat(times12format);
         lbPaidAmount.setCellFormat(times12format);
         lbCreatingTime.setCellFormat(times12format);
-        lbStaffName.setCellFormat(times12format);
+        lbPaidTime.setCellFormat(times12format);
+        lbStaffNameConfirmPaid.setCellFormat(times12format);
+        lbStaffNameConfirmOrderFinish.setCellFormat(times12format);
         lbNote.setCellFormat(times12format);
 
         if( contents == null ){
@@ -130,7 +135,9 @@ public class OrderInfoProducer extends AbstractReportProducer{
         contents.add(lbEmpty);
         contents.add(lbTotalAmount);
         contents.add(lbPaidAmount);
-        contents.add(lbStaffName);
+        contents.add(lbStaffNameConfirmOrderFinish);
+        contents.add(lbStaffNameConfirmPaid);
+        contents.add(lbPaidTime);
         contents.add(lbNote);
 
         // Build records
@@ -223,11 +230,20 @@ public class OrderInfoProducer extends AbstractReportProducer{
                     nbrPaidAmount.setCellFormat(totalFormat);
                     contents.add(nbrPaidAmount);
 
-                    // staff name
-                    Label lblStaffName = createLabelCell(FIELD_HEADER.STAFF_NAME.getValue(), row, order.getStaffName());
-                    lblStaffName.setCellFormat(totalFormat);
-                    contents.add(lblStaffName);
+                    // staff name who confirm order finish
+                    Label lblStaffNameOrderFinish = createLabelCell(FIELD_HEADER.STAFF_NAME_CONFIRM_ORDER_FINISH.getValue(), row, order.getStaffNameConfirmOrderFinish());
+                    lblStaffNameOrderFinish.setCellFormat(totalFormat);
+                    contents.add(lblStaffNameOrderFinish);
 
+                    // staff name who confirm paid
+                    Label lblStaffNamePaid = createLabelCell(FIELD_HEADER.STAFF_NAME_CONFIRM_PAID.getValue(), row, order.getStaffNameConfirmPaid());
+                    lblStaffNamePaid.setCellFormat(totalFormat);
+                    contents.add(lblStaffNamePaid);
+                    
+                    // paid time
+                    DateTime paidtime = createDateCell(FIELD_HEADER.PAID_TIME.getValue(), row, order.getPaidTime(), false);
+                    contents.add(paidtime);
+                    
                     // Note
                     Label lblNote = createLabelCell(FIELD_HEADER.NOTE.getValue(), row, order.getNote());
                     lblNote.setCellFormat(totalFormat);
