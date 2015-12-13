@@ -55,7 +55,7 @@ public class OrderInfoView extends AbstractOrderView {
     private Label lbPaidAmount; // label real amount that customer pay for the
                                 // bill, the amount can be modified
                                 // we consider that currency format in VN is almost the same as ITALY
-
+    private Button btnAddFood;
     private Button btnConfirmOrder;
     private Button btnConfirmPaid;
     // private Panel panelContentContainer;
@@ -83,7 +83,9 @@ public class OrderInfoView extends AbstractOrderView {
     private boolean allOrderDetailCanceled;
     private String previousTextValue = "";
 
-    public OrderInfoView() {
+    public static enum ViewMode{ORDER_SUMMRY, ORDER_DETAIL_VIEW};
+    private ViewMode currentMode;
+    public OrderInfoView(ViewMode mode) {
         super();
         totalAmount = 0.00f;
         paidAmount = 0.00f;
@@ -92,6 +94,8 @@ public class OrderInfoView extends AbstractOrderView {
         orderDetailRecordList = null;
         isOrderDetailListChanged = false;
         isNewOrder = false;
+
+        currentMode = mode;
     }
 
     @Override
@@ -229,8 +233,16 @@ public class OrderInfoView extends AbstractOrderView {
             btnRemove.setData(i);
 
             ComboBox cbStatus = new ComboBox();
-            cbStatus.addItems(Language.CANCELED, Language.WAITING,
-                    Language.COMPLETED);
+            if(record.getStatus() == Types.State.COMPLETED){
+                cbStatus.addItem(Language.COMPLETED);
+            }
+            else if(record.getStatus() == Types.State.CANCELED){
+                cbStatus.addItem(Language.CANCELED);
+            }
+            else{
+                cbStatus.addItems(Language.CANCELED, Language.WAITING);
+            }
+            
             cbStatus.setData(i);
             cbStatus.setValue(Types.StateToLanguageString(record.getStatus()));
             cbStatus.setScrollToSelectedItem(true);
@@ -322,7 +334,8 @@ public class OrderInfoView extends AbstractOrderView {
                         Object propertyId) {
                     Item item = tbOrderDetails.getItem(itemId);
                     ComboBox states = (ComboBox) item.getItemProperty(Language.STATUS).getValue();
-                    if( states.getValue().equals(Types.StateToLanguageString(Types.State.CANCELED))){
+                    if( states.getValue() != null &&
+                            states.getValue().equals(Types.StateToLanguageString(Types.State.CANCELED))){
                         return "highlight-red";
                     }
                     return null;
@@ -433,14 +446,14 @@ public class OrderInfoView extends AbstractOrderView {
     private Component buildFooter() {
         OrderInfoView orderInforView = this;
 
-        VerticalLayout footer = new VerticalLayout();
+        HorizontalLayout footer = new HorizontalLayout();
         footer.setWidth("100%");
 
         footer.setHeightUndefined();
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
 
         // add food button
-        Button btnAddFood = new Button(Language.ADD_FOOD);
+        btnAddFood = new Button(Language.ADD_FOOD);
         btnAddFood.addStyleName(ValoTheme.BUTTON_HUGE);
         btnAddFood.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         btnAddFood.addStyleName("margin-bottom1");
@@ -455,7 +468,6 @@ public class OrderInfoView extends AbstractOrderView {
             }
         });
 
-        HorizontalLayout confirmButtonsContainer = new HorizontalLayout();
         // confirm button
         btnConfirmPaid = new Button(Language.CONFIRM_PAID);
         btnConfirmPaid.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -469,12 +481,11 @@ public class OrderInfoView extends AbstractOrderView {
         // Set state of buttons depend on current order detail list
         setControlButtonsState();
 
-        confirmButtonsContainer.addComponents(btnConfirmPaid, btnConfirmOrder);
-
-        footer.addComponents(btnAddFood, confirmButtonsContainer);
-        footer.setComponentAlignment(btnAddFood, Alignment.MIDDLE_CENTER);
-        footer.setComponentAlignment(confirmButtonsContainer,
-                Alignment.MIDDLE_CENTER);
+        footer.addComponents(btnAddFood, btnConfirmOrder, btnConfirmPaid);
+        footer.setComponentAlignment(btnAddFood, Alignment.MIDDLE_RIGHT);
+        footer.setComponentAlignment(btnConfirmOrder, Alignment.MIDDLE_LEFT);
+        footer.setComponentAlignment(btnConfirmPaid, Alignment.MIDDLE_CENTER);
+        footer.setSpacing(true);
 
         // Confirm order
         btnConfirmOrder.addClickListener(new ClickListener() {
@@ -482,6 +493,8 @@ public class OrderInfoView extends AbstractOrderView {
             public void buttonClick(ClickEvent event) {
                 // update order details infomation
                 if( !saveOrderDetailsData() ){
+                    // set table state to map to current order
+                    setTableState();
                     close();
                     return;
                 }
@@ -492,13 +505,6 @@ public class OrderInfoView extends AbstractOrderView {
                 if (isNewOrder) {
                     if (Adapter.addNewOrder(currentOrder)) {
                         System.out.println("Add new Order: " + currentOrder.toString());
-
-                        if( currentOrder.getStatus() == Types.State.WAITING ){
-                            // set table state to WAITING
-                            Adapter.changeTableState(currentOrder.getTableId(),
-                                    Types.State.WAITING);
-                        }
-
                         // Broadcast order change event
                         Broadcaster.broadcast(CoffeeshopUI.NEW_ORDER_MESSAGE + "::"
                                 + getCurrentTable().getNumber());
@@ -507,6 +513,9 @@ public class OrderInfoView extends AbstractOrderView {
                         NewOrderManager waitingTimeThread = new NewOrderManager(
                                 currentOrder);
                         waitingTimeThread.start();
+
+                        // set table state to map to current order
+                        setTableState();
                     } else {
                         System.out.println("Fail to add orderId: "
                                 + currentOrder.getId());
@@ -534,12 +543,10 @@ public class OrderInfoView extends AbstractOrderView {
                                         currentOrder);
                                 waitingTimeThread.start();
                             }
-                            // set order state to WAITING
-                            Adapter.changeOrderState(currentOrder.getId(), Types.State.WAITING);
-                            // set table state to WAITING
-                            Adapter.changeTableState(currentOrder.getTableId(),
-                                    Types.State.WAITING);
                         }
+
+                        // set table state to map to current order
+                        setTableState();
                     } else {
                         System.out.println("Fail to update orderId: ");
                     }
@@ -570,7 +577,7 @@ public class OrderInfoView extends AbstractOrderView {
                             currentOrder.setStaffNameConfirmPaid(staffName);
                         }
                     }
-                    
+
                     currentOrder.setPaidMoney(Types.getDoubleValueFromFormattedStr(textFieldpaidAmount.getValue()));
                     currentOrder.setPaidTime(new Date());
                     currentOrder.setStatus(Types.State.PAID);
@@ -602,7 +609,42 @@ public class OrderInfoView extends AbstractOrderView {
         return footer;
     }
     
+    /**
+     * Set table state depend on state of current order
+     */
+    private void setTableState()
+    {
+        Types.State tblState = State.UNDEFINED;
+        switch(currentOrder.getStatus()){
+        case CANCELED:
+            tblState = State.EMPTY;
+            break;
+        default:
+            tblState = currentOrder.getStatus();
+            break;
+        }
+        Adapter.changeTableState(currentOrder.getTableId(), tblState);
+    }
+
+    /**
+     * Set control button state depend on current mode view
+     */
     private void setControlButtonsState(){
+        btnAddFood.setVisible(false);
+        btnConfirmOrder.setVisible(false);
+        btnConfirmPaid.setVisible(false);
+        switch(currentMode){
+        case ORDER_SUMMRY:
+            btnConfirmPaid.setVisible(true);
+            break;
+        case ORDER_DETAIL_VIEW:
+            btnAddFood.setVisible(true);
+            btnConfirmOrder.setVisible(true);
+            break;
+         default:
+             break;
+        }
+
         boolean hasWaitingOrderDetail = false;
         boolean hasCompleltedOrderDetail = false;
         for( OrderDetailRecord record : orderDetailRecordList ){
@@ -670,6 +712,7 @@ public class OrderInfoView extends AbstractOrderView {
         orderDetailIdList.clear();
         allOrderDetailCanceled = true;
         isNewFoodAdded = false;
+        boolean hasWaitingOrderDetail = false;
         for (OrderDetailRecord record : orderDetailRecordList) {
             OrderDetail odDetail = new OrderDetail();
             String id = record.getOrderDetailId();
@@ -691,6 +734,12 @@ public class OrderInfoView extends AbstractOrderView {
             if (record.getStatus() != Types.State.CANCELED) {
                 allOrderDetailCanceled = false;
             }
+
+            // check if there's a waiting order detail
+            if (record.getStatus() == Types.State.WAITING) {
+                hasWaitingOrderDetail = true;
+            }
+
             System.out.println("record.getChangeFlag() "
                     + record.getChangeFlag());
 
@@ -712,7 +761,7 @@ public class OrderInfoView extends AbstractOrderView {
                 // create ADDNEW records
                 if (Adapter.addNewOrderDetail(odDetail)) {
                     isOrderDetailListChanged = true;
-                    
+
                     // Consider only if the new order detail has state waiting
                     if( odDetail.getState() == Types.State.WAITING ){
                         isNewFoodAdded = true;
@@ -743,19 +792,25 @@ public class OrderInfoView extends AbstractOrderView {
                 break;
             }
         }
-        // If there's no new food was selected
+
         if (isOrderDetailListChanged) {
             currentOrder.setOrderDetailIdList(orderDetailIdList);
             // If all order details are canceled or deleted, mark order as CANCELED
             if (allOrderDetailCanceled || currentOrder.getOrderDetailIdList().isEmpty()) {
-                // set table state to WAITING
-                Adapter.changeTableState(currentOrder.getTableId(),
-                        Types.State.EMPTY);
                 if( isNewOrder ){
                     // Ignore this order
+                    currentOrder.setStatus(Types.State.CANCELED);
                     return false;
                 }
                 currentOrder.setStatus(Types.State.CANCELED);
+            }
+
+            if( isNewFoodAdded ){
+                currentOrder.setStatus(Types.State.WAITING);
+            }
+
+            if( !hasWaitingOrderDetail ){
+                currentOrder.setStatus(Types.State.UNPAID);
             }
         }
 

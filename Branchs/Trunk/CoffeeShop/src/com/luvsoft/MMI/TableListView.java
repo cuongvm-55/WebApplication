@@ -105,7 +105,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         // notify message
         Notification notify = new Notification("<b>"+Language.PAY_ATTENTION+"</b>",
                 "<i>" + Language.ORDER + " " + tableNumber + " " + Language.COMPLETED+"</i>",
-                Notification.Type.WARNING_MESSAGE , true);
+                Notification.Type.ERROR_MESSAGE , true);
         notify.setPosition(Position.BOTTOM_RIGHT);
         notify.show(Page.getCurrent());
 
@@ -116,7 +116,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         // notify message
         Notification notify = new Notification("<b>"+Language.PAY_ATTENTION+"</b>",
                 "<i>Bàn " + tableNumber +" đã thanh toán</i>",
-                Notification.Type.WARNING_MESSAGE , true);
+                Notification.Type.ERROR_MESSAGE , true);
         notify.setPosition(Position.BOTTOM_RIGHT);
         notify.show(Page.getCurrent());
 

@@ -90,6 +90,7 @@ public class Language {
                 NUMBER = "Number";
                 NO_ORDER_IN_ORDER_LIST = "There's no order at the moment!";
                 ALL_FIELDS_ARE_REQUIRED = "All fields are required!";
+                PAY_BILL = "Paid Order";
 
                 // Errors
                 ERROR = "Error";
@@ -191,6 +192,7 @@ public class Language {
                 CATEGORY = "Danh mục";
                 NUMBER = "Số";
                 ALL_FIELDS_ARE_REQUIRED = "Bạn phải nhập đầy đủ thông tin!";
+                PAY_BILL = "Thanh Toán";
 
                 // Errors
                 ERROR = "Lỗi";
@@ -293,6 +295,7 @@ public class Language {
     public static String CATEGORY;
     public static String NUMBER;
     public static String ALL_FIELDS_ARE_REQUIRED;
+    public static String PAY_BILL;
 
     // Currency
     public static String CURRENCY_SYMBOL;

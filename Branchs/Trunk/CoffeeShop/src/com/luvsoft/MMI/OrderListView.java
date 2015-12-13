@@ -53,7 +53,7 @@ public class OrderListView extends Panel implements ViewInterface{
 
         Notification notify = new Notification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
                 + Language.TABLE + " " + tableNumber + Language.ORDERED + "</i>",
-                Notification.Type.WARNING_MESSAGE, true);
+                Notification.Type.ERROR_MESSAGE, true);
         notify.setPosition(Position.BOTTOM_RIGHT);
         notify.show(Page.getCurrent());
     }
@@ -63,7 +63,7 @@ public class OrderListView extends Panel implements ViewInterface{
 
         Notification notify = new Notification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
                 + Language.ORDER_IN_TABLE + tableNumber + Language.HAS_BEEN_CANCELED + "</i>",
-                Notification.Type.WARNING_MESSAGE, true);
+                Notification.Type.ERROR_MESSAGE, true);
         notify.setPosition(Position.BOTTOM_RIGHT);
         notify.show(Page.getCurrent());
     }
@@ -73,7 +73,7 @@ public class OrderListView extends Panel implements ViewInterface{
 
         Notification notify = new Notification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
                 + Language.ORDER_IN_TABLE + tableNumber + Language.HAS_BEEN_UPDATED + "</i>",
-                Notification.Type.WARNING_MESSAGE, true);
+                Notification.Type.ERROR_MESSAGE, true);
         notify.setPosition(Position.BOTTOM_RIGHT);
         notify.show(Page.getCurrent());
     }
