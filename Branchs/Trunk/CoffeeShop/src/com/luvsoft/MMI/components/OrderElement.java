@@ -113,6 +113,8 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         lbTableName = new Label();
         tbOrderInfos = new Table();
         btnConfFinish = new Button(Language.ALL_DONE);
+        btnConfFinish.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnConfFinish.addStyleName(ValoTheme.BUTTON_HUGE);
 
         lbTableName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.addStyleName(ValoTheme.LABEL_BOLD);
@@ -133,7 +135,6 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         tbOrderInfos.setResponsive(true);
         tbOrderInfos.setSizeFull();
 
-        btnConfFinish.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnConfFinish.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
