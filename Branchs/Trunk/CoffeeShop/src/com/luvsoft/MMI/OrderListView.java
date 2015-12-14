@@ -3,13 +3,12 @@ package com.luvsoft.MMI;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.luvsoft.MMI.components.LuvsoftNotification;
 import com.luvsoft.MMI.components.OrderElement;
 import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;
-import com.vaadin.server.Page;
-import com.vaadin.shared.Position;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -51,31 +50,28 @@ public class OrderListView extends Panel implements ViewInterface{
     public void haveNewOrder(String tableNumber) {
         reloadView();
 
-        Notification notify = new Notification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
-                + Language.TABLE + " " + tableNumber + Language.ORDERED + "</i>",
-                Notification.Type.ERROR_MESSAGE, true);
-        notify.setPosition(Position.BOTTOM_RIGHT);
-        notify.show(Page.getCurrent());
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>",
+                "<i>" + Language.TABLE + " " + tableNumber + Language.ORDERED + "</i>",
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
     }
 
     public void haveCanceledOrder(String tableNumber) {
         reloadView();
 
-        Notification notify = new Notification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
                 + Language.ORDER_IN_TABLE + tableNumber + Language.HAS_BEEN_CANCELED + "</i>",
-                Notification.Type.ERROR_MESSAGE, true);
-        notify.setPosition(Position.BOTTOM_RIGHT);
-        notify.show(Page.getCurrent());
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
     }
 
     public void haveNewOrderUpdated(String tableNumber) {
         reloadView();
 
-        Notification notify = new Notification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
                 + Language.ORDER_IN_TABLE + tableNumber + Language.HAS_BEEN_UPDATED + "</i>",
-                Notification.Type.ERROR_MESSAGE, true);
-        notify.setPosition(Position.BOTTOM_RIGHT);
-        notify.show(Page.getCurrent());
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
     }
     private void loadContent() {
         loadOrderList();

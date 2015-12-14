@@ -1,4 +1,4 @@
-- Sửa dropdown list thành tab menu
+﻿- Sửa dropdown list thành tab menu
 - Nhân viên pha chế: Hiển thị list tất cả các món được order theo bàn đang chờ, có một dấu tick để hoàn thành món và dấu tick để hoàn thành xong order. 
 Order hoàn thành tự động xóa khỏi list
 - Thêm tab quản lý: thống kê, quản lý món, cấu hình
@@ -23,3 +23,5 @@ Tổng                                   66 ngày +- 5 ngày
 Giá                                    6 triệu (ngày 26/9 đã nhận 2 triệu)
 
 Demo 15/12
+
+Giá                                    6 triệu (ngày 26/9 đã nhận 2 triệu, 13/12 đã nhận thêm 1 triệu)

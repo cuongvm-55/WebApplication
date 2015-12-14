@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.luvsoft.MMI.components.CoffeeTableElement;
 import com.luvsoft.MMI.components.CustomizationTreeElement;
+import com.luvsoft.MMI.components.LuvsoftNotification;
 import com.luvsoft.MMI.management.TableForm;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Floor;
@@ -12,8 +13,6 @@ import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
-import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -103,22 +102,20 @@ public class TableListView extends VerticalLayout implements ViewInterface {
 
     public void haveNewOrderCompleted(String tableNumber) {
         // notify message
-        Notification notify = new Notification("<b>"+Language.PAY_ATTENTION+"</b>",
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+Language.PAY_ATTENTION+"</b>",
                 "<i>" + Language.ORDER + " " + tableNumber + " " + Language.COMPLETED+"</i>",
-                Notification.Type.ERROR_MESSAGE , true);
-        notify.setPosition(Position.BOTTOM_RIGHT);
-        notify.show(Page.getCurrent());
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
 
         reloadView();
     }
 
     public void orderWasPaid(String tableNumber) {
         // notify message
-        Notification notify = new Notification("<b>"+Language.PAY_ATTENTION+"</b>",
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+Language.PAY_ATTENTION+"</b>",
                 "<i>Bàn " + tableNumber +" đã thanh toán</i>",
-                Notification.Type.ERROR_MESSAGE , true);
-        notify.setPosition(Position.BOTTOM_RIGHT);
-        notify.show(Page.getCurrent());
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
 
         reloadView();
     }
