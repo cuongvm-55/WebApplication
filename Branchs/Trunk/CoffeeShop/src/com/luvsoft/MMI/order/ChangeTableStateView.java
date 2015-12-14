@@ -168,7 +168,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
 
         btnConfirm = new Button(Language.CONFIRM);
-        btnConfirm.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnConfirm.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
         btnConfirm.addStyleName("margin-left1");
         btnConfirm.setHeightUndefined();
@@ -241,9 +241,9 @@ public class ChangeTableStateView extends AbstractOrderView implements
             optionState.setItemEnabled(Language.EMPTY, true);
             break;
         case WAITING:
+        case UNPAID:
             optionState.setItemEnabled(Language.CANCEL_ORDER, true);
             break;
-        case UNPAID:
         default:
             break;
         }
@@ -271,6 +271,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
         case UNPAID:
             btnAddOrder.setVisible(true);
             btnConfirmPaid.setVisible(true);
+            btnConfirm.setVisible(true);
             break;
         default:
             break;
