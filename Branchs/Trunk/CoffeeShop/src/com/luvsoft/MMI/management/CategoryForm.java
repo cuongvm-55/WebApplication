@@ -47,31 +47,26 @@ public class CategoryForm extends Window implements ViewInterface{
         this.setClosable(true);
         this.setDraggable(false);
         this.setWidth("340px");
-        this.setHeight("240px");
+        this.setHeight("180px");
         this.center();
 
         categoryItem = new PropertysetItem();
-        categoryItem.addItemProperty("code", new ObjectProperty<String>(category.getCode()));
         categoryItem.addItemProperty("name", new ObjectProperty<String>(category.getName()));
-
-        TextField codeField = new TextField(Language.CODE);
-        codeField.setRequired(true);
-        codeField.focus();
 
         TextField nameField = new TextField(Language.NAME);
         nameField.setRequired(true);
+        nameField.focus();
 
         // Now create the binder and bind the fields
         FieldGroup fieldGroup = new FieldGroup(categoryItem);
-        fieldGroup.bind(codeField, "code");
         fieldGroup.bind(nameField, "name");
         fieldGroup.setBuffered(true);
         fieldGroup.addCommitHandler(new CommitHandler() {
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 // validate data
-                if( codeField.getValue().equals("") && nameField.getValue().equals("") ){
-                    throw new CommitException("Code or name cannot be empty!");
+                if( nameField.getValue().equals("") ){
+                    throw new CommitException("Name cannot be empty!");
                 }
                 else if( state == STATE.ADDNEW && Adapter.isCategoryNameExist(nameField.getValue()) ){
                     throw new CommitException("Category is already exist!");
@@ -83,7 +78,6 @@ public class CategoryForm extends Window implements ViewInterface{
                 // save data to database
                 // refresh parent view
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
-                category.setCode(item.getItemProperty("code").getValue().toString());
                 category.setName(item.getItemProperty("name").getValue().toString());
                 switch(state){
                 case ADDNEW:
@@ -146,8 +140,7 @@ public class CategoryForm extends Window implements ViewInterface{
         lblMsg.setSizeFull();
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(lblCaption, codeField, nameField, hzLayout);
-        vtcLayout.setComponentAlignment(codeField, Alignment.MIDDLE_CENTER);
+        vtcLayout.addComponents(lblCaption, nameField, hzLayout);
         vtcLayout.setComponentAlignment(nameField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(hzLayout, Alignment.MIDDLE_CENTER);
         vtcLayout.setSpacing(true);

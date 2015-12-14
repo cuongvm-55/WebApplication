@@ -39,8 +39,6 @@ public class FoodForm extends Window implements ViewInterface{
     private PropertysetItem foodItem;
     private ViewInterface parentView;
 
-    private Label lblMsg;
-    
     static public enum STATE{UPDATE, ADDNEW};
     private STATE state;
     private Food food;
@@ -54,20 +52,16 @@ public class FoodForm extends Window implements ViewInterface{
         this.setClosable(true);
         this.setDraggable(false);
         this.setWidth("340px");
-        this.setHeight("400px");
+        this.setHeight("330px");
         this.center();
         
         foodItem = new PropertysetItem();
-        foodItem.addItemProperty("code", new ObjectProperty<String>(food.getCode()));
         foodItem.addItemProperty("name", new ObjectProperty<String>(food.getName()));
         foodItem.addItemProperty("price", new ObjectProperty<Double>(food.getPrice()));
 
-        TextField codeField = new TextField(Language.CODE);
-        codeField.setRequired(true);
-        codeField.focus();
-
         TextField nameField = new TextField(Language.NAME);
         nameField.setRequired(true);
+        nameField.focus();
 
         TextField priceField = new TextField(Language.PRICE);
         priceField.setRequired(true);
@@ -92,7 +86,6 @@ public class FoodForm extends Window implements ViewInterface{
 
         // Now create the binder and bind the fields
         FieldGroup fieldGroup = new FieldGroup(foodItem);
-        fieldGroup.bind(codeField, "code");
         fieldGroup.bind(nameField, "name");
         fieldGroup.bind(priceField, "price");
         fieldGroup.setBuffered(true);
@@ -108,8 +101,8 @@ public class FoodForm extends Window implements ViewInterface{
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 // validate data
-                if( codeField.getValue().equals("") && nameField.getValue().equals("") ){
-                    throw new CommitException("Code or name cannot be empty!");
+                if( nameField.getValue().equals("") ){
+                    throw new CommitException("Name cannot be empty!");
                 }
                 try{
                    Double.parseDouble(priceField.getValue());
@@ -123,7 +116,6 @@ public class FoodForm extends Window implements ViewInterface{
                 // save data to database
                 // refresh parent view
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
-                food.setCode(item.getItemProperty("code").getValue().toString());
                 food.setName(item.getItemProperty("name").getValue().toString());
                 food.setPrice(Double.parseDouble(item.getItemProperty("price").getValue().toString()));
 
@@ -185,7 +177,6 @@ public class FoodForm extends Window implements ViewInterface{
                     fieldGroup.commit();
                 } catch (CommitException e) {
                     // e.printStackTrace();
-                    lblMsg.setValue("All field are required!");
                 }
             }
         });
@@ -208,9 +199,6 @@ public class FoodForm extends Window implements ViewInterface{
         hzLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
         hzLayout.setSpacing(true);
 
-        lblMsg = new Label("");
-        lblMsg.setSizeFull();
-        
         Label lblCaption = new Label(caption);
         lblCaption.addStyleName(ValoTheme.LABEL_HUGE);
         lblCaption.addStyleName(ValoTheme.LABEL_BOLD);
@@ -218,8 +206,7 @@ public class FoodForm extends Window implements ViewInterface{
 
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(lblCaption, codeField, nameField, priceField, cbType, hzLayout);
-        vtcLayout.setComponentAlignment(codeField, Alignment.MIDDLE_CENTER);
+        vtcLayout.addComponents(lblCaption, nameField, priceField, cbType, hzLayout);
         vtcLayout.setComponentAlignment(nameField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(priceField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(cbType, Alignment.MIDDLE_CENTER);

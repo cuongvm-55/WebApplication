@@ -39,8 +39,6 @@ public class TableForm extends Window implements ViewInterface{
     private PropertysetItem tableItem;
     private ViewInterface parentView;
 
-    private Label lblMsg;
-
     static public enum STATE{UPDATE, ADDNEW};
     private STATE state;
     private Table table;
@@ -54,19 +52,15 @@ public class TableForm extends Window implements ViewInterface{
         this.setClosable(true);
         this.setDraggable(false);
         this.setWidth("340px");
-        this.setHeight("310px");
+        this.setHeight("240px");
         this.center();
-        
-        tableItem = new PropertysetItem();
-        tableItem.addItemProperty("code", new ObjectProperty<String>(table.getCode()));
-        tableItem.addItemProperty("number", new ObjectProperty<String>(table.getNumber()+""));
 
-        TextField codeField = new TextField(Language.CODE);
-        codeField.setRequired(true);
-        codeField.focus();
+        tableItem = new PropertysetItem();
+        tableItem.addItemProperty("number", new ObjectProperty<String>(table.getNumber()+""));
 
         TextField numberField = new TextField(Language.NUMBER);
         numberField.setRequired(true);
+        numberField.focus();
 
         ComboBox cbType = new ComboBox(Language.FLOOR);
         List<Floor> floorList = Adapter.retrieveFloorList();
@@ -88,7 +82,6 @@ public class TableForm extends Window implements ViewInterface{
 
         // Now create the binder and bind the fields
         FieldGroup fieldGroup = new FieldGroup(tableItem);
-        fieldGroup.bind(codeField, "code");
         fieldGroup.bind(numberField, "number");
         fieldGroup.setBuffered(true);
         fieldGroup.setFieldFactory(new FieldGroupFieldFactory() {
@@ -103,8 +96,8 @@ public class TableForm extends Window implements ViewInterface{
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 // validate data
-                if( codeField.getValue().equals("") || numberField.getValue().equals("") ){
-                    throw new CommitException("Code or name cannot be empty!");
+                if( numberField.getValue().equals("") ){
+                    throw new CommitException("Name cannot be empty!");
                 }
                 try{
                     Integer.parseInt(numberField.getValue().toString());
@@ -119,7 +112,6 @@ public class TableForm extends Window implements ViewInterface{
                 // refresh parent view
                 System.out.println("Post commit...");
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
-                table.setCode(item.getItemProperty("code").getValue().toString());
                 table.setNumber(item.getItemProperty("number").getValue().toString());
 
                 // save data
@@ -180,7 +172,6 @@ public class TableForm extends Window implements ViewInterface{
                     fieldGroup.commit();
                 } catch (CommitException e) {
                     // e.printStackTrace();
-                    lblMsg.setValue("All field are required!");
                 }
             }
         });
@@ -204,9 +195,6 @@ public class TableForm extends Window implements ViewInterface{
         hzLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
         hzLayout.setSpacing(true);
 
-        lblMsg = new Label("");
-        lblMsg.setSizeFull();
-
         Label lblCaption = new Label(caption);
         lblCaption.addStyleName(ValoTheme.LABEL_HUGE);
         lblCaption.addStyleName(ValoTheme.LABEL_BOLD);
@@ -214,8 +202,7 @@ public class TableForm extends Window implements ViewInterface{
 
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(lblCaption, codeField, numberField, cbType, hzLayout);
-        vtcLayout.setComponentAlignment(codeField, Alignment.MIDDLE_CENTER);
+        vtcLayout.addComponents(lblCaption, numberField, cbType, hzLayout);
         vtcLayout.setComponentAlignment(numberField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(cbType, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(hzLayout, Alignment.MIDDLE_CENTER);

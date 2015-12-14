@@ -8,12 +8,10 @@ import com.mongodb.BasicDBObject;
 public class Table extends AbstractEntity implements Serializable, Comparable<Table> {
     private static final long serialVersionUID = 4727294623902070131L;
     public static final String DB_FIELD_NAME_ID = "_id";
-    public static final String DB_FIELD_NAME_CODE = "Code";
     public static final String DB_FIELD_NAME_NUMBER = "Number";
     public static final String DB_FIELD_NAME_STATE = "State";
 
     private String id;
-    private String code;
     private String number;
     private int waitingTime;
     private Types.State state;
@@ -22,7 +20,6 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
     public Table()
     {
         id = "";
-        code = "";
         number = "";
         state = Types.State.EMPTY;
     }
@@ -37,7 +34,6 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
     {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(DB_FIELD_NAME_ID, id);
-        map.put(DB_FIELD_NAME_CODE, code);
         map.put(DB_FIELD_NAME_NUMBER, number);
         map.put(DB_FIELD_NAME_STATE, state.toString());
         return map;
@@ -46,7 +42,6 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
     @Override
     public void setObject(BasicDBObject dbObject){
         id = getString(DB_FIELD_NAME_ID, dbObject);
-        code = getString(DB_FIELD_NAME_CODE, dbObject);
         number = getString(DB_FIELD_NAME_NUMBER, dbObject);
         // extract state
         switch( getString(DB_FIELD_NAME_STATE, dbObject) )
@@ -71,14 +66,6 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getNumber() {
@@ -115,8 +102,9 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
 
     @Override
     public String toString() {
-        return "Table [id=" + id + ", code=" + code + ", name=" + number
-                + ", state=" + state + "]";
+        return "Table [id=" + id + ", number=" + number + ", waitingTime="
+                + waitingTime + ", state=" + state + ", staffName=" + staffName
+                + "]";
     }
 
     @Override

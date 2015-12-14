@@ -72,7 +72,12 @@ public class TableListView extends VerticalLayout implements ViewInterface {
                 }
 
                 table.setStaffName(staffName);
+
+                // Set order for table and init the view
                 CoffeeTableElement tableElement = new CoffeeTableElement(table, this);
+                tableElement.setOrder(currentOrder);
+                tableElement.initCoffeeTableElement();
+
                 gridElementContent.addComponent(tableElement);
             }
 

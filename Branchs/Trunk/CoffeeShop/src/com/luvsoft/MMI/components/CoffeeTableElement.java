@@ -38,14 +38,13 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         this.table = table;
         this.tableListView = tableListView;
         System.out.println("Created CoffeeTableElement for tblId: " + table.getId());
-        initCoffeeTableElement();
     }
 
     /*
      * This function is used to initialize a coffee table element
      * @param: Table state, waiting time and table number
      */
-    private void initCoffeeTableElement() {
+    public void initCoffeeTableElement() {
         Types.State state = table.getState();
 
         this.addStyleName("card");
@@ -64,7 +63,12 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         } else if (state == Types.State.UNPAID) {
             setPaymentState(Types.State.UNPAID);
         } else if (state == Types.State.WAITING){
-            this.setWaitingTime(table.getWaitingTime());
+            if( order == null ){
+                setWaitingTime(-1);
+            }
+            else{
+                this.setWaitingTime(table.getWaitingTime());
+            }
         } else {
             this.setWaitingTime(0);
         }
@@ -95,7 +99,15 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
             this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue(Language.WAITING + " " + waitingTime
                     + " " + Language.MINUTE);
-        } else {
+        }
+        else if( waitingTime == -1){
+            // no order for this table
+            this.lblWaitingTime.addStyleName("TEXT_RED");
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
+            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
+            this.lblWaitingTime.setValue(Language.NO_ORDER_IN_THIS_TABLE);
+        }
+        else {
             this.lblWaitingTime.addStyleName("TEXT_WHITE");
             this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
             this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
@@ -114,6 +126,9 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
             this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
             this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue(Language.UNPAID);
+        }
+        else{
+            setWaitingTime(0);
         }
     }
     /*
@@ -154,7 +169,12 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         } else if (tableState == Types.State.UNPAID) {
             setPaymentState(Types.State.UNPAID);
         } else if (tableState == Types.State.WAITING){
-            this.setWaitingTime(waitingTime);
+            if( order == null ){
+                this.setWaitingTime(-1);
+            }
+            else{
+                this.setWaitingTime(waitingTime);
+            }
         } else {
             this.setWaitingTime(0);
         }

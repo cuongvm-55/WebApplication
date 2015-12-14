@@ -33,7 +33,6 @@ public class FloorForm extends Window implements ViewInterface{
     private PropertysetItem categoryItem;
     private ViewInterface parentView;
 
-    private Label lblMsg;
     static public enum STATE{UPDATE, ADDNEW};
     private STATE state;
     private Floor floor;
@@ -47,30 +46,25 @@ public class FloorForm extends Window implements ViewInterface{
         this.setClosable(true);
         this.setDraggable(false);
         this.setWidth("340px");
-        this.setHeight("240px");
+        this.setHeight("180px");
         this.center();
 
         categoryItem = new PropertysetItem();
-        categoryItem.addItemProperty("code", new ObjectProperty<String>(floor.getCode()));
         categoryItem.addItemProperty("number", new ObjectProperty<String>(floor.getNumber()));
-
-        TextField codeField = new TextField(Language.CODE);
-        codeField.setRequired(true);
-        codeField.focus();
 
         TextField numberField = new TextField(Language.NUMBER);
         numberField.setRequired(true);
+        numberField.focus();
 
         // Now create the binder and bind the fields
         FieldGroup fieldGroup = new FieldGroup(categoryItem);
-        fieldGroup.bind(codeField, "code");
         fieldGroup.bind(numberField, "number");
         fieldGroup.setBuffered(true);
         fieldGroup.addCommitHandler(new CommitHandler() {
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 // validate data
-                if( codeField.getValue().equals("") || numberField.getValue().equals("") ){
+                if( numberField.getValue().equals("") ){
                     throw new CommitException("Code or number cannot be empty!");
                 }
                 else if( state == STATE.ADDNEW && Adapter.isFloorNumberExist(numberField.getValue()) ){
@@ -87,9 +81,8 @@ public class FloorForm extends Window implements ViewInterface{
             @Override
             public void postCommit(CommitEvent commitEvent) throws CommitException {
                 // save data to database
-                // refresh parent vieư
+                // refresh parent view
                 PropertysetItem item = (PropertysetItem)commitEvent.getFieldBinder().getItemDataSource();
-                floor.setCode(item.getItemProperty("code").getValue().toString());
                 floor.setNumber(item.getItemProperty("number").getValue().toString());
                 switch(state){
                 case ADDNEW:
@@ -120,7 +113,6 @@ public class FloorForm extends Window implements ViewInterface{
                 try {
                     fieldGroup.commit();
                 } catch (CommitException e) {
-                    lblMsg.setValue("All field are required!");
                 }
             }
         });
@@ -143,9 +135,6 @@ public class FloorForm extends Window implements ViewInterface{
         hzLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
         hzLayout.setSpacing(true);
 
-        lblMsg = new Label("");
-        lblMsg.setSizeFull();
-
         Label lblCaption = new Label(caption);
         lblCaption.addStyleName(ValoTheme.LABEL_HUGE);
         lblCaption.addStyleName(ValoTheme.LABEL_BOLD);
@@ -153,8 +142,7 @@ public class FloorForm extends Window implements ViewInterface{
 
         VerticalLayout vtcLayout = new VerticalLayout();
         vtcLayout.setSizeFull();
-        vtcLayout.addComponents(lblCaption, codeField, numberField, hzLayout);
-        vtcLayout.setComponentAlignment(codeField, Alignment.MIDDLE_CENTER);
+        vtcLayout.addComponents(lblCaption, numberField, hzLayout);
         vtcLayout.setComponentAlignment(numberField, Alignment.MIDDLE_CENTER);
         vtcLayout.setComponentAlignment(hzLayout, Alignment.MIDDLE_CENTER);
         vtcLayout.setSpacing(true);

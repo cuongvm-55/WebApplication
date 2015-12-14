@@ -10,19 +10,16 @@ import com.mongodb.BasicDBObject;
 public class Floor extends AbstractEntity implements Comparable<Floor>, Serializable {
     private static final long serialVersionUID = 6493408468507998364L;
     public static final String DB_FIELD_NAME_ID = "_id";
-    public static final String DB_FIELD_NAME_CODE = "Code";
     public static final String DB_FIELD_NAME_NUMBER = "Number";
     public static final String DB_FIELD_NAME_TABLE_LIST = "TableList";
 
     private String id;
-    private String code;
     private String number;
     private List<String> tableIdList; // list of table ObjectId
 
     public Floor()
     {
         id = "";
-        code = "";
         number = "";
         tableIdList = new ArrayList<String>();
     }
@@ -35,7 +32,6 @@ public class Floor extends AbstractEntity implements Comparable<Floor>, Serializ
     @Override
     public void setObject(BasicDBObject dbObject){
         id = getString(DB_FIELD_NAME_ID, dbObject);
-        code = getString(DB_FIELD_NAME_CODE, dbObject);
         number = getString(DB_FIELD_NAME_NUMBER, dbObject);
         tableIdList = Types.stringToList(getString(DB_FIELD_NAME_TABLE_LIST, dbObject));
     }
@@ -45,17 +41,16 @@ public class Floor extends AbstractEntity implements Comparable<Floor>, Serializ
     {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(DB_FIELD_NAME_ID, id);
-        map.put(DB_FIELD_NAME_CODE, code);
         map.put(DB_FIELD_NAME_NUMBER, number);
         // Map list
         map.put(DB_FIELD_NAME_TABLE_LIST, Types.formatListToString(tableIdList));
         return map;
     }
-    
+
     @Override
     public String toString() {
-        return "Floor [id=" + id + ", code=" + code + ", name=" + number
-                + ", tableIdList=" + tableIdList + "]";
+        return "Floor [id=" + id + ", number=" + number + ", tableIdList="
+                + tableIdList + "]";
     }
 
     public String getId() {
@@ -64,14 +59,6 @@ public class Floor extends AbstractEntity implements Comparable<Floor>, Serializ
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getNumber() {
