@@ -806,7 +806,12 @@ public class OrderInfoView extends AbstractOrderView {
             }
 
             if( isNewFoodAdded ){
+                // reset creating time when user add new food to exist order
+                if( currentOrder.getStatus() != State.WAITING ){
+                    currentOrder.setCreatingTime(new Date());
+                }
                 currentOrder.setStatus(Types.State.WAITING);
+                currentOrder.setWaitingTime(0); // reset waiting time
             }
 
             if( !hasWaitingOrderDetail ){
