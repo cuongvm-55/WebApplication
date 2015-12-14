@@ -20,7 +20,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.VerticalLayout;
@@ -162,38 +162,34 @@ public class ChangeTableStateView extends AbstractOrderView implements
     }
 
     private Component buildFooter() {
-        HorizontalLayout footer = new HorizontalLayout();
+        CssLayout footer = new CssLayout();
         footer.setWidth("100%");
         footer.setHeightUndefined();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR + " TEXT_CENTER");
 
         btnConfirm = new Button(Language.CONFIRM);
         btnConfirm.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnConfirm.addStyleName("margin-left1");
+        btnConfirm.addStyleName("margin-right1 margin-left1");
         btnConfirm.setHeightUndefined();
         btnConfirm.setClickShortcut(KeyCode.ENTER, null);
 
         btnConfirmPaid = new Button(Language.PAY_BILL);
         btnConfirmPaid.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnConfirmPaid.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnConfirmPaid.addStyleName("margin-right1");
+        btnConfirmPaid.addStyleName("margin-right1 margin-left1");
         btnConfirmPaid.setHeightUndefined();
 
         btnAddOrder = new Button(Language.ADD_ORDER);
         btnAddOrder.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnAddOrder.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnAddOrder.addStyleName("margin-right1");
+        btnAddOrder.addStyleName("margin-right1 margin-left1");
         btnAddOrder.setHeightUndefined();
 
         // set control buttons state
         setControlBtnState();
 
         footer.addComponents(btnAddOrder, btnConfirm, btnConfirmPaid);
-        footer.setComponentAlignment(btnAddOrder, Alignment.MIDDLE_RIGHT);
-        footer.setComponentAlignment(btnConfirm, Alignment.MIDDLE_LEFT);
-        footer.setComponentAlignment(btnConfirmPaid, Alignment.MIDDLE_LEFT);
-        footer.setSpacing(true);
         return footer;
     }
 
