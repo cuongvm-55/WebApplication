@@ -1,0 +1,10 @@
+Software list
+
+Pre condition:
+1.Drivers for DEL Vostro...
+2. Chrome
+
+Require to run:
+1. Java jre 8.0
+2. Apache tomcat 7.0
+3. MongoDB 2.6.1

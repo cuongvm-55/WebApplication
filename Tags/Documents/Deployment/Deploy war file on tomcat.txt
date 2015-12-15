@@ -1,0 +1,9 @@
+ - Install tomcat
+ - Create user in tomcat-users.xml
+	<role rolename="manager"/>
+	<role rolename="admin"/>
+	<role rolename="manager-gui"/>
+	<user username="tomcat" password="s3cret" roles="manager-gui"/>
+	<user username="admin" password="admin" roles="admin,manager,manager-gui"/>
+ - Access localhost:8080/manager/html
+ - setup tomat to run with correct jre version

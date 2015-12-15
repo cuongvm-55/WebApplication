@@ -1,0 +1,15 @@
+Run mongoDB as a window service
+
+Make sure that you added you /bin directory to you system variable PATH
+
+First I executed this command:
+
+D:\mongodb\bin>mongod --remove
+First I executed this command after opening command prompt as administrator:
+
+D:\mongodb\bin>mongod --dbpath=D:\mongodb --logpath=D:\mongodb\log.txt --install
+After that right there in the command prompt execute:
+
+net start MongoDB
+
+And look for MongoDB service and click start.
