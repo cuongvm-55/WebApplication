@@ -153,7 +153,7 @@ public class AddFoodView extends AbstractOrderView {
         hrzChildElementContainer.addStyleName(ValoTheme.LAYOUT_CARD);
 
         Label foodName = new Label();
-        foodName.addStyleName(ValoTheme.LABEL_LARGE + " "
+        foodName.addStyleName(ValoTheme.LABEL_HUGE + " "
                 + ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE");
         foodName.setValue(food.getName());
 
@@ -163,13 +163,13 @@ public class AddFoodView extends AbstractOrderView {
 
         Button btnMinus = new Button();
         btnMinus.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        btnMinus.addStyleName(ValoTheme.BUTTON_SMALL);
+        btnMinus.addStyleName(ValoTheme.BUTTON_LARGE);
         btnMinus.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         btnMinus.setIcon(FontAwesome.MINUS_CIRCLE);
 
         Button btnPlus = new Button();
         btnPlus.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        btnPlus.addStyleName(ValoTheme.BUTTON_SMALL);
+        btnPlus.addStyleName(ValoTheme.BUTTON_LARGE);
         btnPlus.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         btnPlus.setIcon(FontAwesome.PLUS_CIRCLE);
 

@@ -29,9 +29,12 @@ public class LoginView extends CustomComponent implements View, Button.ClickList
     private final PasswordField password;
 
     private final Button loginButton;
+    private boolean isLoggedIn;
 
     private final VerticalLayout fields;
     public LoginView() {
+        isLoggedIn = false;
+
         setSizeFull();
 
         Label lblWelcome = new Label("Chào Mừng Bạn Đã Đến Với Phần Mềm Quản Lý Huyền Coffee");
@@ -89,6 +92,7 @@ public class LoginView extends CustomComponent implements View, Button.ClickList
         String username = user.getValue();
         String password = this.password.getValue();
         if (Adapter.loginOperatorReq(password)) {
+            isLoggedIn = true;
             // Store the current user in the service session
             getSession().setAttribute("user", username);
 
@@ -138,4 +142,11 @@ public class LoginView extends CustomComponent implements View, Button.ClickList
         login();
     }
 
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setLoggedIn(boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
+    }
 }

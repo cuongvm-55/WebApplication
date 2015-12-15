@@ -10,6 +10,7 @@ import com.luvsoft.MMI.threads.Broadcaster;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.Language.LANGUAGE;
 import com.luvsoft.MMI.utils.ValoThemeSessionInitListener;
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -44,6 +45,8 @@ public class CoffeeshopUI extends UI {
 
     public Navigator navigator;
     public MainView mainView;
+    public LoginView lgView;
+    public static int counter = 0;
 
     private boolean testMode = false;
 
@@ -87,7 +90,10 @@ public class CoffeeshopUI extends UI {
         addStyleName(ValoTheme.UI_WITH_MENU);
         // Create a navigator to control the view
         navigator = new Navigator(this, this);
-        LoginView lgView = new LoginView();
+        lgView = new LoginView();
+
+        counter++;
+        System.out.println("Counter: " + counter);
 
         Broadcaster.register(this::receiveBroadcast);
 
@@ -101,6 +107,7 @@ public class CoffeeshopUI extends UI {
 
         // Create and register the view
         navigator.addView(CoffeeshopUI.LOGIN_VIEW, lgView);
+        lgView.setLoggedIn(getSession().getAttribute("user") != null);
 
         //
         // We use a view change handler to ensure the user is always redirected
@@ -163,6 +170,11 @@ public class CoffeeshopUI extends UI {
      * message has two part: messageId and messageData. MessageId and messageData is separated by :: token
      */
     public void receiveBroadcast(final String message) {
+        if(!lgView.isLoggedIn()) {
+            System.out.println("Login failed!....");
+            return;
+        }
+
         StringTokenizer st = new StringTokenizer(message, "::");
         String messageId, messageData;
 

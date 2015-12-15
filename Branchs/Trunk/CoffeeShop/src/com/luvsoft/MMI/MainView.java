@@ -36,12 +36,14 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
 
     private CssLayout menu;
     private Label title;
+    private boolean isViewChangedByClickingButton;
 
     public MainView() {
         super();
         orderListView = new OrderListView();
         tableListView = new TableListView();
         tableListView.setParentView(this);
+        setViewChangedByClickingButton(true);
     }
 
     public void setMenu(CssLayout menu) {
@@ -142,26 +144,32 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
             mnbSettings.addItem(strStaffName, new ThemeResource("../tests-valo/img/profile-pic-300px.jpg"), null);
         }
 
-        if(event.getParameters() == null || event.getParameters().isEmpty()) {
-            getContentContainer().removeAllComponents();
-            tableListView.createView();
-            getContentContainer().addComponent(tableListView);
-            menu.removeStyleName("valo-menu-visible");
-        } else if(event.getParameters().equals(CoffeeshopUI.TABLE_LIST_VIEW)) {
-            getContentContainer().removeAllComponents();
-            tableListView.setParentView(this);
-            tableListView.createView();
-            getContentContainer().addComponent(tableListView);
-            menu.removeStyleName("valo-menu-visible");
-        } else if(event.getParameters().equals(CoffeeshopUI.ORDER_LIST_VIEW)) {
-            getContentContainer().removeAllComponents();
-            orderListView.createView();
-            getContentContainer().addComponent(orderListView);
-            menu.removeStyleName("valo-menu-visible");
-        } else if(event.getParameters().equals(CoffeeshopUI.MANAGEMENT_VIEW)) {
-            getContentContainer().removeAllComponents();
-            getUI().addWindow(new LoginForm(this));
-            menu.removeStyleName("valo-menu-visible");
+        if(isViewChangedByClickingButton == true) {
+            if((event.getParameters() == null || event.getParameters().isEmpty())) {
+                getContentContainer().removeAllComponents();
+                tableListView.createView();
+                getContentContainer().addComponent(tableListView);
+                menu.removeStyleName("valo-menu-visible");
+                isViewChangedByClickingButton = false;
+            } else if(event.getParameters().equals(CoffeeshopUI.TABLE_LIST_VIEW)) {
+                getContentContainer().removeAllComponents();
+                tableListView.setParentView(this);
+                tableListView.createView();
+                getContentContainer().addComponent(tableListView);
+                menu.removeStyleName("valo-menu-visible");
+                isViewChangedByClickingButton = false;
+            } else if(event.getParameters().equals(CoffeeshopUI.ORDER_LIST_VIEW)) {
+                getContentContainer().removeAllComponents();
+                orderListView.createView();
+                getContentContainer().addComponent(orderListView);
+                menu.removeStyleName("valo-menu-visible");
+                isViewChangedByClickingButton = false;
+            } else if(event.getParameters().equals(CoffeeshopUI.MANAGEMENT_VIEW)) {
+                getContentContainer().removeAllComponents();
+                getUI().addWindow(new LoginForm(this));
+                menu.removeStyleName("valo-menu-visible");
+                isViewChangedByClickingButton = false;
+            }
         }
     }
 
@@ -169,9 +177,9 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
      * Handle all button click events
      */
     private void addClickListener() {
-        btnWaiterView.addClickListener(new MenuButtonListener(CoffeeshopUI.TABLE_LIST_VIEW));
-        btnBartenderView.addClickListener(new MenuButtonListener(CoffeeshopUI.ORDER_LIST_VIEW));
-        btnManagementView.addClickListener(new MenuButtonListener(CoffeeshopUI.MANAGEMENT_VIEW));
+        btnWaiterView.addClickListener(new MenuButtonListener(CoffeeshopUI.TABLE_LIST_VIEW, this));
+        btnBartenderView.addClickListener(new MenuButtonListener(CoffeeshopUI.ORDER_LIST_VIEW, this));
+        btnManagementView.addClickListener(new MenuButtonListener(CoffeeshopUI.MANAGEMENT_VIEW, this));
     }
 
     public String getStaffName() {
@@ -207,5 +215,13 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
 
     public void setTableListView(TableListView tableListView) {
         this.tableListView = tableListView;
+    }
+
+    public boolean isViewChangedByClickingButton() {
+        return isViewChangedByClickingButton;
+    }
+
+    public void setViewChangedByClickingButton(boolean isViewChangedByClickingButton) {
+        this.isViewChangedByClickingButton = isViewChangedByClickingButton;
     }
 }
