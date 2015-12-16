@@ -151,7 +151,7 @@ public class AddFoodView extends AbstractOrderView {
 
         HorizontalLayout hrzChildElementContainer = new HorizontalLayout();
         hrzChildElementContainer.setSizeFull();
-        hrzChildElementContainer.addStyleName(ValoTheme.LAYOUT_CARD);
+        hrzChildElementContainer.addStyleName(ValoTheme.LAYOUT_CARD + " large-checkbox");
 
         Label foodName = new Label();
         foodName.addStyleName(ValoTheme.LABEL_HUGE + " "

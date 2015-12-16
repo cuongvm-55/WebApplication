@@ -216,12 +216,12 @@
         text-align: center;
     }
 
-    .v-checkbox-large > input ~ label:before {
+    .large-checkbox .v-checkbox-large > input ~ label:before {
         height: 35px !important;
         width: 35px !important;
     }
 
-    .v-checkbox-large > input ~ label:after {
+    .large-checkbox .v-checkbox-large > input ~ label:after {
         font-size: 30px !important;
         width: 35px !important;
         height: 35px !important;
