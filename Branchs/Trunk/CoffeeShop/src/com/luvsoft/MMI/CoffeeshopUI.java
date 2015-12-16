@@ -10,7 +10,6 @@ import com.luvsoft.MMI.threads.Broadcaster;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.Language.LANGUAGE;
 import com.luvsoft.MMI.utils.ValoThemeSessionInitListener;
-import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -46,7 +45,6 @@ public class CoffeeshopUI extends UI {
     public Navigator navigator;
     public MainView mainView;
     public LoginView lgView;
-    public static int counter = 0;
 
     private boolean testMode = false;
 
@@ -91,9 +89,6 @@ public class CoffeeshopUI extends UI {
         // Create a navigator to control the view
         navigator = new Navigator(this, this);
         lgView = new LoginView();
-
-        counter++;
-        System.out.println("Counter: " + counter);
 
         Broadcaster.register(this::receiveBroadcast);
 

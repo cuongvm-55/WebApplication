@@ -110,6 +110,8 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
 
     @Override
     public void createView() {
+        this.setSpacing(true);
+
         lbTableName = new Label();
         tbOrderInfos = new Table();
         btnConfFinish = new Button(Language.ALL_DONE);

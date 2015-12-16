@@ -49,6 +49,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
         setResizable(false);
         setDraggable(false);
         setSizeFull();
+        addStyleName("close-style");
 
         // Get order of current table
         List<Types.State> states = new ArrayList<Types.State>();
@@ -77,7 +78,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
                 Language.CANCEL_ORDER, Language.PAID, Language.UNPAID);
         optionState.setItemEnabled(Language.PAID, false);
         optionState.setItemEnabled(Language.UNPAID, false);
-        optionState.addStyleName("bold FONT_LARGE FONT_TAHOMA TEXT_BLUE");
+        optionState.addStyleName("bold FONT_LARGE");
         optionState.addStyleName(ValoTheme.OPTIONGROUP_LARGE);
 
         selectOptionState(getCurrentTable().getState()); //@todo: should depend on Order state

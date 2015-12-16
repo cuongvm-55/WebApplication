@@ -91,6 +91,7 @@ public class AddFoodView extends AbstractOrderView {
         setResizable(false);
         setDraggable(false);
         setSizeFull();
+        addStyleName("close-style");
 
         VerticalLayout container = new VerticalLayout();
         container.setSizeFull();
@@ -178,14 +179,14 @@ public class AddFoodView extends AbstractOrderView {
         btnPlus.setEnabled(checkBox.getValue());
 
         Label foodNumber = new Label();
-        foodNumber.addStyleName("TEXT_CENTER FONT_TAHOMA TEXT_BLUE");
+        foodNumber.addStyleName("bold TEXT_CENTER FONT_TAHOMA TEXT_BLUE " + ValoTheme.LABEL_HUGE);
 
         hrzChildElementContainer.addComponents(foodName, checkBox, btnMinus,
                 foodNumber, btnPlus);
         hrzChildElementContainer.setComponentAlignment(foodName,
                 Alignment.MIDDLE_LEFT);
         hrzChildElementContainer.setComponentAlignment(checkBox,
-                Alignment.MIDDLE_RIGHT);
+                Alignment.TOP_RIGHT);
         hrzChildElementContainer.setComponentAlignment(btnPlus,
                 Alignment.MIDDLE_CENTER);
         hrzChildElementContainer.setComponentAlignment(btnMinus,

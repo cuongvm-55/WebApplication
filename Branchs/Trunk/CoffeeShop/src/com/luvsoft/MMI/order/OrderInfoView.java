@@ -105,6 +105,7 @@ public class OrderInfoView extends AbstractOrderView {
         setResizable(false);
         setDraggable(false);
         setSizeFull();
+        addStyleName("close-style");
 
         container = new VerticalLayout();
 
@@ -400,30 +401,30 @@ public class OrderInfoView extends AbstractOrderView {
         // total amount label
         lbTotalAmount = new Label();
         lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
-        lbTotalAmount.addStyleName("bold large FONT_TAHOMA");
+        lbTotalAmount.addStyleName("bold FONT_TAHOMA " + ValoTheme.LABEL_HUGE);
 
         // paid amount label
         HorizontalLayout layout = new HorizontalLayout();
         lbPaidAmount = new Label();
         lbPaidAmount.setValue(Language.PAID_AMOUNT);
-        lbPaidAmount.addStyleName("bold large FONT_TAHOMA");
+        lbPaidAmount.addStyleName("bold FONT_TAHOMA " + ValoTheme.LABEL_HUGE);
         Label lbCurrencySymbol = new Label(" " + Language.CURRENCY_SYMBOL);
-        lbCurrencySymbol.addStyleName("bold large FONT_TAHOMA");
+        lbCurrencySymbol.addStyleName("bold FONT_TAHOMA " + ValoTheme.LABEL_HUGE);
 
         // editable paid amount textfield
         textFieldpaidAmount = new TextField();
-        textFieldpaidAmount.setHeight("25");
-        textFieldpaidAmount.setWidth("100");
+        textFieldpaidAmount.setHeight("35");
+        textFieldpaidAmount.setWidth("150");
         textFieldpaidAmount.setMaxLength(15);
         textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
-        textFieldpaidAmount.addStyleName("v-textfield-dashing bold TEXT_RED FONT_TAHOMA");
-        layout.addComponents(lbTotalAmount, lbPaidAmount, textFieldpaidAmount,lbCurrencySymbol);
+        textFieldpaidAmount.addStyleName("v-textfield-dashing bold huge TEXT_RED FONT_TAHOMA ");
+        layout.addComponents(lbTotalAmount, lbPaidAmount, textFieldpaidAmount, lbCurrencySymbol);
         layout.setSpacing(true);
 
         container.addComponents(lbTableName, txtNote, tbOrderDetails, layout, buildFooter());
         container.setExpandRatio(txtNote, 2.0f);
         container.setExpandRatio(tbOrderDetails, 7.0f);
-        // container.setExpandRatio(layoutOrderHandling, 3.0f);
+        // container.setExpandRatio(layout, 1.0f);
         container.setResponsive(true);
         container.setSizeFull();
         container.setComponentAlignment(lbTableName, Alignment.TOP_CENTER);

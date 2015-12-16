@@ -195,4 +195,35 @@
     .v-table-row-odd.v-table-row-highlight-red {
         color:#e62020;
     }
+
+    .close-style .v-window-closebox {
+        width: 60px !important;
+        height: 35px;
+        font-size: 40px;
+        color: #ffffff;
+        border-radius: 3px;
+        border: 1px solid #2e4678;
+        border-top-color: #344e81;
+        border-bottom-color: #253966;
+        background-color: #3b5998;
+        background-image: -webkit-linear-gradient(top, #4263a4 2%, #2f4982 98%);
+        background-image: linear-gradient(to bottom,#4263a4 2%, #2f4982 98%);
+        -webkit-box-shadow: inset 0 1px 0 #657bb3, 0 1px 0 rgba(0, 0, 0, 0.04);
+        box-shadow: inset 0 1px 0 #657bb3, 0 1px 0 rgba(0, 0, 0, 0.04);
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+        padding: 3px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .v-checkbox-large > input ~ label:before {
+        height: 35px !important;
+        width: 35px !important;
+    }
+
+    .v-checkbox-large > input ~ label:after {
+        font-size: 30px !important;
+        width: 35px !important;
+        height: 35px !important;
+    }
 }
