@@ -203,11 +203,11 @@ public class OrderInfoView extends AbstractOrderView {
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
 
         tbOrderDetails.setColumnExpandRatio(Language.SEQUENCE, 0.5f);
-        tbOrderDetails.setColumnExpandRatio(Language.FOOD_NAME, 2.0f);
+        tbOrderDetails.setColumnExpandRatio(Language.FOOD_NAME, 2.2f);
         tbOrderDetails.setColumnExpandRatio(Language.STATUS, 1.4f);
-        tbOrderDetails.setColumnExpandRatio(Language.QUANTITY, 0.9f);
-        tbOrderDetails.setColumnExpandRatio(Language.PRICE, 1.0f);
-        tbOrderDetails.setColumnExpandRatio(Language.DELETE, 0.7f);
+        tbOrderDetails.setColumnExpandRatio(Language.QUANTITY, 0.7f);
+        tbOrderDetails.setColumnExpandRatio(Language.PRICE, 1.1f);
+        tbOrderDetails.setColumnExpandRatio(Language.DELETE, 0.6f);
     }
 
     private void updateTable() {
@@ -254,6 +254,7 @@ public class OrderInfoView extends AbstractOrderView {
             TextField txtQuantity = new TextField();
             txtQuantity.setValue(record.getQuantity() + "");
             txtQuantity.setWidth("100%");
+            txtQuantity.setHeight("50px");
             txtQuantity.setResponsive(true);
 
             // Mark red color for canceled order details
@@ -421,9 +422,8 @@ public class OrderInfoView extends AbstractOrderView {
         layout.setSpacing(true);
 
         container.addComponents(lbTableName, txtNote, tbOrderDetails, layout, buildFooter());
-        container.setExpandRatio(txtNote, 2.0f);
+        container.setExpandRatio(txtNote, 1.0f);
         container.setExpandRatio(tbOrderDetails, 7.0f);
-        // container.setExpandRatio(layout, 1.0f);
         container.setResponsive(true);
         container.setSizeFull();
         container.setComponentAlignment(lbTableName, Alignment.TOP_CENTER);

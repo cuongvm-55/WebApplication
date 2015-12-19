@@ -141,9 +141,9 @@ public class Language {
 
                 SEQUENCE = "STT";
                 FOOD_NAME = "Tên";
-                STATUS = "Trạng Thái";
-                QUANTITY = "S.Lượng";
-                PRICE = "Đơn Giá";
+                STATUS = "TT";
+                QUANTITY = "SL";
+                PRICE = "Giá";
                 ADD_FOOD = "Thêm Món";
                 ADD_ORDER = "Đặt Món";
                 CONFIRM_PAID = "Xác Nhận T.Toán";

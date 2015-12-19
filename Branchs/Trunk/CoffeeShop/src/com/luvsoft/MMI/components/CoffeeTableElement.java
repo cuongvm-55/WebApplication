@@ -57,7 +57,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         this.setButtonResource(state);
         
         this.lblWaitingTime = new Label();
-        this.lblWaitingTime.setSizeUndefined();
+        this.lblWaitingTime.addStyleName("TEXT_CENTER " + ValoTheme.LABEL_BOLD + " " + ValoTheme.LABEL_LARGE);
         if(state == Types.State.PAID) {
             setPaymentState(Types.State.PAID);
         } else if (state == Types.State.UNPAID) {
@@ -74,15 +74,10 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         }
 
         this.lblTableNumber = new Label(Language.TABLE + " " + table.getNumber());
-        this.lblTableNumber.addStyleName("TEXT_BLUE");
-        this.lblTableNumber.addStyleName(ValoTheme.LABEL_HUGE);
-        this.lblTableNumber.addStyleName(ValoTheme.LABEL_BOLD);
-        this.lblTableNumber.setSizeUndefined();
+        this.lblTableNumber.addStyleName("TEXT_BLUE TEXT_CENTER " + ValoTheme.LABEL_HUGE + " " + ValoTheme.LABEL_BOLD);
 
         this.addComponents(btnTableState, lblWaitingTime, lblTableNumber);
         this.setComponentAlignment(btnTableState, Alignment.MIDDLE_CENTER);
-        this.setComponentAlignment(lblWaitingTime, Alignment.MIDDLE_CENTER);
-        this.setComponentAlignment(lblTableNumber, Alignment.MIDDLE_CENTER);
 
         // Add click listener
         this.btnTableState.addClickListener(this);
@@ -95,22 +90,16 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     private void setWaitingTimeLabel(int waitingTime) {
         if (0 < waitingTime) {
             this.lblWaitingTime.addStyleName("TEXT_RED");
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue(Language.WAITING + " " + waitingTime
                     + " " + Language.MINUTE);
         }
         else if( waitingTime == -1){
             // no order for this table
             this.lblWaitingTime.addStyleName("TEXT_RED");
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue(Language.NO_ORDER_IN_THIS_TABLE);
         }
         else {
             this.lblWaitingTime.addStyleName("TEXT_WHITE");
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue("NO TIME");
         }
     }
@@ -118,13 +107,9 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     private void setPaymentState(Types.State state) {
         if(state == Types.State.PAID) {
             this.lblWaitingTime.addStyleName("TEXT_RED");
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue(Language.PAID);
         } else if(state == Types.State.UNPAID) {
             this.lblWaitingTime.addStyleName("TEXT_RED");
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
-            this.lblWaitingTime.addStyleName(ValoTheme.LABEL_LARGE);
             this.lblWaitingTime.setValue(Language.UNPAID);
         }
         else{
@@ -180,7 +165,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         }
     }
     /*
-     * Navigate to OrderInfoView
+     * Navigate to changeTableStateView
      */
     @Override
     public void click(ClickEvent event) {
@@ -191,6 +176,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
             changeTableStateView.setCurrentTable(table);
             changeTableStateView.createView();
             UI.getCurrent().addWindow(changeTableStateView);
+            changeTableStateView.setImmediate(true);
         }
     }
 
