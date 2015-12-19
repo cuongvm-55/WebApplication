@@ -11,10 +11,10 @@ import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.threads.Broadcaster;
 import com.luvsoft.MMI.threads.NewOrderManager;
 import com.luvsoft.MMI.utils.Language;
+import com.luvsoft.entities.Food;
 import com.luvsoft.entities.Order;
+import com.luvsoft.entities.OrderDetail;
 import com.luvsoft.entities.Types;
-import com.vaadin.data.Container;
-import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Alignment;
@@ -22,9 +22,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.DefaultFieldFactory;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextArea;
@@ -60,52 +57,54 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         }
         lbTableName.setValue(orderInfo.getTableName());
         txtNote.setValue(orderInfo.getNote());
-
+        
+        tbOrderInfos.clear();
         for( int i = 0; i < orderDetailList.size(); i++ ){
             Integer itemId = new Integer(i);
             OrderDetailRecord orderDetail = orderDetailList.get(i);
-            tbOrderInfos.addItem(new Object[]{new Integer(i), orderDetail.getFoodName(),
+            ComboBox select = new ComboBox();
+            select.setNullSelectionAllowed(false);
+            select.setScrollToSelectedItem(true);
+            select.setTextInputAllowed(false);
+            select.addItem(Language.CANCELED/*Types.State.CANCELED.toString()*/);
+            select.addItem(Language.WAITING/*Types.State.WAITING.toString()*/);
+            select.addItem(Language.COMPLETED/*Types.State.COMPLETED.toString()*/);
+            select.setRequired(true);
+            select.select(Types.StateToLanguageString(orderDetail.getStatus()));
+            select.addValueChangeListener(new ValueChangeListener() {
+                @Override
+                public void valueChange(ValueChangeEvent event) {
+                    // Set order detail status
+                    String state = event.getProperty().getValue().toString();
+                    if( !Adapter.changeOrderDetailState(orderDetail.getOrderDetailId(), Types.StringToState(state)) ){
+                        System.out.println("Cannot change order detail state");
+                    }
+                    else{
+                        // notify one food has been completed
+                        // Broadcast order change event
+                        if( state.equals(Language.COMPLETED) ){
+                            OrderDetail od = Adapter.getOrderDetailById(orderDetail.getOrderDetailId());
+                            Food food = Adapter.getFoodById(od.getFoodId());
+                            Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
+                                    + "<i>"
+                                    + orderInfo.getTableName() + "</i><br/><i>"
+                                    + Language.FOOD + ": " +food.getName()+" " + Language.HAS_BEEN_COMPLETED + "</i>");
+                            }
+                    }
+                }
+            });
+            tbOrderInfos.addItem(new Object[]{
+                    new Integer(i),
+                    orderDetail.getFoodName(),
                     orderDetail.getQuantity(),
-                    Types.StateToLanguageString(orderDetail.getStatus()),
-                    orderDetail.getOrderDetailId()}, itemId);
+                    select,
+                    orderDetail.getOrderDetailId()
+                    }, itemId);
         }
         tbOrderInfos.setVisibleColumns(Language.SEQUENCE,Language.FOOD_NAME,Language.QUANTITY,Language.STATUS);
-        tbOrderInfos.setTableFieldFactory(new DefaultFieldFactory(){
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            @Override
-            public Field createField(Container container, Object itemId,
-                    Object propertyId, Component uiContext) {
-                if (Language.STATUS.equals(propertyId)) {
-                    ComboBox select = new ComboBox();
-                    select.setNullSelectionAllowed(false);
-                    select.setScrollToSelectedItem(true);
-                    select.setTextInputAllowed(false);
-                    select.addItem(Language.CANCELED/*Types.State.CANCELED.toString()*/);
-                    select.addItem(Language.WAITING/*Types.State.WAITING.toString()*/);
-                    select.addItem(Language.COMPLETED/*Types.State.COMPLETED.toString()*/);
-                    select.setRequired(true);
-
-                    select.addValueChangeListener(new ValueChangeListener() {
-                        @Override
-                        public void valueChange(ValueChangeEvent event) {
-                            // Set order detail status
-                            Item item = tbOrderInfos.getItem(itemId);
-                            String orderDetailId = item.getItemProperty("orderdetailId").getValue().toString();
-                            String state = event.getProperty().getValue().toString();
-                            System.out.println("Switch orderDetailId: " +orderDetailId+" to state: " + event.getProperty().getValue());
-                            if( !Adapter.changeOrderDetailState(orderDetailId, Types.StringToState(state)) ){
-                                System.out.println("Cannot change order detail state");
-                            }
-                        }
-                    });
-                    return select;
-                }
-                return null;
-                //return super.createField(container, itemId, propertyId, uiContext);
-            }
-        });
-
-        tbOrderInfos.setEditable(true);
+        tbOrderInfos.setPageLength(orderDetailList.size());
+        //tbOrderInfos.setCacheRate ( 0.1 );
+        //tbOrderInfos.setEditable(true);
     }
 
     @Override
@@ -131,9 +130,8 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
         tbOrderInfos.addContainerProperty(Language.FOOD_NAME, String.class, null);
         tbOrderInfos.addContainerProperty(Language.QUANTITY, Integer.class, null);
-        tbOrderInfos.addContainerProperty(Language.STATUS, String.class, null);
+        tbOrderInfos.addContainerProperty(Language.STATUS, ComboBox.class, null);
         tbOrderInfos.addContainerProperty(new String("orderdetailId"), String.class, null);
-        tbOrderInfos.setPageLength(tbOrderInfos.size());
         tbOrderInfos.setResponsive(true);
         tbOrderInfos.setSizeFull();
 

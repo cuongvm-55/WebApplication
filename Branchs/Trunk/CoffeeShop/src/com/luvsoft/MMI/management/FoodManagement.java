@@ -126,8 +126,26 @@ public class FoodManagement extends Window implements ViewInterface{
             hzLayout.setComponentAlignment(cbDel, Alignment.MIDDLE_CENTER);
             hzLayout.setComponentAlignment(btnModify, Alignment.MIDDLE_CENTER);
             hzLayout.setSpacing(true);
+            
+            
+            //VerticalLayout defaultLayout = new VerticalLayout();
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
-                    buildContentElement(category), category.getName(), hzLayout);
+                    buildContentElement(category), category.getName(), null);
+            //treeElement.setContentCollapse();
+            treeElement.getBtnExpandElement().addClickListener(new ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    if( treeElement.getContent().isVisible() ){
+                        //treeElement.setContent(defaultLayout);
+                        treeElement.setContentCollapse();
+                    }
+                    else{
+                        //treeElement.setContent(buildContentElement(category));
+                        treeElement.setContentExpand();
+                    }
+                }
+            });
+
             content.addComponent(treeElement);
             content.setComponentAlignment(treeElement, Alignment.TOP_CENTER);
         }
@@ -140,8 +158,8 @@ public class FoodManagement extends Window implements ViewInterface{
         VerticalLayout vtcElementContainer = new VerticalLayout();
 
         for(int index=0; index < category.getFoodIdList().size();index++){
-            vtcElementContainer.addComponents(buildChildElementContainer(
-                    Adapter.getFood(category.getId(), index)));
+            Food food = Adapter.getFoodById(category.getFoodIdList().get(index));
+            vtcElementContainer.addComponents(buildChildElementContainer(food));
         }
         return vtcElementContainer;
     }
@@ -344,5 +362,15 @@ public class FoodManagement extends Window implements ViewInterface{
     public void setParentView(ViewInterface parentView) {
         // TODO Auto-generated method stub
         
+    }
+    
+    @Override
+    public void close(){
+        // init some static data
+        List<Category> cateList = Adapter.retrieveCategoryList();
+        for( int i=0;i< cateList.size();i++){
+            Adapter.initFoodList(cateList.get(i));
+        }
+        super.close();
     }
 }

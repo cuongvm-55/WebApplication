@@ -292,11 +292,18 @@ public class Adapter {
         return configCtrl.updateConfiguration( conf);
     }
     
+    public static List<Category> initCategoryList(){
+        return categoryCtrl.initCategoryList();
+    }
     public static void initFoodList(Category cate){
         categoryCtrl.initFoodList(cate);
     }
 
     public static Food getFood(String categoryId, int index){
         return categoryCtrl.getFood(categoryId, index);
+    }
+    
+    public static Food getFoodById(String foodId){
+        return foodCtrl.getFoodById(foodId);
     }
 }

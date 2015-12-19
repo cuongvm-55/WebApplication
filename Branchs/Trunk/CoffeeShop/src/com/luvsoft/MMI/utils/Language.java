@@ -92,6 +92,8 @@ public class Language {
                 ALL_FIELDS_ARE_REQUIRED = "All fields are required!";
                 PAY_BILL = "Paid Order";
                 NO_ORDER_IN_THIS_TABLE = "No order";
+                FOOD = "Food";
+                HAS_BEEN_COMPLETED = "has been completed.";
 
                 // Errors
                 ERROR = "Error";
@@ -195,6 +197,8 @@ public class Language {
                 ALL_FIELDS_ARE_REQUIRED = "Bạn phải nhập đầy đủ thông tin!";
                 PAY_BILL = "Thanh Toán";
                 NO_ORDER_IN_THIS_TABLE = "Chưa đặt món";
+                FOOD = "Món";
+                HAS_BEEN_COMPLETED = "đã hoàn thành.";
 
                 // Errors
                 ERROR = "Lỗi";
@@ -299,6 +303,8 @@ public class Language {
     public static String ALL_FIELDS_ARE_REQUIRED;
     public static String PAY_BILL;
     public static String NO_ORDER_IN_THIS_TABLE;
+    public static String FOOD;
+    public static String HAS_BEEN_COMPLETED;
 
     // Currency
     public static String CURRENCY_SYMBOL;

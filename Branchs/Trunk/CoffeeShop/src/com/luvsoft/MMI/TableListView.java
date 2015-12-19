@@ -134,6 +134,14 @@ public class TableListView extends VerticalLayout implements ViewInterface {
 
         reloadView();
     }
+    
+    public void foodWasCompleted(String message){
+        // notify message
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+Language.PAY_ATTENTION+"</b>",
+                message,
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
+    }
 
     public void haveCanceledOrder() {
         reloadView();
