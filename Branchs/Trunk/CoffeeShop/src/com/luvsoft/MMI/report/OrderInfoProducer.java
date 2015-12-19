@@ -172,46 +172,30 @@ public class OrderInfoProducer extends AbstractReportProducer{
             for( int index=0; index < odDtList.size(); index++ ){
                 double amount = 0.00f;
                 OrderDetailRecord rc = odDtList.get(index);
-                WritableFont font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD, false);
-                if( rc.getStatus() == Types.State.CANCELED ){
-                    try{
-                        font.setColour(Colour.RED);}
-                    catch(WriteException e){
-                        // do nothing
-                    }
-                }
-                WritableCellFormat contentFormat = new WritableCellFormat (font);
 
                 jxl.write.Number nbrNo = createNumberCell(FIELD_HEADER.NO.getValue(), row, row - 6);
-                nbrNo.setCellFormat(contentFormat);
                 contents.add(nbrNo);
 
                 DateTime date = createDateCell(FIELD_HEADER.CREATING_TIME.getValue(), row, order.getCreatingTime(), false);
                 contents.add(date);
                 
                 Label lblTblName = createLabelCell(FIELD_HEADER.TABLE_NAME.getValue(), row, orderInfo.getTableName());
-                lblTblName.setCellFormat(contentFormat);
                 contents.add(lblTblName);
 
                 Label lblFoodName = createLabelCell(FIELD_HEADER.FOOD_NAME.getValue(), row, rc.getFoodName());
-                lblFoodName.setCellFormat(contentFormat);
                 contents.add(lblFoodName);
 
                 jxl.write.Number nbrQuantity = createNumberCell(FIELD_HEADER.QUANTITY.getValue(), row, rc.getQuantity());
-                nbrQuantity.setCellFormat(contentFormat);
                 contents.add(nbrQuantity);
 
                 jxl.write.Number nbrPrice = createNumberCell(FIELD_HEADER.PRICE.getValue(), row, rc.getPrice());
-                nbrPrice.setCellFormat(contentFormat);
                 contents.add(nbrPrice);
 
                 amount = (rc.getPrice()*rc.getQuantity());
                 jxl.write.Number nbrAmount = createNumberCell(FIELD_HEADER.AMOUNT.getValue(), row, amount);
-                nbrAmount.setCellFormat(contentFormat);
                 contents.add(nbrAmount);
 
                 Label lblStatus = createLabelCell(FIELD_HEADER.STATUS.getValue(), row, Types.StateToLanguageString(rc.getStatus()) );
-                lblStatus.setCellFormat(contentFormat);
                 contents.add(lblStatus);
                 if(rc.getStatus() == Types.State.COMPLETED){
                     totalAmount += amount;
@@ -220,24 +204,18 @@ public class OrderInfoProducer extends AbstractReportProducer{
                 // for empty field, do not create cell
                 // if current record is the last record of order, create the total cell and paid amount cell
                 if( index == (odDtList.size() - 1) ){
-                    WritableFont fontTotal = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD, false);
-                    WritableCellFormat totalFormat = new WritableCellFormat (fontTotal);
                     jxl.write.Number nbrTotalAmount = createNumberCell(FIELD_HEADER.TOTAL_AMOUNT.getValue(), row, totalAmount);
-                    nbrTotalAmount.setCellFormat(totalFormat);
                     contents.add(nbrTotalAmount);
 
                     jxl.write.Number nbrPaidAmount = createNumberCell(FIELD_HEADER.PAID_AMOUNT.getValue(), row, order.getPaidMoney());
-                    nbrPaidAmount.setCellFormat(totalFormat);
                     contents.add(nbrPaidAmount);
 
                     // staff name who confirm order finish
                     Label lblStaffNameOrderFinish = createLabelCell(FIELD_HEADER.STAFF_NAME_CONFIRM_ORDER_FINISH.getValue(), row, order.getStaffNameConfirmOrderFinish());
-                    lblStaffNameOrderFinish.setCellFormat(totalFormat);
                     contents.add(lblStaffNameOrderFinish);
 
                     // staff name who confirm paid
                     Label lblStaffNamePaid = createLabelCell(FIELD_HEADER.STAFF_NAME_CONFIRM_PAID.getValue(), row, order.getStaffNameConfirmPaid());
-                    lblStaffNamePaid.setCellFormat(totalFormat);
                     contents.add(lblStaffNamePaid);
                     
                     // paid time
@@ -246,7 +224,6 @@ public class OrderInfoProducer extends AbstractReportProducer{
                     
                     // Note
                     Label lblNote = createLabelCell(FIELD_HEADER.NOTE.getValue(), row, order.getNote());
-                    lblNote.setCellFormat(totalFormat);
                     contents.add(lblNote);
                 }
 

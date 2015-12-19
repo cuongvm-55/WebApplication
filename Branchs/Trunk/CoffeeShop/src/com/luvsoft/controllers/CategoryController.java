@@ -33,8 +33,8 @@ public class CategoryController extends AbstractController{
     }
 
     public void initFoodList(Category cate){
-        List<Food> foodList = new ArrayList<Food>();
         if( cate != null){
+            List<Food> foodList = new ArrayList<Food>();
             FoodFacade foodFacade = new FoodFacade();
             for( String foodId : cate.getFoodIdList() ){
                 Food food = new Food();

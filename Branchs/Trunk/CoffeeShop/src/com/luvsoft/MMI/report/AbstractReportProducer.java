@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import jxl.Workbook;
+import jxl.WorkbookSettings;
 import jxl.write.DateFormat;
 import jxl.write.DateTime;
 import jxl.write.Label;
@@ -23,9 +24,6 @@ import com.luvsoft.MMI.Adapter;
 public abstract class AbstractReportProducer {
     public static String REPORT_DATE_TIME_FORMAT_NO_SECONDS = "dd/MM/yyyy HH:mm";
     public static String REPORT_DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
-    
-    private static final DateFormat customDateFormatHeader = new DateFormat(REPORT_DATE_TIME_FORMAT_NO_SECONDS);
-    private static final DateFormat customDateFormat = new DateFormat(REPORT_DATE_TIME_FORMAT);
 
     // returns all header cells
     protected abstract boolean buildHeader(List<WritableCell> headers);
@@ -53,17 +51,13 @@ public abstract class AbstractReportProducer {
         return new Number(col, row, fl);
     }
 
+    WritableCellFormat dateFormatHeader = new WritableCellFormat(new DateFormat(REPORT_DATE_TIME_FORMAT_NO_SECONDS));
+    WritableCellFormat dateFormat = new WritableCellFormat( new DateFormat(REPORT_DATE_TIME_FORMAT));
     public DateTime createDateCell(int col, int row, Date date, boolean isHeader){
-        DateFormat dateFormat;
         if( isHeader ){
-            dateFormat = customDateFormatHeader;
+            return new DateTime(col, row, date, dateFormatHeader);
         }
-        else{
-            dateFormat = customDateFormat;
-        }
-
-        WritableCellFormat format = new WritableCellFormat (dateFormat); 
-        return new DateTime(col, row, date, format);
+        return new DateTime(col, row, date, dateFormat);
     }
 
     public boolean export(){
@@ -73,7 +67,9 @@ public abstract class AbstractReportProducer {
                 // File name + current date
                 SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss"); // it's not depend on the current language
                 String fileName = Adapter.getConfiguration().getReportOutputDir()+"/"+getReportName() + formatter.format(new Date()) + ".xls";
-                WritableWorkbook workBook = Workbook.createWorkbook(new File( fileName ));
+                WorkbookSettings wbSettings = new WorkbookSettings();
+                wbSettings.setRationalization(false);
+                WritableWorkbook workBook = Workbook.createWorkbook(new File( fileName ), wbSettings);
 
                 // Create sheet on the desired work book
                 WritableSheet sheet = workBook.createSheet(getSheetName(), 0);
