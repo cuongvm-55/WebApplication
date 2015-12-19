@@ -2,8 +2,6 @@ package com.luvsoft.MMI.components;
 
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
@@ -11,7 +9,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
-public class CustomizationTreeElement extends VerticalLayout implements ClickListener{
+public class CustomizationTreeElement extends VerticalLayout{
 
     /**
      * @author datnq.55
@@ -61,32 +59,18 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         // Add label and button to element container
         this.horzFloorTitleContainer.addComponents(btnExpandElement, lblFloorName, addComponent);
         this.addComponents(this.horzFloorTitleContainer, content);
-
-        // Add event listener
-        this.btnExpandElement.addClickListener(this);
-    }
-
-    @Override
-    public void buttonClick(ClickEvent event) {
-        if(event.getButton() == this.btnExpandElement) {
-            if(this.content.isVisible()) {
-                setContentCollapse();
-                this.btnExpandElement.setImmediate(true);
-            } else {
-                setContentExpand();
-                this.btnExpandElement.setImmediate(true);
-            }
-        }
     }
 
     public void setContentExpand(){
         this.btnExpandElement.setIcon(FontAwesome.CHEVRON_DOWN);
         this.content.setVisible(true);
+        this.btnExpandElement.setImmediate(true);
     }
 
     public void setContentCollapse(){
         this.btnExpandElement.setIcon(FontAwesome.CHEVRON_RIGHT);
         this.content.setVisible(false);
+        this.btnExpandElement.setImmediate(true);
     }
 
     public Button getBtnExpandElement() {
@@ -102,7 +86,9 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
     }
 
     public void setContent(Component content) {
+        removeComponent(this.content);
         this.content = content;
+        addComponent(this.content);
     }
 
 }

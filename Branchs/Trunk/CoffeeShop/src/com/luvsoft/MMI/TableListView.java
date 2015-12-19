@@ -94,6 +94,17 @@ public class TableListView extends VerticalLayout implements ViewInterface {
             });
 
             CustomizationTreeElement treeElement = new CustomizationTreeElement(gridElementContent, Language.FLOOR + " " + floorList.get(j).getNumber(), btnAddTbl);
+            treeElement.getBtnExpandElement().addClickListener(new ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    if( treeElement.getContent().isVisible() ){
+                        treeElement.setContentCollapse();
+                    }
+                    else{
+                        treeElement.setContentExpand();
+                    }
+                }
+            });
             this.addComponent(treeElement);
         }
     }
