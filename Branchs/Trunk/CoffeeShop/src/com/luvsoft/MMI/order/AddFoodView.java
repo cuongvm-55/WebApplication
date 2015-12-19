@@ -59,7 +59,7 @@ public class AddFoodView extends AbstractOrderView {
         }
     }
 
-    private List<Category> listOfCategory = new ArrayList<Category>();
+    private List<Category> listOfCategory;
     private List<OrderDetailRecord> orderDetailRecordList;
     private List<OrderDetailRecordExtension> orderDetailExtensionList;
 
@@ -73,6 +73,7 @@ public class AddFoodView extends AbstractOrderView {
         // Do not display category that has no food
         List<Category> cateList = Adapter.retrieveCategoryList();
         if(cateList != null){
+            listOfCategory = new ArrayList<Category>();
             for( Category cate : cateList ){
                 if( !cate.getFoodIdList().isEmpty() ){
                     listOfCategory.add(cate);
@@ -116,7 +117,10 @@ public class AddFoodView extends AbstractOrderView {
         wrapPanel.setSizeFull();
 
         VerticalLayout content = new VerticalLayout();
-
+        if( listOfCategory == null ){
+            wrapPanel.setContent(content);
+            return wrapPanel;
+        }
         for (Category category : listOfCategory) {
             VerticalLayout defaultLayout = new VerticalLayout();
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
@@ -159,6 +163,9 @@ public class AddFoodView extends AbstractOrderView {
 
     private void buildChildElementContainer(Food food, GridLayout grid) {
         // Create a temporary order detail
+        if( food == null ){
+            return;
+        }
         OrderDetailRecord orderDetail = new OrderDetailRecord();
         orderDetail.setFoodId(food.getId());
         orderDetail.setFoodName(food.getName());

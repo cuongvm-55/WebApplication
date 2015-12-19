@@ -127,6 +127,19 @@ public class TableManagement extends Window implements ViewInterface{
             hzLayout.setSpacing(true);
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
                     buildContentElement(floor), Language.FLOOR + " " + floor.getNumber(), hzLayout);
+            //treeElement.setContentCollapse();
+            treeElement.getBtnExpandElement().addClickListener(new ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    if( treeElement.getContent().isVisible() ){
+                        treeElement.setContentCollapse();
+                    }
+                    else{
+                        treeElement.setContentExpand();
+                    }
+                }
+            });
+            
             content.addComponent(treeElement);
             content.setComponentAlignment(treeElement, Alignment.TOP_CENTER);
         }

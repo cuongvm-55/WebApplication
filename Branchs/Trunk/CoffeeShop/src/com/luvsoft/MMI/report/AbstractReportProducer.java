@@ -23,6 +23,10 @@ import com.luvsoft.MMI.Adapter;
 public abstract class AbstractReportProducer {
     public static String REPORT_DATE_TIME_FORMAT_NO_SECONDS = "dd/MM/yyyy HH:mm";
     public static String REPORT_DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+    
+    private static final DateFormat customDateFormatHeader = new DateFormat(REPORT_DATE_TIME_FORMAT_NO_SECONDS);
+    private static final DateFormat customDateFormat = new DateFormat(REPORT_DATE_TIME_FORMAT);
+
     // returns all header cells
     protected abstract boolean buildHeader(List<WritableCell> headers);
 
@@ -50,16 +54,16 @@ public abstract class AbstractReportProducer {
     }
 
     public DateTime createDateCell(int col, int row, Date date, boolean isHeader){
-        DateFormat customDateFormat;
+        DateFormat dateFormat;
         if( isHeader ){
-            customDateFormat = new DateFormat(REPORT_DATE_TIME_FORMAT_NO_SECONDS);
+            dateFormat = customDateFormatHeader;
         }
         else{
-            customDateFormat = new DateFormat(REPORT_DATE_TIME_FORMAT);
+            dateFormat = customDateFormat;
         }
 
-        WritableCellFormat dateFormat = new WritableCellFormat (customDateFormat); 
-        return new DateTime(col, row, date, dateFormat);
+        WritableCellFormat format = new WritableCellFormat (dateFormat); 
+        return new DateTime(col, row, date, format);
     }
 
     public boolean export(){

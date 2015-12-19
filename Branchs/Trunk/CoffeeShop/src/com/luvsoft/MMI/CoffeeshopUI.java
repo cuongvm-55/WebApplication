@@ -41,6 +41,7 @@ public class CoffeeshopUI extends UI {
     public static final String CANCELED_ORDER = "canceled_order";
     public static final String CHANGE_TABLE_STATE = "change_table_state";
     public static final String ORDER_WAS_PAID = "order_was_paid";
+    public static final String FOOD_WAS_COMPLETED = "food_was_complete";
 
     public Navigator navigator;
     public MainView mainView;
@@ -200,6 +201,9 @@ public class CoffeeshopUI extends UI {
         } else if(messageId.equals(CoffeeshopUI.ORDER_WAS_PAID)) {
             access(() -> mainView.getTableListView().orderWasPaid(messageData));
             access(() -> mainView.getOrderListView().reloadView());
+        } else if(messageId.equals(CoffeeshopUI.FOOD_WAS_COMPLETED)) {
+            access(() -> mainView.getTableListView().foodWasCompleted(messageData));
         }
+
     }
 }

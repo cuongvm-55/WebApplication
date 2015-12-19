@@ -1,5 +1,6 @@
 package com.luvsoft.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,6 @@ public class CachedData {
     //protected static List<Floor> floorList = null;
     // protected static Map<String, List<Table>> floorMaps = new HashMap<String, List<Table>>(); // <FloorId, TableList>
     
-    protected static List<Category> categoryList = null;
+    protected static List<Category> categoryList = new ArrayList<Category>();
     protected static Map<String, List<Food>> categoriesMaps = new HashMap<String, List<Food>>();; // <CategoryIds, FoodList>
 }

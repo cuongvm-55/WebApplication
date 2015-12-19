@@ -22,11 +22,13 @@ public class CategoryController extends AbstractController{
      * @return list of category
      */
     public List<Category> getAllCategory() {
-        if( CachedData.categoryList == null ){
-            List<Category> list = new ArrayList<Category>();
-            categoryFacade.findAll(list);
-            CachedData.categoryList = list;
-        }
+        return CachedData.categoryList;
+    }
+
+    public List<Category> initCategoryList(){
+        CachedData.categoryList.clear();
+        CachedData.categoriesMaps.clear();
+        categoryFacade.findAll(CachedData.categoryList);
         return CachedData.categoryList;
     }
 
@@ -39,19 +41,16 @@ public class CategoryController extends AbstractController{
                 if( foodFacade.findById(foodId, food)){
                     foodList.add(food);
                 }
-            }
-            if( CachedData.categoriesMaps.get(cate.getId()) != null){
-                CachedData.categoriesMaps.replace(cate.getId(), foodList);
-            }
-            else{
                 CachedData.categoriesMaps.put(cate.getId(), foodList);
             }
         }
-        
     }
 
     public Food getFood(String catId, int index){
-        return CachedData.categoriesMaps.get(catId).get(index);
+        if( CachedData.categoriesMaps.get(catId) != null){
+            return CachedData.categoriesMaps.get(catId).get(index);
+        }
+        return null;
     }
 
     public List<Food> getFoodListOfCategory(String catId){

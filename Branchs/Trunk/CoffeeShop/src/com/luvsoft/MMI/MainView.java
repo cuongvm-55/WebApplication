@@ -47,13 +47,13 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
         tableListView = new TableListView();
         tableListView.setParentView(this);
         setViewChangedByClickingButton(true);
-        
+
         // init some static data
-        List<Category> cateList = Adapter.retrieveCategoryList();
+        List<Category> cateList = Adapter.initCategoryList();
         for( int i=0;i< cateList.size();i++){
             Adapter.initFoodList(cateList.get(i));
         }
-        
+
     }
 
     public void setMenu(CssLayout menu) {
