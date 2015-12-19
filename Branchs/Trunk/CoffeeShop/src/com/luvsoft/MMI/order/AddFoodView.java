@@ -14,12 +14,12 @@ import com.luvsoft.entities.Food;
 import com.luvsoft.entities.Types.State;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
@@ -146,8 +146,8 @@ public class AddFoodView extends AbstractOrderView {
 
     private Component buildContentElement(Category category) {
         GridLayout gridElementContent = new GridLayout();
-        gridElementContent.addStyleName("large-checkbox");
-        gridElementContent.setColumns(5);
+        gridElementContent.addStyleName("large-checkbox grid-layout-custom");
+        gridElementContent.setColumns(3);
         gridElementContent.setSizeFull();
         gridElementContent.setSpacing(true);
         for(int index=0; index < category.getFoodIdList().size();index++){
@@ -177,29 +177,23 @@ public class AddFoodView extends AbstractOrderView {
         checkBox.addStyleName(ValoTheme.CHECKBOX_LARGE);
         checkBox.setSizeFull();
 
-        Button btnMinus = new Button();
-        btnMinus.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        btnMinus.addStyleName(ValoTheme.BUTTON_LARGE);
-        btnMinus.addStyleName(ValoTheme.BUTTON_FRIENDLY);
-        btnMinus.setIcon(FontAwesome.MINUS_CIRCLE);
+        ComboBox cbNumberList = new ComboBox();
+        cbNumberList.setValue(1);
+        cbNumberList.setNullSelectionAllowed(false);
+        cbNumberList.setTextInputAllowed(false);
+        cbNumberList.setResponsive(true);
+        cbNumberList.setHeight("35px");
+        cbNumberList.addStyleName("FONT_X_LARGE");
 
-        Button btnPlus = new Button();
-        btnPlus.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        btnPlus.addStyleName(ValoTheme.BUTTON_LARGE);
-        btnPlus.addStyleName(ValoTheme.BUTTON_FRIENDLY);
-        btnPlus.setIcon(FontAwesome.PLUS_CIRCLE);
+        for(int i=1; i<=20; i++) {
+            cbNumberList.addItem(i);
+        }
+        cbNumberList.setEnabled(false);
 
-        // Enable or disable minus and plus button depend on check box status
-        btnMinus.setEnabled(checkBox.getValue());
-        btnPlus.setEnabled(checkBox.getValue());
-
-        Label foodNumber = new Label();
-        foodNumber.addStyleName("bold TEXT_CENTER FONT_TAHOMA TEXT_BLUE " + ValoTheme.LABEL_HUGE);
-
-        grid.addComponents(foodName, checkBox, btnMinus, foodNumber, btnPlus);
+        grid.addComponents(foodName, checkBox, cbNumberList);
         grid.setColumnExpandRatio(0, 5.0f);
         grid.setColumnExpandRatio(1, 0.5f);
-        grid.setColumnExpandRatio(3, 0.5f);
+        grid.setColumnExpandRatio(2, 0.5f);
 
         // Handle events
         checkBox.addValueChangeListener(new ValueChangeListener() {
@@ -207,50 +201,32 @@ public class AddFoodView extends AbstractOrderView {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 boolean value = (boolean) event.getProperty().getValue();
-                btnMinus.setEnabled(value);
-                btnPlus.setEnabled(value);
+                cbNumberList.setEnabled(value);
+                Integer number = (Integer) cbNumberList.getValue();
+                if(number == null) {
+                    cbNumberList.setValue(1);
+                    number = 1;
+                }
+
                 orderDetailExtension.setEnable(value);
-                if (value == true && foodNumber.getValue().equals("")) {
-                    foodNumber.setValue(1 + "");
-                    foodNumber.setImmediate(true);
-                    orderDetailExtension.getOrderDetailRecord().setQuantity(1);
+                if (value == true) {
+                    orderDetailExtension.getOrderDetailRecord().setQuantity(number);
                 }
+                cbNumberList.setImmediate(true);
                 checkBox.setImmediate(true);
-                btnMinus.setImmediate(true);
-                btnPlus.setImmediate(true);
             }
         });
 
-        btnMinus.addClickListener(new ClickListener() {
-
+        cbNumberList.addValueChangeListener(new ValueChangeListener() {
+            
             @Override
-            public void buttonClick(ClickEvent event) {
-                if (!foodNumber.getValue().equals("")) {
-                    Integer number = Integer.parseInt(foodNumber.getValue());
+            public void valueChange(ValueChangeEvent event) {
+                String foodNumber = event.getProperty().getValue().toString();
+                if (!foodNumber.equals("")) {
+                    Integer number = Integer.parseInt(foodNumber);
                     if (number > 1) {
-                        foodNumber.setValue(number - 1 + "");
-                        foodNumber.setImmediate(true);
-                        orderDetailExtension.getOrderDetailRecord().setQuantity(
-                                number - 1);
+                        orderDetailExtension.getOrderDetailRecord().setQuantity(number);
                     }
-                }
-            }
-        });
-
-        btnPlus.addClickListener(new ClickListener() {
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                if (!foodNumber.getValue().equals("")) {
-                    Integer number = Integer.parseInt(foodNumber.getValue());
-                    foodNumber.setValue(1 + number + "");
-                    foodNumber.setImmediate(true);
-                    orderDetailExtension.getOrderDetailRecord().setQuantity(
-                            number + 1);
-                } else {
-                    foodNumber.setValue(1 + "");
-                    foodNumber.setImmediate(true);
-                    orderDetailExtension.getOrderDetailRecord().setQuantity(1);
                 }
             }
         });

@@ -35,6 +35,10 @@
    .FONT_LARGE {
       font-size: 25px;
    }
+
+   .FONT_X_LARGE {
+      font-size: x-large;
+   }
    .FONT_OVERSIZE {
       font-size: 40px;
    }
@@ -106,6 +110,7 @@
         width: 120px !important;
         height: 50px !important;
     }
+
     .text-align-left{
         text-align: left;
     }
@@ -226,5 +231,13 @@
         font-size: 30px !important;
         width: 35px !important;
         height: 35px !important;
+    }
+
+    .grid-layout-custom .v-gridlayout-slot {
+        background-color: #E7EBF2;
+    }
+
+    .grid-layout-custom .v-filterselect {
+        width: 120px !important;
     }
 }
