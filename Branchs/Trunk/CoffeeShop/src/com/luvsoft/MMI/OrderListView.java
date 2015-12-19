@@ -41,6 +41,7 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
 
     @Override
     public void reloadView() {
+        removeAllComponents();
         createView();
     }
 

@@ -10,7 +10,7 @@ public class LuvsoftNotification {
     public LuvsoftNotification(String caption, String description, Notification.Type type) {
         description += "<span style=\"position:fixed;top:0;left:0;width:100%;height:100%\"></span>";
         notify = new Notification(caption, description, type, true);
-        notify.setDelayMsec(Notification.DELAY_FOREVER);
+        notify.setDelayMsec(300000);
         notify.setPosition(Position.BOTTOM_RIGHT);
     }
 
