@@ -215,6 +215,9 @@ public class AddFoodView extends AbstractOrderView {
                     foodNumber.setImmediate(true);
                     orderDetailExtension.getOrderDetailRecord().setQuantity(1);
                 }
+                checkBox.setImmediate(true);
+                btnMinus.setImmediate(true);
+                btnPlus.setImmediate(true);
             }
         });
 
