@@ -119,14 +119,20 @@ public class AddFoodView extends AbstractOrderView {
 
         for (Category category : listOfCategory) {
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
-                    buildContentElement(category), category.getName(), null);
+                    /*buildContentElement(category)*/new VerticalLayout(), category.getName(), null);
             treeElement.setContentCollapse();
             treeElement.getBtnExpandElement().addClickListener(new ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
                     System.out.println("cateId: " + category.getId());
-                    treeElement.setContent(buildContentElement(category));
-                    treeElement.setContentExpand();
+                    if( treeElement.isVisible() ){
+                        treeElement.setContent(new VerticalLayout());
+                        treeElement.setContentCollapse();
+                    }
+                    else{
+                        treeElement.setContent(buildContentElement(category));
+                        treeElement.setContentExpand();
+                    }
                 }
             });
 
