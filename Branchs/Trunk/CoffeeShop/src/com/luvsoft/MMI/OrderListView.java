@@ -36,12 +36,12 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
         addStyleName("table-list-view");
         setWidth("100%");
         setHeightUndefined();
+        removeAllComponents();
         loadContent();
     }
 
     @Override
     public void reloadView() {
-        removeAllComponents();
         createView();
     }
 

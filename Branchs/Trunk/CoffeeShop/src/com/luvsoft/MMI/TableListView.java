@@ -35,6 +35,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         this.setWidth("100%");
         this.setHeightUndefined();
         this.addStyleName("table-list-view");
+        removeAllComponents();
         floorList = Adapter.retrieveFloorList();
         if( floorList == null ){
             System.out.println("There's no floor!");
@@ -111,7 +112,6 @@ public class TableListView extends VerticalLayout implements ViewInterface {
 
     @Override
     public void reloadView() {
-        removeAllComponents();
         createView();
     }
 
