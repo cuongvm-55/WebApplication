@@ -1,7 +1,6 @@
 package com.luvsoft.MMI;
 
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -171,15 +170,15 @@ public class CoffeeshopUI extends UI {
             return;
         }
 
-        StringTokenizer st = new StringTokenizer(message, "::");
+        String[] str = message.split("::");
         String messageId, messageData;
 
-        if(st.countTokens() < 2) {
+        if(str.length < 2) {
             messageId = message;
             messageData = "";
         } else {
-            messageId = (String) st.nextElement();
-            messageData = (String) st.nextElement();
+            messageId = str[0];
+            messageData = str[1];
         }
 
         if(messageId.equals(CoffeeshopUI.UPDATE_WAITING_TIME)) {

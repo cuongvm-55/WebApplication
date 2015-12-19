@@ -85,10 +85,9 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                         if( state.equals(Language.COMPLETED) ){
                             OrderDetail od = Adapter.getOrderDetailById(orderDetail.getOrderDetailId());
                             Food food = Adapter.getFoodById(od.getFoodId());
-                            Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
-                                    + "<i>"
-                                    + orderInfo.getTableName() + "</i><br/><i>"
-                                    + Language.FOOD + ": " +food.getName()+" " + Language.HAS_BEEN_COMPLETED + "</i>");
+                            Broadcaster.broadcast(CoffeeshopUI.FOOD_WAS_COMPLETED + "::"
+                                    + "<i><b>" +orderInfo.getTableName() + "</b></i><br/><i>"
+                                    + Language.FOOD + " <b>" +food.getName()+"</b> " + Language.HAS_BEEN_COMPLETED + "</i>");
                             }
                     }
                 }

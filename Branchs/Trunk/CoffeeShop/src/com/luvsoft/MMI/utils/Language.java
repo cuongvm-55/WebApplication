@@ -198,7 +198,7 @@ public class Language {
                 PAY_BILL = "Thanh Toán";
                 NO_ORDER_IN_THIS_TABLE = "Chưa đặt món";
                 FOOD = "Món";
-                HAS_BEEN_COMPLETED = "đã hoàn thành.";
+                HAS_BEEN_COMPLETED = "đã xong!";
 
                 // Errors
                 ERROR = "Lỗi";
