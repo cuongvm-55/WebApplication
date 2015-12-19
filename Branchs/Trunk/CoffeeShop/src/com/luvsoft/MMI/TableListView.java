@@ -16,6 +16,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
@@ -31,7 +32,6 @@ public class TableListView extends VerticalLayout implements ViewInterface {
 
     @Override
     public void createView() {
-        removeAllComponents();
         this.setWidth("100%");
         this.setHeightUndefined();
         this.addStyleName("table-list-view");
@@ -83,9 +83,8 @@ public class TableListView extends VerticalLayout implements ViewInterface {
 
             // Add table button
             Button btnAddTbl = new Button();
-            btnAddTbl.setHeight("100%");
             btnAddTbl.setIcon(FontAwesome.PLUS_CIRCLE);
-            btnAddTbl.setStyleName("icon-only primary TEXT_WHITE");
+            btnAddTbl.setStyleName("icon-only primary TEXT_WHITE " + ValoTheme.BUTTON_LARGE);
             btnAddTbl.addClickListener(new ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
@@ -102,6 +101,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
 
     @Override
     public void reloadView() {
+        removeAllComponents();
         createView();
     }
 

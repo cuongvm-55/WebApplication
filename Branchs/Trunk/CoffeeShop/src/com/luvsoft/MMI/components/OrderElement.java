@@ -137,6 +137,11 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         tbOrderInfos.setResponsive(true);
         tbOrderInfos.setSizeFull();
 
+        tbOrderInfos.setColumnExpandRatio(Language.SEQUENCE, 0.5f);
+        tbOrderInfos.setColumnExpandRatio(Language.FOOD_NAME, 3.9f);
+        tbOrderInfos.setColumnExpandRatio(Language.STATUS, 1.4f);
+        tbOrderInfos.setColumnExpandRatio(Language.QUANTITY, 0.7f);
+
         btnConfFinish.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {

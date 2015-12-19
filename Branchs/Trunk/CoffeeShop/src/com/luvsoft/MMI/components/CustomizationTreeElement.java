@@ -1,12 +1,11 @@
 package com.luvsoft.MMI.components;
 
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -23,7 +22,7 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
      */
 
     private Button btnExpandElement;
-    private HorizontalLayout horzFloorTitleContainer;
+    private CssLayout horzFloorTitleContainer;
     private Label lblFloorName;
     private Component addComponent;
     private Component content;
@@ -37,43 +36,30 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
         this.content = content;
         this.addStyleName("elementContainerStyle");
 
-        this.horzFloorTitleContainer = new HorizontalLayout();
-        this.horzFloorTitleContainer.setResponsive(true);
+        this.horzFloorTitleContainer = new CssLayout();
         this.horzFloorTitleContainer.setWidth("100%");
-        this.horzFloorTitleContainer.setHeight("40px");
-        this.horzFloorTitleContainer.addStyleName("BACKGROUND_BLUE TEXT_WHITE");
+        this.horzFloorTitleContainer.addStyleName("BACKGROUND_BLUE TEXT_WHITE " + ValoTheme.LAYOUT_COMPONENT_GROUP);
 
         this.btnExpandElement = new Button();
-        this.btnExpandElement.addStyleName("icon-only primary TEXT_WHITE");
+        this.btnExpandElement.addStyleName("icon-only primary TEXT_WHITE " + ValoTheme.BUTTON_LARGE);
         this.btnExpandElement.setIcon(FontAwesome.CHEVRON_DOWN);
-        this.btnExpandElement.setHeight("100%");
-        this.btnExpandElement.setWidth("60%");
+        this.btnExpandElement.setWidth("15%");
 
         this.lblFloorName = new Label(title);
-        this.lblFloorName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE");
-        this.lblFloorName.addStyleName(ValoTheme.LABEL_BOLD);
-        this.lblFloorName.addStyleName(ValoTheme.LABEL_HUGE);
-        this.lblFloorName.setWidth("100%");
+        this.lblFloorName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE " +ValoTheme.LABEL_BOLD + " " + ValoTheme.LABEL_HUGE);
+        this.lblFloorName.setWidth("70%");
 
         if( additionalComponent == null ){
             addComponent = new Label("");
-            addComponent.setHeight("100%");
-            addComponent.setWidth("60%");
+            addComponent.setWidth("15%");
         }
         else{
             addComponent = additionalComponent;
-            addComponent.setHeight("100%");
-            addComponent.setWidth("60%");
+            addComponent.setWidth("15%");
         }
 
         // Add label and button to element container
-        this.horzFloorTitleContainer.addComponents(this.btnExpandElement, this.lblFloorName, addComponent);
-        this.horzFloorTitleContainer.setExpandRatio(this.btnExpandElement, 1.0f);
-        this.horzFloorTitleContainer.setExpandRatio(this.lblFloorName, 4.0f);
-        this.horzFloorTitleContainer.setExpandRatio(this.addComponent, 1.0f);
-        this.horzFloorTitleContainer.setComponentAlignment(this.addComponent, Alignment.MIDDLE_RIGHT);
-        this.horzFloorTitleContainer.setComponentAlignment(this.lblFloorName, Alignment.MIDDLE_CENTER);
-
+        this.horzFloorTitleContainer.addComponents(btnExpandElement, lblFloorName, addComponent);
         this.addComponents(this.horzFloorTitleContainer, content);
 
         // Add event listener
@@ -86,9 +72,11 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
             if(this.content.isVisible()) {
                 this.btnExpandElement.setIcon(FontAwesome.CHEVRON_RIGHT);
                 this.content.setVisible(false);
+                this.btnExpandElement.setImmediate(true);
             } else {
                 this.btnExpandElement.setIcon(FontAwesome.CHEVRON_DOWN);
                 this.content.setVisible(true);
+                this.btnExpandElement.setImmediate(true);
             }
         }
         

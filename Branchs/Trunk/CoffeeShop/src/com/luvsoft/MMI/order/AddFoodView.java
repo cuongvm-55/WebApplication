@@ -21,7 +21,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -128,16 +129,18 @@ public class AddFoodView extends AbstractOrderView {
     }
 
     private Component buildContentElement(Category category) {
-        VerticalLayout vtcElementContainer = new VerticalLayout();
-
+        GridLayout gridElementContent = new GridLayout();
+        gridElementContent.addStyleName("large-checkbox");
+        gridElementContent.setColumns(5);
+        gridElementContent.setSizeFull();
+        gridElementContent.setSpacing(true);
         for (Food food : category.getListOfFoodByCategory()) {
-            vtcElementContainer.addComponents(buildChildElementContainer(food));
+            buildChildElementContainer(food, gridElementContent);
         }
-
-        return vtcElementContainer;
+        return gridElementContent;
     }
 
-    private Component buildChildElementContainer(Food food) {
+    private void buildChildElementContainer(Food food, GridLayout grid) {
         // Create a temporary order detail
         OrderDetailRecord orderDetail = new OrderDetailRecord();
         orderDetail.setFoodId(food.getId());
@@ -149,13 +152,8 @@ public class AddFoodView extends AbstractOrderView {
         OrderDetailRecordExtension orderDetailExtension = new OrderDetailRecordExtension(
                 orderDetail, false);
 
-        HorizontalLayout hrzChildElementContainer = new HorizontalLayout();
-        hrzChildElementContainer.setSizeFull();
-        hrzChildElementContainer.addStyleName(ValoTheme.LAYOUT_CARD + " large-checkbox");
-
         Label foodName = new Label();
-        foodName.addStyleName(ValoTheme.LABEL_HUGE + " "
-                + ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE");
+        foodName.addStyleName(ValoTheme.LABEL_HUGE + " " + ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE");
         foodName.setValue(food.getName());
 
         CheckBox checkBox = new CheckBox();
@@ -181,24 +179,10 @@ public class AddFoodView extends AbstractOrderView {
         Label foodNumber = new Label();
         foodNumber.addStyleName("bold TEXT_CENTER FONT_TAHOMA TEXT_BLUE " + ValoTheme.LABEL_HUGE);
 
-        hrzChildElementContainer.addComponents(foodName, checkBox, btnMinus,
-                foodNumber, btnPlus);
-        hrzChildElementContainer.setComponentAlignment(foodName,
-                Alignment.MIDDLE_LEFT);
-        hrzChildElementContainer.setComponentAlignment(checkBox,
-                Alignment.TOP_RIGHT);
-        hrzChildElementContainer.setComponentAlignment(btnPlus,
-                Alignment.MIDDLE_CENTER);
-        hrzChildElementContainer.setComponentAlignment(btnMinus,
-                Alignment.MIDDLE_CENTER);
-        hrzChildElementContainer.setComponentAlignment(foodNumber,
-                Alignment.MIDDLE_CENTER);
-
-        hrzChildElementContainer.setExpandRatio(foodName, 6.0f);
-        hrzChildElementContainer.setExpandRatio(checkBox, 1.0f);
-        hrzChildElementContainer.setExpandRatio(btnMinus, 1.0f);
-        hrzChildElementContainer.setExpandRatio(foodNumber, 1.0f);
-        hrzChildElementContainer.setExpandRatio(btnPlus, 1.0f);
+        grid.addComponents(foodName, checkBox, btnMinus, foodNumber, btnPlus);
+        grid.setColumnExpandRatio(0, 5.0f);
+        grid.setColumnExpandRatio(1, 0.5f);
+        grid.setColumnExpandRatio(3, 0.5f);
 
         // Handle events
         checkBox.addValueChangeListener(new ValueChangeListener() {
@@ -211,6 +195,7 @@ public class AddFoodView extends AbstractOrderView {
                 orderDetailExtension.setEnable(value);
                 if (value == true && foodNumber.getValue().equals("")) {
                     foodNumber.setValue(1 + "");
+                    foodNumber.setImmediate(true);
                     orderDetailExtension.getOrderDetailRecord().setQuantity(1);
                 }
             }
@@ -224,6 +209,7 @@ public class AddFoodView extends AbstractOrderView {
                     Integer number = Integer.parseInt(foodNumber.getValue());
                     if (number > 1) {
                         foodNumber.setValue(number - 1 + "");
+                        foodNumber.setImmediate(true);
                         orderDetailExtension.getOrderDetailRecord().setQuantity(
                                 number - 1);
                     }
@@ -238,25 +224,26 @@ public class AddFoodView extends AbstractOrderView {
                 if (!foodNumber.getValue().equals("")) {
                     Integer number = Integer.parseInt(foodNumber.getValue());
                     foodNumber.setValue(1 + number + "");
+                    foodNumber.setImmediate(true);
                     orderDetailExtension.getOrderDetailRecord().setQuantity(
                             number + 1);
                 } else {
                     foodNumber.setValue(1 + "");
+                    foodNumber.setImmediate(true);
                     orderDetailExtension.getOrderDetailRecord().setQuantity(1);
                 }
             }
         });
 
         orderDetailExtensionList.add(orderDetailExtension);
-        return hrzChildElementContainer;
     }
 
     private Component buildFooter() {
-        VerticalLayout footer = new VerticalLayout();
+        CssLayout footer = new CssLayout();
         footer.setWidth("100%");
 
         footer.setHeightUndefined();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR + " TEXT_CENTER");
 
         Button btnConfirm = new Button(Language.CONFIRM);
         btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
@@ -323,7 +310,6 @@ public class AddFoodView extends AbstractOrderView {
             }
         });
         footer.addComponents(btnConfirm);
-        footer.setComponentAlignment(btnConfirm, Alignment.MIDDLE_CENTER);
 
         return footer;
     }

@@ -165,27 +165,17 @@ public class ChangeTableStateView extends AbstractOrderView implements
     private Component buildFooter() {
         CssLayout footer = new CssLayout();
         footer.setWidth("100%");
-        footer.setHeightUndefined();
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR + " TEXT_CENTER");
 
         btnConfirm = new Button(Language.CONFIRM);
-        btnConfirm.addStyleName(ValoTheme.BUTTON_FRIENDLY);
-        btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnConfirm.addStyleName("margin-right1 margin-left1");
-        btnConfirm.setHeightUndefined();
+        btnConfirm.addStyleName(ValoTheme.BUTTON_FRIENDLY + " margin-right1 margin-left1 " + ValoTheme.BUTTON_HUGE);
         btnConfirm.setClickShortcut(KeyCode.ENTER, null);
 
         btnConfirmPaid = new Button(Language.PAY_BILL);
-        btnConfirmPaid.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        btnConfirmPaid.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnConfirmPaid.addStyleName("margin-right1 margin-left1");
-        btnConfirmPaid.setHeightUndefined();
+        btnConfirmPaid.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 " + ValoTheme.BUTTON_HUGE);
 
         btnAddOrder = new Button(Language.ADD_ORDER);
-        btnAddOrder.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        btnAddOrder.addStyleName(ValoTheme.BUTTON_HUGE);
-        btnAddOrder.addStyleName("margin-right1 margin-left1");
-        btnAddOrder.setHeightUndefined();
+        btnAddOrder.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 " + ValoTheme.BUTTON_HUGE);
 
         // set control buttons state
         setControlBtnState();

@@ -12,7 +12,6 @@ import com.luvsoft.entities.Types;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
 /**
@@ -22,8 +21,7 @@ import com.vaadin.ui.VerticalLayout;
  * This class is used to implement Order list View
  */
 @SuppressWarnings("serial")
-public class OrderListView extends Panel implements ViewInterface{
-    private VerticalLayout vtcLayout;
+public class OrderListView extends VerticalLayout implements ViewInterface{
     public static OrderListView orderListView;
 
     // data
@@ -36,10 +34,9 @@ public class OrderListView extends Panel implements ViewInterface{
     @Override
     public void createView() {
         addStyleName("table-list-view");
-        vtcLayout = new VerticalLayout();
+        setWidth("100%");
+        setHeightUndefined();
         loadContent();
-        this.setContent(vtcLayout);
-        this.setSizeFull();
     }
 
     @Override
@@ -78,8 +75,7 @@ public class OrderListView extends Panel implements ViewInterface{
         if( orderList.isEmpty() ){
             // No Order in orderlist
             Label lbl = new Label(Language.NO_ORDER_IN_ORDER_LIST);
-            vtcLayout.addComponent(lbl);
-            this.setContent(vtcLayout);
+            this.addComponent(lbl);
             return;
         }
         for( Order order : orderList ){
@@ -90,7 +86,7 @@ public class OrderListView extends Panel implements ViewInterface{
             HorizontalLayout bottomLine = new HorizontalLayout();
             bottomLine.setSizeFull();
             bottomLine.setStyleName("bottom-line");
-            vtcLayout.addComponents(/*topLine,*/ orderElement, bottomLine);
+            this.addComponents(/*topLine,*/ orderElement, bottomLine);
         }
     }
 
