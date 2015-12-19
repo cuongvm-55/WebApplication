@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.luvsoft.entities.Category;
+import com.luvsoft.entities.Food;
 import com.luvsoft.facades.CategoryFacade;
+import com.luvsoft.facades.FoodFacade;
 
 /**
  * 
@@ -20,11 +22,42 @@ public class CategoryController extends AbstractController{
      * @return list of category
      */
     public List<Category> getAllCategory() {
-        List<Category> list = new ArrayList<Category>();
-        categoryFacade.findAll(list);
-        return list;
+        if( CachedData.categoryList == null ){
+            List<Category> list = new ArrayList<Category>();
+            categoryFacade.findAll(list);
+            CachedData.categoryList = list;
+        }
+        return CachedData.categoryList;
     }
 
+    public void initFoodList(Category cate){
+        List<Food> foodList = new ArrayList<Food>();
+        if( cate != null){
+            FoodFacade foodFacade = new FoodFacade();
+            for( String foodId : cate.getFoodIdList() ){
+                Food food = new Food();
+                if( foodFacade.findById(foodId, food)){
+                    foodList.add(food);
+                }
+            }
+            if( CachedData.categoriesMaps.get(cate.getId()) != null){
+                CachedData.categoriesMaps.replace(cate.getId(), foodList);
+            }
+            else{
+                CachedData.categoriesMaps.put(cate.getId(), foodList);
+            }
+        }
+        
+    }
+
+    public Food getFood(String catId, int index){
+        return CachedData.categoriesMaps.get(catId).get(index);
+    }
+
+    public List<Food> getFoodListOfCategory(String catId){
+        return CachedData.categoriesMaps.get(catId);
+    }
+ 
     /**
      * Get category by its Id
      * @return Category
@@ -54,7 +87,7 @@ public class CategoryController extends AbstractController{
     /**
      * Update category
      */
-    public boolean updateCategory(String cateId, Category cate){
-        return categoryFacade.update(cateId, cate);
+    public boolean updateCategory(Category cate){
+        return categoryFacade.update(cate.getId(), cate);
     }
 }

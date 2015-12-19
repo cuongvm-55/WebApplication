@@ -42,7 +42,10 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         }
 
         String staffName = ((MainView) getParentView()).getStaffName();
-
+        List<Types.State> states = new ArrayList<Types.State>();
+        states.add(Types.State.PAID);
+        states.add(Types.State.CANCELED);
+        List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
         for (int j = 0; j < floorList.size(); j++) {
             GridLayout gridElementContent = new GridLayout();
             gridElementContent.setColumns(3);
@@ -53,10 +56,6 @@ public class TableListView extends VerticalLayout implements ViewInterface {
             for (int i = 0; i < tableList.size(); i++) {
                 Table table = tableList.get(i);
                 System.out.println("TableId: " + table.getId());
-                List<Types.State> states = new ArrayList<Types.State>();
-                states.add(Types.State.PAID);
-                states.add(Types.State.CANCELED);
-                List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
                 Order currentOrder = null;
                 for (Order order : orderList) {
                     if( order.getTableId().equals(table.getId()) ) {

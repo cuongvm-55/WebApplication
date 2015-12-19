@@ -32,7 +32,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     // data
     private Table table; // table info
     private Order order; // the current Order of this table
-    
+
     public CoffeeTableElement(Table table, TableListView tableListView) {
         super();
         this.table = table;
@@ -64,13 +64,13 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
             setPaymentState(Types.State.UNPAID);
         } else if (state == Types.State.WAITING){
             if( order == null ){
-                setWaitingTime(-1);
+                setWaitingTimeLabel(-1);
             }
             else{
-                this.setWaitingTime(table.getWaitingTime());
+                this.setWaitingTimeLabel(table.getWaitingTime());
             }
         } else {
-            this.setWaitingTime(0);
+            this.setWaitingTimeLabel(0);
         }
 
         this.lblTableNumber = new Label(Language.TABLE + " " + table.getNumber());
@@ -92,7 +92,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
      * This function is used to set waiting time for a table
      * @param waiting time
      */
-    private void setWaitingTime(int waitingTime) {
+    private void setWaitingTimeLabel(int waitingTime) {
         if (0 < waitingTime) {
             this.lblWaitingTime.addStyleName("TEXT_RED");
             this.lblWaitingTime.addStyleName(ValoTheme.LABEL_BOLD);
@@ -128,7 +128,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
             this.lblWaitingTime.setValue(Language.UNPAID);
         }
         else{
-            setWaitingTime(0);
+            setWaitingTimeLabel(0);
         }
     }
     /*
@@ -170,13 +170,13 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
             setPaymentState(Types.State.UNPAID);
         } else if (tableState == Types.State.WAITING){
             if( order == null ){
-                this.setWaitingTime(-1);
+                this.setWaitingTimeLabel(-1);
             }
             else{
-                this.setWaitingTime(waitingTime);
+                this.setWaitingTimeLabel(waitingTime);
             }
         } else {
-            this.setWaitingTime(0);
+            this.setWaitingTimeLabel(0);
         }
     }
     /*

@@ -84,14 +84,36 @@ public class CustomizationTreeElement extends VerticalLayout implements ClickLis
     public void buttonClick(ClickEvent event) {
         if(event.getButton() == this.btnExpandElement) {
             if(this.content.isVisible()) {
-                this.btnExpandElement.setIcon(FontAwesome.CHEVRON_RIGHT);
-                this.content.setVisible(false);
+                setContentCollapse();
             } else {
-                this.btnExpandElement.setIcon(FontAwesome.CHEVRON_DOWN);
-                this.content.setVisible(true);
+                setContentExpand();
             }
         }
-        
     }
 
+    public void setContentExpand(){
+        this.btnExpandElement.setIcon(FontAwesome.CHEVRON_DOWN);
+        this.content.setVisible(true);
+    }
+
+    public void setContentCollapse(){
+        this.btnExpandElement.setIcon(FontAwesome.CHEVRON_RIGHT);
+        this.content.setVisible(false);
+    }
+
+    public Button getBtnExpandElement() {
+        return btnExpandElement;
+    }
+
+    public void setBtnExpandElement(Button btnExpandElement) {
+        this.btnExpandElement = btnExpandElement;
+    }
+
+    public Component getContent() {
+        return content;
+    }
+
+    public void setContent(Component content) {
+        this.content = content;
+    }
 }

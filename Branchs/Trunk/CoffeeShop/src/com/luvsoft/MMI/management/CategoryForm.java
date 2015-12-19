@@ -88,7 +88,7 @@ public class CategoryForm extends Window implements ViewInterface{
                     }
                     break;
                 case UPDATE:
-                    if( Adapter.updateCategory(category.getId(), category) ){
+                    if( Adapter.updateCategory(category) ){
                         parentView.reloadView();
                         close();
                     }

@@ -16,7 +16,6 @@ public class Category extends AbstractEntity implements Serializable {
     private String id;
     private String name;
     private List<String> foodIdList; // list of table ObjectId
-    private List<Food> listOfFoodByCategory;
 
     public Category()
     {
@@ -73,18 +72,10 @@ public class Category extends AbstractEntity implements Serializable {
         this.foodIdList = foodIdList;
     }
 
-    public List<Food> getListOfFoodByCategory() {
-        return listOfFoodByCategory;
-    }
-
-    public void setListOfFoodByCategory(List<Food> listOfFoodByCategory) {
-        this.listOfFoodByCategory = listOfFoodByCategory;
-    }
-
     @Override
     public String toString() {
         return "Category [id=" + id + ", name=" + name + ", foodIdList="
-                + foodIdList + ", listOfFoodByCategory=" + listOfFoodByCategory
+                + foodIdList
                 + "]";
     }
 

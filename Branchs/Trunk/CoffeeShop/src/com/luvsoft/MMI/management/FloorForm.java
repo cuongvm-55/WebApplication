@@ -93,7 +93,7 @@ public class FloorForm extends Window implements ViewInterface{
                     }
                     break;
                 case UPDATE:
-                    if( Adapter.updateFloor(floor.getId(), floor) ){
+                    if( Adapter.updateFloor(floor) ){
                         parentView.reloadView();
                         close();
                     }

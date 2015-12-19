@@ -138,10 +138,11 @@ public class FoodManagement extends Window implements ViewInterface{
 
     private Component buildContentElement(Category category) {
         VerticalLayout vtcElementContainer = new VerticalLayout();
-        for (Food food : category.getListOfFoodByCategory()) {
-            vtcElementContainer.addComponents(buildChildElementContainer(food));
-        }
 
+        for(int index=0; index < category.getFoodIdList().size();index++){
+            vtcElementContainer.addComponents(buildChildElementContainer(
+                    Adapter.getFood(category.getId(), index)));
+        }
         return vtcElementContainer;
     }
 
@@ -248,7 +249,7 @@ public class FoodManagement extends Window implements ViewInterface{
                                         Category cate = Adapter.getCategoryOfFood(foodId);
                                         if( cate != null ){
                                             cate.getFoodIdList().remove(foodId);
-                                            Adapter.updateCategory(cate.getId(), cate);
+                                            Adapter.updateCategory(cate);
                                         }
                                     }
 

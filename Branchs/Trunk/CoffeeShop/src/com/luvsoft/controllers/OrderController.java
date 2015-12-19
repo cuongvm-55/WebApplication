@@ -120,14 +120,14 @@ public class OrderController extends AbstractController{
     /*
      * Update order
      */
-    public boolean updateOrder(String orderId, Order order){
-        return orderFacade.update(orderId, order);
+    public boolean updateOrder(Order order){
+        return orderFacade.update(order.getId(), order);
     }
     
     /*
      * Update order detail
      */
-    public boolean updateOrderDetail(String orderDetailId, OrderDetail orderDetail){
-        return orderDetailFacade.update(orderDetailId, orderDetail);
+    public boolean updateOrderDetail(OrderDetail orderDetail){
+        return orderDetailFacade.update(orderDetail.getId(), orderDetail);
     }
 }

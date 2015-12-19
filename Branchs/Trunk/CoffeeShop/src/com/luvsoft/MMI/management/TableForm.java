@@ -139,7 +139,7 @@ public class TableForm extends Window implements ViewInterface{
                 if(prefloor != null){
                     List<String> tableIds = prefloor.getTableIdList();
                     tableIds.remove(table.getId());
-                    if( !Adapter.updateFloor(prefloor.getId(), prefloor) ){
+                    if( !Adapter.updateFloor(prefloor) ){
                         System.out.println("Fail to update category id: " + prefloor.getId());
                     }
                 }
@@ -149,7 +149,7 @@ public class TableForm extends Window implements ViewInterface{
                 if( newfloor != null ){
                     List<String> tableIds = newfloor.getTableIdList();
                     tableIds.add(table.getId());
-                    if( !Adapter.updateFloor(newfloor.getId(), newfloor) ){
+                    if( !Adapter.updateFloor(newfloor) ){
                         System.out.println("Fail to update category id: " + newfloor.getId());
                     }
                 }

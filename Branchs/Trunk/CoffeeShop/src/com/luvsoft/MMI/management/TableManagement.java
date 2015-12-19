@@ -241,7 +241,7 @@ public class TableManagement extends Window implements ViewInterface{
                                             Floor floor = Adapter.getFloorOfTable(toBeDeletedTables.get(i));
                                             if(floor != null){
                                                 floor.getTableIdList().remove(toBeDeletedTables.get(i));
-                                                Adapter.updateFloor(floor.getId(), floor);
+                                                Adapter.updateFloor(floor);
                                             }
                                         }
                                     }

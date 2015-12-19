@@ -8,7 +8,6 @@ public class FoodController extends AbstractController{
 
     public Food getFoodById(String foodId){
         Food food = new Food();
-        foodFacade = new FoodFacade();
         foodFacade.findById(foodId, food);
         return food;
     }
@@ -27,7 +26,7 @@ public class FoodController extends AbstractController{
     /*
      * Update foodId by information of food
      */
-    public boolean updateFood(String foodId, Food food){
-        return foodFacade.update(foodId, food);
+    public boolean updateFood(Food food){
+        return foodFacade.update(food.getId(), food);
     }
 }

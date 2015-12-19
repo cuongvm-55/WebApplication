@@ -118,7 +118,16 @@ public class AddFoodView extends AbstractOrderView {
 
         for (Category category : listOfCategory) {
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
-                    buildContentElement(category), category.getName(), null);
+                    /*buildContentElement(category)*/new VerticalLayout(), category.getName(), null);
+            treeElement.setContentCollapse();
+            treeElement.getBtnExpandElement().addClickListener(new ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    System.out.println("cateId: " + category.getId());
+                    treeElement.setContent(buildContentElement(category));
+                    treeElement.setContentExpand();
+                }
+            });
             content.addComponent(treeElement);
             content.setComponentAlignment(treeElement, Alignment.TOP_CENTER);
         }
@@ -130,10 +139,10 @@ public class AddFoodView extends AbstractOrderView {
     private Component buildContentElement(Category category) {
         VerticalLayout vtcElementContainer = new VerticalLayout();
 
-        for (Food food : category.getListOfFoodByCategory()) {
-            vtcElementContainer.addComponents(buildChildElementContainer(food));
+        for(int index=0; index < category.getFoodIdList().size();index++){
+            vtcElementContainer.addComponents(buildChildElementContainer(
+                    Adapter.getFood(category.getId(), index)));
         }
-
         return vtcElementContainer;
     }
 

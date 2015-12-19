@@ -85,19 +85,6 @@ public class Adapter {
 
     public static List<Category> retrieveCategoryList() {
         List<Category> list = categoryCtrl.getAllCategory();
-
-        for (Category category : list) {
-            List<Food> listOfFood = new ArrayList<Food>();
-            for (String foodId : category.getFoodIdList()) {
-                Food food = foodCtrl.getFoodById(foodId);
- 
-                // If food is not empty
-                if(!food.getId().equals("")) {
-                            listOfFood.add(food);
-                }
-            }
-            category.setListOfFoodByCategory(listOfFood);
-         } 
          return list;
 }
 
@@ -120,12 +107,12 @@ public class Adapter {
         return orderCtrl.updateFieldValueOfOrder(orderId, fieldName, fieldVale);
     }
 
-    public static boolean updateOrder(String orderId, Order order){
-        return orderCtrl.updateOrder(orderId, order);
+    public static boolean updateOrder(Order order){
+        return orderCtrl.updateOrder(order);
     }
-    
-    public static boolean updateOrderDetail(String orderDetailId, OrderDetail orderDetail){
-        return orderCtrl.updateOrderDetail(orderDetailId, orderDetail);
+
+    public static boolean updateOrderDetail(OrderDetail orderDetail){
+        return orderCtrl.updateOrderDetail(orderDetail);
     }
     
     public static boolean updateFieldValueOfOrderDetail(String orderId, String fieldName, String fieldVale){
@@ -182,12 +169,12 @@ public class Adapter {
         return foodCtrl.addNewFood(food);
     }
 
-    public static boolean updateFood(String foodId, Food food){
-        return foodCtrl.updateFood(foodId, food);
+    public static boolean updateFood(Food food){
+        return foodCtrl.updateFood(food);
     }
 
-    public static boolean updateCategory(String cateId, Category cate){
-        return categoryCtrl.updateCategory(cateId, cate);
+    public static boolean updateCategory(Category cate){
+        return categoryCtrl.updateCategory(cate);
     }
 
     public static boolean isCategoryNameExist(String categoryName){
@@ -206,8 +193,8 @@ public class Adapter {
         return floorCtrl.addNewFloor(floor);
     }
 
-    public static boolean updateFloor(String floorId, Floor floor){
-        return floorCtrl.updateFloor(floorId, floor);
+    public static boolean updateFloor(Floor floor){
+        return floorCtrl.updateFloor(floor);
     }
 
     public static boolean addNewTable(Table table){
@@ -303,5 +290,13 @@ public class Adapter {
     
     public static boolean updateConfiguration(Configuration conf){
         return configCtrl.updateConfiguration( conf);
+    }
+    
+    public static void initFoodList(Category cate){
+        categoryCtrl.initFoodList(cate);
+    }
+
+    public static Food getFood(String categoryId, int index){
+        return categoryCtrl.getFood(categoryId, index);
     }
 }

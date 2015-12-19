@@ -53,8 +53,8 @@ public class FloorController extends AbstractController{
     /**
      * Update floor
      */
-    public boolean updateFloor(String floorId, Floor floor){
-        return floorFacade.update(floorId, floor);
+    public boolean updateFloor(Floor floor){
+        return floorFacade.update(floor.getId(), floor);
     }
 
     /**

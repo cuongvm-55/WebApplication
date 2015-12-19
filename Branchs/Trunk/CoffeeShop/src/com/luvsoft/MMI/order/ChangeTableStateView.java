@@ -105,7 +105,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
     @Override
     public void buttonClick(ClickEvent event) {
         if( event.getComponent() == btnAddOrder ) {
-            orderInforView = new OrderInfoView(ViewMode.ORDER_DETAIL_VIEW);
+            orderInforView = new OrderInfoView(currentOrder, ViewMode.ORDER_DETAIL_VIEW);
             orderInforView.setParentView(this);
             orderInforView.setCurrentTable(getCurrentTable());
             orderInforView.createView();
@@ -135,8 +135,8 @@ public class ChangeTableStateView extends AbstractOrderView implements
                                                 getCurrentTable().getId(),
                                                 newState);
                                         NewOrderManager.interruptWaitingOrderThread(currentOrder);
-                                        close();
                                         Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+getCurrentTable().getNumber());
+                                        close();
                                     }
                                 }
                                 else {
@@ -148,12 +148,12 @@ public class ChangeTableStateView extends AbstractOrderView implements
             }
             else {
                 Adapter.changeTableState(getCurrentTable().getId(), newState);
-                close();
                 Broadcaster.broadcast(CoffeeshopUI.CHANGE_TABLE_STATE);
+                close();
             }
         }
         else if(event.getComponent() == btnConfirmPaid){
-            orderInforView = new OrderInfoView(ViewMode.ORDER_SUMMRY);
+            orderInforView = new OrderInfoView(currentOrder, ViewMode.ORDER_SUMMRY);
             orderInforView.setParentView(this);
             orderInforView.setCurrentTable(getCurrentTable());
             orderInforView.createView();

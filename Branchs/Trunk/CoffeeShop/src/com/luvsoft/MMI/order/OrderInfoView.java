@@ -85,11 +85,11 @@ public class OrderInfoView extends AbstractOrderView {
 
     public static enum ViewMode{ORDER_SUMMRY, ORDER_DETAIL_VIEW};
     private ViewMode currentMode;
-    public OrderInfoView(ViewMode mode) {
+    public OrderInfoView(Order order, ViewMode mode) {
         super();
         totalAmount = 0.00f;
         paidAmount = 0.00f;
-        currentOrder = null;
+        currentOrder = order;
         orderInfo = null;
         orderDetailRecordList = null;
         isOrderDetailListChanged = false;
@@ -118,7 +118,6 @@ public class OrderInfoView extends AbstractOrderView {
 
         buildTable();
 
-        currentOrder = retrieveOrder();
         if( currentOrder != null ) {
             orderInfo = Adapter.retrieveOrderInfo(currentOrder);
             if( orderInfo != null ) {
@@ -522,7 +521,7 @@ public class OrderInfoView extends AbstractOrderView {
                                 + currentOrder.getId());
                     }
                 } else {
-                    if (Adapter.updateOrder(currentOrder.getId(), currentOrder)) {
+                    if (Adapter.updateOrder(currentOrder)) {
                         System.out.println("Update Order: " + currentOrder.toString());
                         if( isOrderDetailListChanged || !previousTextValue.equals(txtNote.getValue()) ){
                             // Broadcast order change event
@@ -590,8 +589,7 @@ public class OrderInfoView extends AbstractOrderView {
                         }
                     }
                     else {
-                        if( Adapter.updateOrder(currentOrder.getId(),
-                                currentOrder) ) {
+                        if( Adapter.updateOrder(currentOrder) ) {
                             ret = true;
                         }
                     }
@@ -748,7 +746,7 @@ public class OrderInfoView extends AbstractOrderView {
             case MODIFIED: {
                 // update MODIFIED records
                 System.out.println("Modified");
-                if (Adapter.updateOrderDetail(odDetail.getId(), odDetail)) {
+                if (Adapter.updateOrderDetail(odDetail)) {
                     isOrderDetailListChanged = true;
                 }
                 else{
@@ -798,15 +796,13 @@ public class OrderInfoView extends AbstractOrderView {
             currentOrder.setOrderDetailIdList(orderDetailIdList);
             // If all order details are canceled or deleted, mark order as CANCELED
             if (allOrderDetailCanceled || currentOrder.getOrderDetailIdList().isEmpty()) {
+                currentOrder.setStatus(Types.State.CANCELED);
                 if( isNewOrder ){
-                    // Ignore this order
-                    currentOrder.setStatus(Types.State.CANCELED);
+                    // Ignore this order by return false
                     return false;
                 }
-                currentOrder.setStatus(Types.State.CANCELED);
             }
-
-            if( isNewFoodAdded ){
+            else if( isNewFoodAdded ){
                 // reset creating time when user add new food to exist order
                 if( currentOrder.getStatus() != State.WAITING ){
                     currentOrder.setCreatingTime(new Date());
@@ -814,34 +810,12 @@ public class OrderInfoView extends AbstractOrderView {
                 currentOrder.setStatus(Types.State.WAITING);
                 currentOrder.setWaitingTime(0); // reset waiting time
             }
-
-            if( !hasWaitingOrderDetail ){
+            else if( !hasWaitingOrderDetail ){
                 currentOrder.setStatus(Types.State.UNPAID);
             }
         }
 
         return true;
-    }
-
-    /*
-     * Get order from db return NULL if no order for this table
-     */
-    private Order retrieveOrder() {
-        System.out.println("loadOrder...");
-        List<Types.State> states = new ArrayList<Types.State>();
-        states.add(Types.State.PAID);
-        states.add(Types.State.CANCELED);
-        List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
-        System.out.println(orderList.toString());
-        for (Order order : orderList) {
-            if( order.getTableId().equals(this.getCurrentTable().getId()) ) {
-                System.out.println("OrderId: " + order.getId());
-                return order;
-            }
-        }
-        System.out.println("No order for tableId: "
-                + this.getCurrentTable().getId());
-        return null;
     }
 
     public Order getCurrentOrder() {

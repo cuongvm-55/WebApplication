@@ -129,7 +129,7 @@ public class FoodForm extends Window implements ViewInterface{
 
                     break;
                 case UPDATE:
-                    if( !Adapter.updateFood(food.getId(), food) ){
+                    if( !Adapter.updateFood(food) ){
                         System.out.println("Fail to update food: " + food.getId() );
                     }
 
@@ -144,7 +144,7 @@ public class FoodForm extends Window implements ViewInterface{
                 if(preCate != null){
                     List<String> foodIds = preCate.getFoodIdList();
                     foodIds.remove(food.getId());
-                    if( !Adapter.updateCategory(preCate.getId(), preCate) ){
+                    if( !Adapter.updateCategory(preCate) ){
                         System.out.println("Fail to update category id: " + preCate.getId());
                     }
                 }
@@ -154,7 +154,7 @@ public class FoodForm extends Window implements ViewInterface{
                 if( newCate != null ){
                     List<String> foodIds = newCate.getFoodIdList();
                     foodIds.add(food.getId());
-                    if( !Adapter.updateCategory(newCate.getId(), newCate) ){
+                    if( !Adapter.updateCategory(newCate) ){
                         System.out.println("Fail to update category id: " + newCate.getId());
                     }
                 }

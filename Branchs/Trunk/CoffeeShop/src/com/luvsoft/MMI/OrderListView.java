@@ -75,7 +75,7 @@ public class OrderListView extends Panel implements ViewInterface{
     }
     private void loadContent() {
         loadOrderList();
-        if( orderList.isEmpty() ){
+        if( orderList == null || orderList.isEmpty() ){
             // No Order in orderlist
             Label lbl = new Label(Language.NO_ORDER_IN_ORDER_LIST);
             vtcLayout.addComponent(lbl);
@@ -109,12 +109,11 @@ public class OrderListView extends Panel implements ViewInterface{
      * At a particular moment, there's only 1 Order corresponding to a Table
      * In DB, we should have two types of Orders:
      *  1. Saved orders - could not be modified anymore, that's all complete orders
-     *     - Order state must be "PAID"
+     *     - Order state must be "PAID" or "CANCELED"
      *  2. Current orders - user are working with these orders, add food, confirm paid,...
      *     - Order state < "PAID"
      * - When user confirm order foods for the first time, an Order will be added to db as a new "current orders" for a table
-     * - When a table changes state from other states to EMPTY, the associated Order will be set to "COMPLETED" 
-     *   and can't be modified anymore
+     * - When user cancel or confirm paid, the associated Order will be set to "PAID", "CANCELED" and can't be modified anymore
      * 
      * This function loads all "current orders" that has state WAITING
      */
