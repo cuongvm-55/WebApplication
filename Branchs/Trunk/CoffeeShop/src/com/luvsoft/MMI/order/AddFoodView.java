@@ -195,7 +195,10 @@ public class AddFoodView extends AbstractOrderView {
         for(int i=1; i<=20; i++) {
             cbNumberList.addItem(i);
         }
-        cbNumberList.setEnabled(false);
+        cbNumberList.setValue(1);
+
+        cbNumberList.setEnabled(true);
+        //cbNumberList.setEnabled(false);
 
         grid.addComponents(foodName, checkBox, cbNumberList);
         grid.setColumnExpandRatio(0, 5.0f);
@@ -208,10 +211,10 @@ public class AddFoodView extends AbstractOrderView {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 boolean value = (boolean) event.getProperty().getValue();
-                cbNumberList.setEnabled(value);
+                //cbNumberList.setEnabled(value);
                 Integer number = (Integer) cbNumberList.getValue();
                 if(number == null) {
-                    cbNumberList.setValue(1);
+                    //cbNumberList.setValue(1);
                     number = 1;
                 }
 
@@ -219,13 +222,9 @@ public class AddFoodView extends AbstractOrderView {
                 if (value == true) {
                     orderDetailExtension.getOrderDetailRecord().setQuantity(number);
                 }
-                cbNumberList.setImmediate(true);
-                checkBox.setImmediate(true);
             }
         });
-
         cbNumberList.addValueChangeListener(new ValueChangeListener() {
-            
             @Override
             public void valueChange(ValueChangeEvent event) {
                 String foodNumber = event.getProperty().getValue().toString();
@@ -238,6 +237,8 @@ public class AddFoodView extends AbstractOrderView {
             }
         });
 
+        cbNumberList.setImmediate(false);
+        checkBox.setImmediate(false);
         orderDetailExtensionList.add(orderDetailExtension);
     }
 

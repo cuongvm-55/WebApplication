@@ -25,9 +25,13 @@ public class CategoryController extends AbstractController{
      */
     public List<Category> getAllCategory() {
         if( isSUPMode() ){
+            System.out.println("Supmode...");
             List<Category> list = new ArrayList<Category>();
             categoryFacade.findAll(list);
             return list;
+        }
+        else{
+            System.out.println("Operator...");
         }
         return CachedData.categoryList;
     }
