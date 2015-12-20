@@ -395,6 +395,7 @@ public class OrderInfoView extends AbstractOrderView {
         txtNote.addStyleName("bold large FONT_TAHOMA");
         txtNote.setSizeFull();
         txtNote.setValue(currentOrder.getNote());
+        txtNote.setResponsive(false);
 
         // total amount label
         lbTotalAmount = new Label();
@@ -420,9 +421,9 @@ public class OrderInfoView extends AbstractOrderView {
         layout.setSpacing(true);
 
         container.addComponents(lbTableName, txtNote, tbOrderDetails, layout, buildFooter());
-        container.setExpandRatio(txtNote, 1.0f);
+        container.setExpandRatio(txtNote, 2.0f);
         container.setExpandRatio(tbOrderDetails, 7.0f);
-        container.setResponsive(true);
+        // container.setResponsive(true);
         container.setSizeFull();
         container.setComponentAlignment(lbTableName, Alignment.TOP_CENTER);
 
