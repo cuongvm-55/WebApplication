@@ -176,13 +176,16 @@ public class CoffeeshopUI extends UI {
         if(str.length < 2) {
             messageId = message;
             messageData = "";
-        } else {
+        } else if(str.length == 2) {
             messageId = str[0];
             messageData = str[1];
+        } else {
+            messageId = str[0];
+            messageData = str[1] + "::" + str[2];
         }
 
         if(messageId.equals(CoffeeshopUI.UPDATE_WAITING_TIME)) {
-            access(() -> mainView.getTableListView().updateWaitingTime());
+            access(() -> mainView.getTableListView().updateWaitingTime(messageData));
         } else if(messageId.equals(CoffeeshopUI.NEW_ORDER_MESSAGE)) {
             access(() -> mainView.getOrderListView().haveNewOrder(messageData));
             access(() -> mainView.getTableListView().reloadView());

@@ -26,8 +26,11 @@ public class TableListView extends VerticalLayout implements ViewInterface {
     private List<Floor> floorList;
     private List<Table> tableList;
     private ViewInterface parentView;
+    private List<CoffeeTableElement> listTableElement;  
+
     public TableListView(){
         super();
+        listTableElement = new ArrayList<CoffeeTableElement>();
     }
 
     @Override
@@ -36,6 +39,8 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         this.setHeightUndefined();
         this.addStyleName("table-list-view");
         removeAllComponents();
+        listTableElement.clear();
+
         floorList = Adapter.retrieveFloorList();
         if( floorList == null ){
             System.out.println("There's no floor!");
@@ -79,6 +84,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
                 tableElement.initCoffeeTableElement();
 
                 gridElementContent.addComponent(tableElement);
+                listTableElement.add(tableElement);
             }
 
             // Add table button
@@ -147,8 +153,17 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         reloadView();
     }
 
-    public void updateWaitingTime() {
-        reloadView();
+    public void updateWaitingTime(String messageData) {
+        String tableId, wattingTime;
+        String str[] = messageData.split("::");
+        tableId = str[0];
+        wattingTime = str[1];
+
+        for (CoffeeTableElement coffeeTableElement : listTableElement) {
+            if(tableId.equals(coffeeTableElement.getTable().getId())) {
+                coffeeTableElement.setWaitingTimeLabel(Integer.parseInt(wattingTime));
+            }
+        }
     }
 
     @Override

@@ -49,6 +49,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
 
         this.addStyleName("card");
         this.setSizeFull();
+        this.removeAllComponents();
 
         this.btnTableState = new Image();
         this.btnTableState.setWidth("70%");
@@ -87,7 +88,7 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
      * This function is used to set waiting time for a table
      * @param waiting time
      */
-    private void setWaitingTimeLabel(int waitingTime) {
+    public  void setWaitingTimeLabel(int waitingTime) {
         if (0 < waitingTime) {
             this.lblWaitingTime.addStyleName("TEXT_RED");
             this.lblWaitingTime.setValue(Language.WAITING + " " + waitingTime

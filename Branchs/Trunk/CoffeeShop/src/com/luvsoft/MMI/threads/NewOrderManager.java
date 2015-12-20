@@ -28,7 +28,7 @@ public class NewOrderManager extends Thread {
                 currentOrder.setWaitingTime(waitingTime);
                 if(currentOrder.getStatus().equals(Types.State.WAITING) && waitingTime > 0) {
                     if( Adapter.updateFieldValueOfOrder(currentOrder.getId(), Order.DB_FIELD_NAME_WAITING_TIME, waitingTime) ) {
-                        Broadcaster.broadcast(CoffeeshopUI.UPDATE_WAITING_TIME);
+                        Broadcaster.broadcast(CoffeeshopUI.UPDATE_WAITING_TIME + "::" + currentOrder.getTableId() + "::" + waitingTime);
                     }
                 }
                 Thread.sleep(60000);
