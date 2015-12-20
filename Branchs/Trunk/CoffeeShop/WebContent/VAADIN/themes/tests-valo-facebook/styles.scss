@@ -111,6 +111,11 @@
         height: 50px !important;
     }
 
+    .select-management .v-select-select {
+       width: 150px !important;
+       height: 35px !important;
+       font-size: large;
+    }
     .text-align-left{
         text-align: left;
     }
@@ -223,14 +228,14 @@
     }
 
     .large-checkbox .v-checkbox-large > input ~ label:before {
-        height: 35px !important;
-        width: 35px !important;
+        height: 40px !important;
+        width: 40px !important;
     }
 
     .large-checkbox .v-checkbox-large > input ~ label:after {
         font-size: 30px !important;
-        width: 35px !important;
-        height: 35px !important;
+        width: 40px !important;
+        height: 40px !important;
     }
 
     .grid-layout-custom .v-gridlayout-slot {

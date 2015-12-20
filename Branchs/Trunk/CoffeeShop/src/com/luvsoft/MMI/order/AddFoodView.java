@@ -19,11 +19,11 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -184,12 +184,11 @@ public class AddFoodView extends AbstractOrderView {
         checkBox.addStyleName(ValoTheme.CHECKBOX_LARGE);
         checkBox.setSizeFull();
 
-        ComboBox cbNumberList = new ComboBox();
+        NativeSelect cbNumberList = new NativeSelect();
         cbNumberList.setValue(1);
         cbNumberList.setNullSelectionAllowed(false);
-        cbNumberList.setTextInputAllowed(false);
         cbNumberList.setResponsive(true);
-        cbNumberList.setHeight("35px");
+        cbNumberList.setHeight("40px");
         cbNumberList.addStyleName("FONT_X_LARGE");
 
         for(int i=1; i<=20; i++) {
@@ -205,6 +204,7 @@ public class AddFoodView extends AbstractOrderView {
         grid.setColumnExpandRatio(1, 0.5f);
         grid.setColumnExpandRatio(2, 0.5f);
 
+        grid.setComponentAlignment(cbNumberList, Alignment.MIDDLE_CENTER);
         // Handle events
         checkBox.addValueChangeListener(new ValueChangeListener() {
 

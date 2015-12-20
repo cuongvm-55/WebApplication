@@ -21,8 +21,8 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
@@ -62,10 +62,8 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         for( int i = 0; i < orderDetailList.size(); i++ ){
             Integer itemId = new Integer(i);
             OrderDetailRecord orderDetail = orderDetailList.get(i);
-            ComboBox select = new ComboBox();
+            NativeSelect select = new NativeSelect();
             select.setNullSelectionAllowed(false);
-            select.setScrollToSelectedItem(true);
-            select.setTextInputAllowed(false);
             select.addItem(Language.CANCELED/*Types.State.CANCELED.toString()*/);
             select.addItem(Language.WAITING/*Types.State.WAITING.toString()*/);
             select.addItem(Language.COMPLETED/*Types.State.COMPLETED.toString()*/);
@@ -129,7 +127,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
         tbOrderInfos.addContainerProperty(Language.FOOD_NAME, String.class, null);
         tbOrderInfos.addContainerProperty(Language.QUANTITY, Integer.class, null);
-        tbOrderInfos.addContainerProperty(Language.STATUS, ComboBox.class, null);
+        tbOrderInfos.addContainerProperty(Language.STATUS, NativeSelect.class, null);
         tbOrderInfos.addContainerProperty(new String("orderdetailId"), String.class, null);
         tbOrderInfos.setResponsive(true);
         tbOrderInfos.setSizeFull();

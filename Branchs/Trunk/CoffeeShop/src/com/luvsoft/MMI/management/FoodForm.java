@@ -20,10 +20,10 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -56,6 +56,7 @@ public class FoodForm extends Window implements ViewInterface{
         this.setWidth("340px");
         this.setHeight("330px");
         this.center();
+        this.addStyleName("select-management");
         
         foodItem = new PropertysetItem();
         foodItem.addItemProperty("name", new ObjectProperty<String>(food.getName()));
@@ -68,7 +69,7 @@ public class FoodForm extends Window implements ViewInterface{
         TextField priceField = new TextField(Language.PRICE);
         priceField.setRequired(true);
 
-        ComboBox cbType = new ComboBox(Language.CATEGORY);
+        NativeSelect cbType = new NativeSelect(Language.CATEGORY);
         List<Category> cateList = Adapter.retrieveCategoryList();
         if( cateList != null ){
             for( Category cate : cateList ){
@@ -78,9 +79,8 @@ public class FoodForm extends Window implements ViewInterface{
                 cbType.select(cateList.get(0).getName());
             }
         }
-        cbType.setScrollToSelectedItem(true);
+
         cbType.setNullSelectionAllowed(false);
-        cbType.setTextInputAllowed(false);
         cbType.setRequired(true);
         cbType.setResponsive(true);
 
@@ -97,7 +97,6 @@ public class FoodForm extends Window implements ViewInterface{
             @SuppressWarnings("rawtypes")
             @Override
             public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-                // TODO Auto-generated method stub
                 return createField(dataType, fieldType);
             }
         });

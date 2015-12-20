@@ -29,10 +29,10 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
@@ -188,7 +188,7 @@ public class OrderInfoView extends AbstractOrderView {
                 null);
         tbOrderDetails.addContainerProperty(Language.FOOD_NAME, String.class,
                 null);
-        tbOrderDetails.addContainerProperty(Language.STATUS, ComboBox.class,
+        tbOrderDetails.addContainerProperty(Language.STATUS, NativeSelect.class,
                 null);
         tbOrderDetails.addContainerProperty(Language.QUANTITY, TextField.class,
                 null);
@@ -232,7 +232,7 @@ public class OrderInfoView extends AbstractOrderView {
             btnRemove.setIcon(FontAwesome.BAN);
             btnRemove.setData(i);
 
-            ComboBox cbStatus = new ComboBox();
+            NativeSelect cbStatus = new NativeSelect();
             if(record.getStatus() == Types.State.COMPLETED){
                 cbStatus.addItem(Language.COMPLETED);
             }
@@ -245,9 +245,7 @@ public class OrderInfoView extends AbstractOrderView {
             
             cbStatus.setData(i);
             cbStatus.setValue(Types.StateToLanguageString(record.getStatus()));
-            cbStatus.setScrollToSelectedItem(true);
             cbStatus.setNullSelectionAllowed(false);
-            cbStatus.setTextInputAllowed(false);
             cbStatus.setRequired(true);
             cbStatus.setResponsive(true);
 
@@ -334,7 +332,7 @@ public class OrderInfoView extends AbstractOrderView {
                 public String getStyle(Table source, Object itemId,
                         Object propertyId) {
                     Item item = tbOrderDetails.getItem(itemId);
-                    ComboBox states = (ComboBox) item.getItemProperty(Language.STATUS).getValue();
+                    NativeSelect states = (NativeSelect) item.getItemProperty(Language.STATUS).getValue();
                     if( states.getValue() != null &&
                             states.getValue().equals(Types.StateToLanguageString(Types.State.CANCELED))){
                         return "highlight-red";
