@@ -126,21 +126,17 @@ public class FoodManagement extends Window implements ViewInterface{
             hzLayout.setComponentAlignment(cbDel, Alignment.MIDDLE_CENTER);
             hzLayout.setComponentAlignment(btnModify, Alignment.MIDDLE_CENTER);
             hzLayout.setSpacing(true);
-            
-            
+
             //VerticalLayout defaultLayout = new VerticalLayout();
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
-                    buildContentElement(category), category.getName(), null);
-            //treeElement.setContentCollapse();
+                    buildContentElement(category), category.getName(), hzLayout);
             treeElement.getBtnExpandElement().addClickListener(new ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
                     if( treeElement.getContent().isVisible() ){
-                        //treeElement.setContent(defaultLayout);
                         treeElement.setContentCollapse();
                     }
                     else{
-                        //treeElement.setContent(buildContentElement(category));
                         treeElement.setContentExpand();
                     }
                 }

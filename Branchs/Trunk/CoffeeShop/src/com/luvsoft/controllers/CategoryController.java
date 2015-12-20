@@ -13,15 +13,22 @@ import com.luvsoft.facades.FoodFacade;
  * @author datnq.55
  *
  */
-
 public class CategoryController extends AbstractController{
     private static CategoryFacade categoryFacade = new CategoryFacade();
 
+    public CategoryController() {
+        setSUPMode(false);
+    }
     /**
      * Get all category from database
      * @return list of category
      */
     public List<Category> getAllCategory() {
+        if( isSUPMode() ){
+            List<Category> list = new ArrayList<Category>();
+            categoryFacade.findAll(list);
+            return list;
+        }
         return CachedData.categoryList;
     }
 
@@ -54,7 +61,23 @@ public class CategoryController extends AbstractController{
     }
 
     public List<Food> getFoodListOfCategory(String catId){
-        return CachedData.categoriesMaps.get(catId);
+        if( isSUPMode() ){
+            List<Food> foodList = new ArrayList<Food>();
+            Category cat = new Category();
+            if( categoryFacade.findById(catId, cat) ){
+                FoodFacade foodFacade = new FoodFacade();
+                for( String foodId : cat.getFoodIdList() ){
+                    Food food = new Food();
+                    if( foodFacade.findById(foodId, food)){
+                        foodList.add(food);
+                    }
+                }
+            }
+            return foodList;
+        }
+        else{
+            return CachedData.categoriesMaps.get(catId);
+        }
     }
  
     /**

@@ -306,4 +306,12 @@ public class Adapter {
     public static Food getFoodById(String foodId){
         return foodCtrl.getFoodById(foodId);
     }
+
+    public static boolean isSUPMode() {
+        return categoryCtrl.isSUPMode();
+    }
+
+    public static void setSUPMode(boolean isSUPMode) {
+        categoryCtrl.setSUPMode(isSUPMode);
+    }
 }

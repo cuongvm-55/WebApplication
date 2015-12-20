@@ -148,6 +148,8 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
             return;
         }
 
+        // we're in Operator mode
+        Adapter.setSUPMode(false);
         if(strStaffName == null) {
             strStaffName = getSession().getAttribute("user") != null ? getSession().getAttribute("user").toString() : "";
             System.out.println("STAFF NAME .......... " + strStaffName);
