@@ -192,8 +192,8 @@ public class ManagementView extends VerticalLayout{
                                         }
                                         else{
                                             Notification notify = new Notification("<b>Thông báo</b>",
-                                                    "<i><style color='#ff0000'>Đã gặp lỗi, xóa dữ liệu không thành công!</style></i>",
-                                                    Notification.Type.TRAY_NOTIFICATION  , true);
+                                                    "<i>Đã gặp lỗi, xóa dữ liệu không thành công!</i>",
+                                                    Notification.Type.ERROR_MESSAGE  , true);
                                             notify.setPosition(Position.BOTTOM_RIGHT);
                                             notify.show(Page.getCurrent());
                                             System.out.println("Fail to remove data...");
@@ -246,8 +246,8 @@ public class ManagementView extends VerticalLayout{
                     }
                     else{
                         Notification notify = new Notification("<b>Thông báo</b>",
-                                "<i><style color='#ff0000'>Đã gặp lỗi, xuất báo cáo không thành công!</style></i>",
-                                Notification.Type.TRAY_NOTIFICATION  , true);
+                                "<i>Đã gặp lỗi, xuất báo cáo không thành công!</i>",
+                                Notification.Type.ERROR_MESSAGE  , true);
                         notify.setPosition(Position.BOTTOM_RIGHT);
                         notify.show(Page.getCurrent());
                         System.out.println("Fail to remove data...");
