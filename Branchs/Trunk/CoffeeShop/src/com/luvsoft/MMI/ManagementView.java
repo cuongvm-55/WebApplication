@@ -97,7 +97,6 @@ public class ManagementView extends VerticalLayout{
         btnConfiguration.setCaption(Language.CONFIGURATION);
         btnConfiguration.setWidth("50%");
         btnConfiguration.addClickListener(new ClickListener() {
-            
             @Override
             public void buttonClick(ClickEvent event) {
                 getUI().addWindow(new ConfigForm(Adapter.getConfiguration()));
@@ -180,16 +179,28 @@ public class ManagementView extends VerticalLayout{
                                     cal.set(Calendar.MINUTE, toTime.getMinutes());
                                     cal.set(Calendar.SECOND, 58);
                                     Date endDate = cal.getTime();
-                                    if( removeOrderDataInDateRange(begDate, endDate) ){
-                                        // notify message
-                                        Notification notify = new Notification("<b>Thông báo</b>",
-                                                "<i>Đã xóa dữ liệu thành công!</i>",
-                                                Notification.Type.TRAY_NOTIFICATION  , true);
-                                        notify.setPosition(Position.BOTTOM_RIGHT);
-                                        notify.show(Page.getCurrent());
+                                    if( begDate != null && endDate != null &&
+                                            endDate.after(begDate) || endDate.equals(begDate) )
+                                    {
+                                        if( removeOrderDataInDateRange(begDate, endDate) ){
+                                            // notify message
+                                            Notification notify = new Notification("<b>Thông báo</b>",
+                                                    "<i>Đã xóa dữ liệu thành công!</i>",
+                                                    Notification.Type.TRAY_NOTIFICATION  , true);
+                                            notify.setPosition(Position.BOTTOM_RIGHT);
+                                            notify.show(Page.getCurrent());
+                                        }
+                                        else{
+                                            Notification notify = new Notification("<b>Thông báo</b>",
+                                                    "<i><style color='#ff0000'>Đã gặp lỗi, xóa dữ liệu không thành công!</style></i>",
+                                                    Notification.Type.TRAY_NOTIFICATION  , true);
+                                            notify.setPosition(Position.BOTTOM_RIGHT);
+                                            notify.show(Page.getCurrent());
+                                            System.out.println("Fail to remove data...");
+                                        }
                                     }
                                     else{
-                                        System.out.println("Fail to remove data...");
+                                        System.out.println("Invalid date range...");
                                     }
                                 } else {
                                     System.out.println("user canceled, do nothing!");
@@ -234,6 +245,12 @@ public class ManagementView extends VerticalLayout{
                         notify.show(Page.getCurrent());
                     }
                     else{
+                        Notification notify = new Notification("<b>Thông báo</b>",
+                                "<i><style color='#ff0000'>Đã gặp lỗi, xuất báo cáo không thành công!</style></i>",
+                                Notification.Type.TRAY_NOTIFICATION  , true);
+                        notify.setPosition(Position.BOTTOM_RIGHT);
+                        notify.show(Page.getCurrent());
+                        System.out.println("Fail to remove data...");
                         System.out.println("Fail to export report");
                     }
                 }
@@ -246,7 +263,7 @@ public class ManagementView extends VerticalLayout{
         HorizontalLayout control = new HorizontalLayout();
         control.addComponents(btnClearData, btnCreateReport);
         control.setSpacing(true);
-        
+
         VerticalLayout layout = new VerticalLayout();
         layout.setSizeFull();
         layout.addComponents(lblChooseDate, frLayout, toLayout, control);

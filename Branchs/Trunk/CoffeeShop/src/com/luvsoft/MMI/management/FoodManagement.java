@@ -155,12 +155,12 @@ public class FoodManagement extends Window implements ViewInterface{
 
         for(int index=0; index < category.getFoodIdList().size();index++){
             Food food = Adapter.getFoodById(category.getFoodIdList().get(index));
-            vtcElementContainer.addComponents(buildChildElementContainer(food));
+            vtcElementContainer.addComponents(buildChildElementContainer(category, food));
         }
         return vtcElementContainer;
     }
 
-    private Component buildChildElementContainer(Food food) {
+    private Component buildChildElementContainer(Category category, Food food) {
         HorizontalLayout hrzChildElementContainer = new HorizontalLayout();
         hrzChildElementContainer.setSizeFull();
         hrzChildElementContainer.addStyleName(ValoTheme.LAYOUT_CARD);
@@ -203,7 +203,7 @@ public class FoodManagement extends Window implements ViewInterface{
         btnEdit.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                FoodForm form = new FoodForm(food, STATE.UPDATE);
+                FoodForm form = new FoodForm(category, food, STATE.UPDATE);
                 form.setParentView(FoodManagement.this);
                 getUI().addWindow(form);
             }
@@ -239,7 +239,7 @@ public class FoodManagement extends Window implements ViewInterface{
         btnAddFood.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                FoodForm form = new FoodForm(new Food(), STATE.ADDNEW);
+                FoodForm form = new FoodForm(null, new Food(), STATE.ADDNEW);
                 form.setParentView(FoodManagement.this);
                 getUI().addWindow(form);
             }

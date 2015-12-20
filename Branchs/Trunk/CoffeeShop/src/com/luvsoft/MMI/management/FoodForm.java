@@ -42,9 +42,11 @@ public class FoodForm extends Window implements ViewInterface{
     static public enum STATE{UPDATE, ADDNEW};
     private STATE state;
     private Food food;
+    private Category category;
 
-    public FoodForm(Food _food, STATE _state){
+    public FoodForm(Category _category, Food _food, STATE _state){
         state = _state;
+        category = _category;
         food = _food;
         String caption = ( state == STATE.ADDNEW) ? Language.NEW_FOOD : Language.UPDATE_FOOD;
         this.setModal(true);
@@ -72,6 +74,9 @@ public class FoodForm extends Window implements ViewInterface{
             for( Category cate : cateList ){
                 cbType.addItem(cate.getName());
             }
+            if(!cateList.isEmpty()){
+                cbType.select(cateList.get(0).getName());
+            }
         }
         cbType.setScrollToSelectedItem(true);
         cbType.setNullSelectionAllowed(false);
@@ -79,9 +84,8 @@ public class FoodForm extends Window implements ViewInterface{
         cbType.setRequired(true);
         cbType.setResponsive(true);
 
-        Category cate = Adapter.getCategoryOfFood(food.getId());
-        if( cate != null ){
-            cbType.setValue(cate.getName());
+        if( category != null ){
+            cbType.setValue(category.getName());
         }
 
         // Now create the binder and bind the fields
@@ -140,28 +144,32 @@ public class FoodForm extends Window implements ViewInterface{
                 }
 
                 // Remove food id from previous category
-                Category preCate = Adapter.getCategoryOfFood(food.getId());
-                if( !preCate.getName().equals(cbType.getValue().toString()) ){
-                    if(preCate != null){
-                        List<String> foodIds = preCate.getFoodIdList();
-                        foodIds.remove(food.getId());
-                        if( !Adapter.updateCategory(preCate) ){
-                            System.out.println("Fail to update category id: " + preCate.getId());
-                        }
+                Category preCate = category;
+                Category newCate = Adapter.getCategoryByName(cbType.getValue().toString());
+                if(preCate != null){
+                    if( preCate.getId().equals(newCate.getId()) ){
+                        // nothing changed on category
+                        parentView.reloadView();
+                        close();
+                        return;
                     }
+                    List<String> foodIds = preCate.getFoodIdList();
+                    foodIds.remove(food.getId());
+                    if( !Adapter.updateCategory(preCate) ){
+                        System.out.println("Fail to update category id: " + preCate.getId());
+                    }
+                }
 
-                    // Add to selected category
-                    Category newCate = Adapter.getCategoryByName(cbType.getValue().toString());
-                    if( newCate != null ){
-                        List<String> foodIds = newCate.getFoodIdList();
-                        foodIds.add(food.getId());
-                        if( !Adapter.updateCategory(newCate) ){
-                            System.out.println("Fail to update category id: " + newCate.getId());
-                        }
+                // Add to selected category
+                if( newCate != null ){
+                    List<String> foodIds = newCate.getFoodIdList();
+                    foodIds.add(food.getId());
+                    if( !Adapter.updateCategory(newCate) ){
+                        System.out.println("Fail to update category id: " + newCate.getId());
                     }
-                    else{
-                        System.out.println("Cannot find category name: " + cbType.getValue().toString());
-                    }
+                }
+                else{
+                    System.out.println("Cannot find category name: " + cbType.getValue().toString());
                 }
 
                 parentView.reloadView();
