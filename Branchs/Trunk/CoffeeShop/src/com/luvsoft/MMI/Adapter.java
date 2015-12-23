@@ -115,7 +115,7 @@ public class Adapter {
         return orderCtrl.updateOrderDetail(orderDetail);
     }
     
-    public static boolean updateFieldValueOfOrderDetail(String orderId, String fieldName, String fieldVale){
+    public static boolean updateFieldValueOfOrderDetail(String orderId, String fieldName, Object fieldVale){
         return orderCtrl.updateFieldValueOfOrderDetail(orderId, fieldName, fieldVale);
     }
     
@@ -252,7 +252,7 @@ public class Adapter {
         }
         return null;
     }
-    
+
     public static Category getCategoryByName(String categoryName){
         List<Category> cateList = Adapter.retrieveCategoryList();
         if( cateList != null ){

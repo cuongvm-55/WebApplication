@@ -36,29 +36,6 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class AddFoodView extends AbstractOrderView {
-
-    private class OrderDetailRecordExtension {
-        private OrderDetailRecord orderDetailRecord;
-        private boolean enable;
-
-        public OrderDetailRecordExtension(OrderDetailRecord orderDetailRecord, boolean enable) {
-            this.orderDetailRecord = orderDetailRecord;
-            this.enable = enable;
-        }
-
-        public OrderDetailRecord getOrderDetailRecord() {
-            return orderDetailRecord;
-        }
-
-        public boolean isEnable() {
-            return enable;
-        }
-
-        public void setEnable(boolean enable) {
-            this.enable = enable;
-        }
-    }
-
     private List<Category> listOfCategory;
     private List<OrderDetailRecord> orderDetailRecordList;
     private List<OrderDetailRecordExtension> orderDetailExtensionList;

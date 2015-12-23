@@ -7,14 +7,14 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
 public class MongoDBConnection {
-	// Database URLs
-	public static final String MONGOCONNECTION_MONGOLAB = "mongodb://root:root@ds041992.mongolab.com:41992/coffeeshop";
-	public static final String MONGOCONNECTION_LOCALHOST = "mongodb://localhost:27017/coffeeshop";
-	    
-	private static MongoDBConnection instance;
+    // Database URLs
+    public static final String MONGOCONNECTION_MONGOLAB = "mongodb://root:root@ds041992.mongolab.com:41992/coffeeshop";
+    public static final String MONGOCONNECTION_LOCALHOST = "mongodb://localhost:27017/coffeeshop";
+    
+    private static MongoDBConnection instance;
     private static MongoClient mongoClient;
     private static DB database;
-    
+
     /*
      * @name connectMongoDB function
      */

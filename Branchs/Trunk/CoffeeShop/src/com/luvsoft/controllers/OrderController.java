@@ -113,7 +113,7 @@ public class OrderController extends AbstractController{
     /*
      * Update fieldValue
      */
-    public boolean updateFieldValueOfOrderDetail(String orderId, String fieldName, String fieldVale){
+    public boolean updateFieldValueOfOrderDetail(String orderId, String fieldName, Object fieldVale){
         return orderDetailFacade.updateFieldValue(orderId, fieldName, fieldVale);
     }
 
