@@ -93,7 +93,7 @@ public class ChangeTable extends Window implements ViewInterface{
         lblTblName.setWidth("100%");
 
         // Checkbox to select all order detail
-        CheckBox cbSelectAll = new CheckBox("Chọn hết"); 
+        CheckBox cbSelectAll = new CheckBox(); 
         cbSelectAll.addStyleName(ValoTheme.CHECKBOX_LARGE);
         cbSelectAll.setSizeFull();
         cbSelectAll.addValueChangeListener(new ValueChangeListener() {
@@ -109,8 +109,14 @@ public class ChangeTable extends Window implements ViewInterface{
             }
         });
 
+        Label lblSelectAll = new Label("Chọn hết");
+        lblSelectAll.addStyleName(ValoTheme.LABEL_HUGE + " TEXT_ALIGN_RIGHT");
+
+        Label lblMoveTo = new Label(Language.MOVE_TO);
+        lblMoveTo.addStyleName(ValoTheme.LABEL_HUGE + " TEXT_ALIGN_RIGHT");
+
         // Combobox destination table name
-        nsDestTables = new NativeSelect(Language.MOVE_TO);
+        nsDestTables = new NativeSelect();
         nsDestTables.setNullSelectionAllowed(false);
         nsDestTables.setInvalidAllowed(false);
         nsDestTables.setRequired(true);
@@ -136,10 +142,12 @@ public class ChangeTable extends Window implements ViewInterface{
         }
 
 
-        CssLayout hzLayout = new CssLayout();
+        HorizontalLayout hzLayout = new HorizontalLayout();
         hzLayout.addStyleName(" TEXT_CENTER large-individual-checkbox");
         hzLayout.setWidth("100%");
-        hzLayout.addComponents(cbSelectAll, nsDestTables);
+        hzLayout.addComponents(lblSelectAll, cbSelectAll, lblMoveTo, nsDestTables);
+        hzLayout.setComponentAlignment(lblSelectAll, Alignment.MIDDLE_RIGHT);
+        hzLayout.setComponentAlignment(lblMoveTo, Alignment.MIDDLE_RIGHT);
         cbList = new ArrayList<CheckBox>();
 
         // Grid to hold the order detail content

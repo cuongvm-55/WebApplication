@@ -36,6 +36,10 @@
      text-align:center;
    }
 
+   .TEXT_ALIGN_RIGHT {
+     text-align:right;
+   }
+
    .FONT_LARGE {
       font-size: 25px;
    }
@@ -315,7 +319,7 @@
        font-size: 40px;
     }
 
-    .table-list-view .v-csslayout-card {
-        height: 100%;
-    }
+    // .table-list-view .v-csslayout-card {
+    //    height: 90%;
+    // }
 }

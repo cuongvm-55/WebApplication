@@ -16,7 +16,6 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
@@ -307,15 +306,6 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         table.setTable(tempTable);
         
         doUpdateCoffeeTableElement(tableId, table);
-    }
-
-    private void doUpdateTableElementsList(String srcOrderId, String destOderId) {
-        for (CoffeeTableElement coffeeTableElement : listTableElement) {
-            if(coffeeTableElement.getOrder().getId().equals(srcOrderId)) {
-                Order order = Adapter.getOrder(destOderId);
-                coffeeTableElement.setOrder(order);
-            }
-        }
     }
 
     private void doUpdateCoffeeTableElement(String tableId, Table table) {
