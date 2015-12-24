@@ -76,9 +76,8 @@ public class AddFoodView extends AbstractOrderView {
         container.setSizeFull();
 
         Label lblTableNumber = new Label(Language.TABLE + " " + getCurrentTable().getNumber());
-        lblTableNumber.addStyleName("FONT_TAHOMA TEXT_CENTER BACKGROUND_BLUE TEXT_WHITE");
+        lblTableNumber.addStyleName("FONT_TAHOMA TEXT_CENTER BACKGROUND_BLUE TEXT_WHITE FONT_OVERSIZE");
         lblTableNumber.addStyleName(ValoTheme.LABEL_BOLD);
-        lblTableNumber.addStyleName(ValoTheme.LABEL_HUGE);
         lblTableNumber.setWidth("100%");
 
         Component content = buildContent();
@@ -154,7 +153,7 @@ public class AddFoodView extends AbstractOrderView {
                 orderDetail, false);
 
         Label foodName = new Label();
-        foodName.addStyleName(ValoTheme.LABEL_HUGE + " " + ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE");
+        foodName.addStyleName(ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE FONT_OVERSIZE");
         foodName.setValue(food.getName());
 
         CheckBox checkBox = new CheckBox();
@@ -162,11 +161,11 @@ public class AddFoodView extends AbstractOrderView {
         checkBox.setSizeFull();
 
         NativeSelect cbNumberList = new NativeSelect();
+        cbNumberList.setSizeFull();
         cbNumberList.setValue(1);
         cbNumberList.setNullSelectionAllowed(false);
         cbNumberList.setResponsive(true);
-        cbNumberList.setHeight("40px");
-        cbNumberList.addStyleName("FONT_X_LARGE");
+        cbNumberList.addStyleName("FONT_OVERSIZE");
 
         for(int i=1; i<=20; i++) {
             cbNumberList.addItem(i);
@@ -177,9 +176,9 @@ public class AddFoodView extends AbstractOrderView {
         //cbNumberList.setEnabled(false);
 
         grid.addComponents(foodName, checkBox, cbNumberList);
-        grid.setColumnExpandRatio(0, 5.0f);
+        grid.setColumnExpandRatio(0, 4.5f);
         grid.setColumnExpandRatio(1, 0.5f);
-        grid.setColumnExpandRatio(2, 0.5f);
+        grid.setColumnExpandRatio(2, 1.0f);
 
         grid.setComponentAlignment(cbNumberList, Alignment.MIDDLE_CENTER);
         // Handle events
@@ -227,7 +226,7 @@ public class AddFoodView extends AbstractOrderView {
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR + " TEXT_CENTER");
 
         Button btnConfirm = new Button(Language.CONFIRM);
-        btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnConfirm.addStyleName("BUTTON_GIGANTIC");
         btnConfirm.addStyleName(ValoTheme.BUTTON_PRIMARY);
 
         btnConfirm.addClickListener(new ClickListener() {

@@ -54,7 +54,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
         for (int j = 0; j < floorList.size(); j++) {
             GridLayout gridElementContent = new GridLayout();
-            gridElementContent.setColumns(3);
+            gridElementContent.setColumns(2);
             gridElementContent.setWidth("100%");
             System.out.println("FloorId: " + floorList.get(j).getId());
             tableList = Adapter.retrieveTableList(floorList.get(j).getTableIdList());
@@ -90,7 +90,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
             // Add table button
             Button btnAddTbl = new Button();
             btnAddTbl.setIcon(FontAwesome.PLUS_CIRCLE);
-            btnAddTbl.setStyleName("icon-only primary TEXT_WHITE " + ValoTheme.BUTTON_LARGE);
+            btnAddTbl.setStyleName("icon-only primary TEXT_WHITE BUTTON_GIGANTIC");
             btnAddTbl.addClickListener(new ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {

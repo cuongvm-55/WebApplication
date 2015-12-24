@@ -113,16 +113,15 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         tbOrderInfos = new Table();
         btnConfFinish = new Button(Language.ALL_DONE);
         btnConfFinish.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        btnConfFinish.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnConfFinish.addStyleName("BUTTON_GIGANTIC");
 
-        lbTableName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+        lbTableName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE FONT_OVERSIZE");
         lbTableName.addStyleName(ValoTheme.LABEL_BOLD);
-        lbTableName.addStyleName(ValoTheme.LABEL_HUGE);
         lbTableName.setWidth("100%");
 
         // Note text field
         txtNote = new TextArea(Language.NOTE);
-        txtNote.addStyleName("bold large FONT_TAHOMA");
+        txtNote.addStyleName("bold FONT_OVERSIZE TEXT_RED FONT_TAHOMA");
         txtNote.setSizeFull();
 
         tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
@@ -134,8 +133,8 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         tbOrderInfos.setSizeFull();
 
         tbOrderInfos.setColumnExpandRatio(Language.SEQUENCE, 0.5f);
-        tbOrderInfos.setColumnExpandRatio(Language.FOOD_NAME, 3.9f);
-        tbOrderInfos.setColumnExpandRatio(Language.STATUS, 1.4f);
+        tbOrderInfos.setColumnExpandRatio(Language.FOOD_NAME, 3.4f);
+        tbOrderInfos.setColumnExpandRatio(Language.STATUS, 1.9f);
         tbOrderInfos.setColumnExpandRatio(Language.QUANTITY, 0.7f);
 
         btnConfFinish.addClickListener(new ClickListener() {

@@ -29,6 +29,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -89,9 +90,8 @@ public class ChangeTable extends Window implements ViewInterface{
         odDetailRecordExtList = new ArrayList<OrderDetailRecordExtension>();
         // Table name
         Label lblTblName = new Label(orderInfo.getTableName());
-        lblTblName.addStyleName("FONT_TAHOMA TEXT_CENTER BACKGROUND_BLUE TEXT_WHITE");
+        lblTblName.addStyleName("FONT_TAHOMA TEXT_CENTER BACKGROUND_BLUE TEXT_WHITE FONT_OVERSIZE");
         lblTblName.addStyleName(ValoTheme.LABEL_BOLD);
-        lblTblName.addStyleName(ValoTheme.LABEL_HUGE);
         lblTblName.setWidth("100%");
 
         // Checkbox to select all order detail
@@ -116,7 +116,7 @@ public class ChangeTable extends Window implements ViewInterface{
         nsDestTables.setNullSelectionAllowed(false);
         nsDestTables.setInvalidAllowed(false);
         nsDestTables.setRequired(true);
-        nsDestTables.addStyleName("FONT_X_LARGE");
+        nsDestTables.addStyleName("FONT_OVERSIZE");
         List<Floor> floorList = Adapter.retrieveFloorList();
         if( floorList == null || floorList.isEmpty() ){
             System.out.println("No floor exist!");
@@ -139,12 +139,10 @@ public class ChangeTable extends Window implements ViewInterface{
         
         nsDestTables.removeItem(orderInfo.getTableName()); // Should not change to itself
 
-        HorizontalLayout hzLayout = new HorizontalLayout();
+        CssLayout hzLayout = new CssLayout();
+        hzLayout.addStyleName(" TEXT_CENTER large-individual-checkbox");
         hzLayout.setWidth("100%");
         hzLayout.addComponents(cbSelectAll, nsDestTables);
-        hzLayout.setComponentAlignment(cbSelectAll, Alignment.MIDDLE_LEFT);
-        hzLayout.setComponentAlignment(nsDestTables, Alignment.TOP_RIGHT);
-
         cbList = new ArrayList<CheckBox>();
 
         // Grid to hold the order detail content
@@ -165,14 +163,14 @@ public class ChangeTable extends Window implements ViewInterface{
         panelContent.setSizeFull();
 
         // Footer
-        HorizontalLayout footer = new HorizontalLayout();
+        CssLayout footer = new CssLayout();
         footer.setWidth("100%");
         footer.setHeightUndefined();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR + " TEXT_CENTER");
 
         // Confirm button
         Button btnConfirm = new Button(Language.CONFIRM);
-        btnConfirm.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnConfirm.addStyleName("BUTTON_GIGANTIC");
         btnConfirm.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         btnConfirm.addStyleName("margin-bottom1");
         btnConfirm.addClickListener(new ClickListener() {
@@ -193,7 +191,6 @@ public class ChangeTable extends Window implements ViewInterface{
             }
         });
         footer.addComponent(btnConfirm);
-        footer.setComponentAlignment(btnConfirm, Alignment.MIDDLE_CENTER);
 
         VerticalLayout cotainerLayout = new VerticalLayout();
         cotainerLayout.setSizeFull();
@@ -211,7 +208,7 @@ public class ChangeTable extends Window implements ViewInterface{
         OrderDetailRecordExtension rc = new OrderDetailRecordExtension(record, false);
 
         Label foodName = new Label();
-        foodName.addStyleName(ValoTheme.LABEL_HUGE + " " + ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE");
+        foodName.addStyleName( ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE FONT_OVERSIZE");
         foodName.setValue(record.getFoodName());
 
         CheckBox checkBox = new CheckBox();
@@ -220,10 +217,10 @@ public class ChangeTable extends Window implements ViewInterface{
         cbList.add(checkBox);
 
         NativeSelect cbNumberList = new NativeSelect();
+        cbNumberList.setSizeFull();
         cbNumberList.setNullSelectionAllowed(false);
         cbNumberList.setResponsive(true);
-        cbNumberList.setHeight("40px");
-        cbNumberList.addStyleName("FONT_X_LARGE");
+        cbNumberList.addStyleName("FONT_OVERSIZE");
 
         for(int i = 1; i <= record.getQuantity(); i++) {
             cbNumberList.addItem(i);
@@ -248,8 +245,8 @@ public class ChangeTable extends Window implements ViewInterface{
 
         grid.addComponents(checkBox, foodName, cbNumberList);
         grid.setColumnExpandRatio(0, 0.5f);
-        grid.setColumnExpandRatio(1, 5.0f);
-        grid.setColumnExpandRatio(2, 0.5f);
+        grid.setColumnExpandRatio(1, 4.0f);
+        grid.setColumnExpandRatio(2, 1.0f);
         grid.setComponentAlignment(cbNumberList, Alignment.MIDDLE_CENTER);
 
         odDetailRecordExtList.add(rc);

@@ -47,13 +47,12 @@ public class ChangeTableStateView extends AbstractOrderView implements
         setResizable(false);
         setDraggable(false);
         setSizeFull();
-        addStyleName("close-style");
+        addStyleName("close-style radio-style");
 
         
         Label lblTableNumber = new Label(Language.TABLE + " "+ getCurrentTable().getNumber());
-        lblTableNumber.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+        lblTableNumber.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE FONT_OVERSIZE ");
         lblTableNumber.addStyleName(ValoTheme.LABEL_BOLD);
-        lblTableNumber.addStyleName(ValoTheme.LABEL_HUGE);
         lblTableNumber.setWidth("100%");
 
         VerticalLayout vtcPopupContainer = new VerticalLayout();
@@ -64,7 +63,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
                 Language.CANCEL_ORDER, Language.PAID, Language.UNPAID);
         optionState.setItemEnabled(Language.PAID, false);
         optionState.setItemEnabled(Language.UNPAID, false);
-        optionState.addStyleName("bold FONT_LARGE");
+        optionState.addStyleName("bold FONT_OVER_OVERSIZE");
         optionState.addStyleName(ValoTheme.OPTIONGROUP_LARGE);
 
         selectOptionState(getCurrentTable().getState()); //@todo: should depend on Order state
@@ -160,17 +159,17 @@ public class ChangeTableStateView extends AbstractOrderView implements
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR + " TEXT_CENTER");
 
         btnConfirm = new Button(Language.CONFIRM);
-        btnConfirm.addStyleName(ValoTheme.BUTTON_FRIENDLY + " margin-right1 margin-left1 " + ValoTheme.BUTTON_HUGE);
+        btnConfirm.addStyleName(ValoTheme.BUTTON_FRIENDLY + " margin-right1 margin-left1 margin-bottom1 BUTTON_GIGANTIC");
         btnConfirm.setClickShortcut(KeyCode.ENTER, null);
 
         btnConfirmPaid = new Button(Language.PAY_BILL);
-        btnConfirmPaid.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 " + ValoTheme.BUTTON_HUGE);
+        btnConfirmPaid.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 margin-bottom1 BUTTON_GIGANTIC");
 
         btnAddOrder = new Button(Language.ADD_ORDER);
-        btnAddOrder.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 " + ValoTheme.BUTTON_HUGE);
+        btnAddOrder.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 margin-bottom1 BUTTON_GIGANTIC");
 
         btnChangeTable = new Button(Language.CHANGE_TABLE);
-        btnChangeTable.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 " + ValoTheme.BUTTON_HUGE);
+        btnChangeTable.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 margin-bottom1 BUTTON_GIGANTIC");
 
         // set control buttons state
         setControlBtnState();

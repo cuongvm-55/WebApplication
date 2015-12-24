@@ -30,6 +30,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
@@ -111,7 +112,7 @@ public class OrderInfoView extends AbstractOrderView {
 
         lbTableName = new Label();
         lbTableName
-                .setStyleName("bold huge FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
+                .setStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
         lbTableName.setWidth("100%");
         lbTableName.setValue(Language.TABLE + " "
                 + getCurrentTable().getNumber());
@@ -184,8 +185,8 @@ public class OrderInfoView extends AbstractOrderView {
         tbOrderDetails.addStyleName("bold large FONT_TAHOMA");
         tbOrderDetails.setSizeFull();
         tbOrderDetails.setResponsive(true);
-        tbOrderDetails.addContainerProperty(Language.SEQUENCE, Integer.class,
-                null);
+//        tbOrderDetails.addContainerProperty(Language.SEQUENCE, Integer.class,
+//                null);
         tbOrderDetails.addContainerProperty(Language.FOOD_NAME, String.class,
                 null);
         tbOrderDetails.addContainerProperty(Language.STATUS, NativeSelect.class,
@@ -202,12 +203,12 @@ public class OrderInfoView extends AbstractOrderView {
         tbOrderDetails.setColumnCollapsed("orderdetailId", true);
         tbOrderDetails.setPageLength(TABLE_NUMBER_OF_ROWS);
 
-        tbOrderDetails.setColumnExpandRatio(Language.SEQUENCE, 0.5f);
+//        tbOrderDetails.setColumnExpandRatio(Language.SEQUENCE, 0.5f);
         tbOrderDetails.setColumnExpandRatio(Language.FOOD_NAME, 2.2f);
-        tbOrderDetails.setColumnExpandRatio(Language.STATUS, 1.4f);
-        tbOrderDetails.setColumnExpandRatio(Language.QUANTITY, 0.7f);
+        tbOrderDetails.setColumnExpandRatio(Language.STATUS, 1.8f);
+        tbOrderDetails.setColumnExpandRatio(Language.QUANTITY, 0.9f);
         tbOrderDetails.setColumnExpandRatio(Language.PRICE, 1.1f);
-        tbOrderDetails.setColumnExpandRatio(Language.DELETE, 0.6f);
+        tbOrderDetails.setColumnExpandRatio(Language.DELETE, 0.5f);
     }
 
     private void updateTable() {
@@ -262,7 +263,7 @@ public class OrderInfoView extends AbstractOrderView {
             }
 
             // If item is not available, we will add new one
-            if( tbOrderDetails.addItem(new Object[] { i, record.getFoodName(),
+            if( tbOrderDetails.addItem(new Object[] { /*i,*/ record.getFoodName(),
                     // Types.StateToLanguageString(record.getStatus()),
                     cbStatus, txtQuantity, new Double(record.getPrice()),
                     btnRemove, record.getOrderDetailId() }, i) == null ) {
@@ -392,7 +393,7 @@ public class OrderInfoView extends AbstractOrderView {
 
         // Note text field
         txtNote = new TextArea(Language.NOTE);
-        txtNote.addStyleName("bold large FONT_TAHOMA");
+        txtNote.addStyleName("bold FONT_OVERSIZE FONT_TAHOMA TEXT_RED");
         txtNote.setSizeFull();
         txtNote.setValue(currentOrder.getNote());
         txtNote.setResponsive(false);
@@ -421,8 +422,8 @@ public class OrderInfoView extends AbstractOrderView {
         layout.setSpacing(true);
 
         container.addComponents(lbTableName, txtNote, tbOrderDetails, layout, buildFooter());
-        container.setExpandRatio(txtNote, 2.0f);
-        container.setExpandRatio(tbOrderDetails, 7.0f);
+        container.setExpandRatio(txtNote, 3.0f);
+        container.setExpandRatio(tbOrderDetails, 6.0f);
         // container.setResponsive(true);
         container.setSizeFull();
         container.setComponentAlignment(lbTableName, Alignment.TOP_CENTER);
@@ -445,15 +446,15 @@ public class OrderInfoView extends AbstractOrderView {
     private Component buildFooter() {
         OrderInfoView orderInforView = this;
 
-        HorizontalLayout footer = new HorizontalLayout();
+        CssLayout footer = new CssLayout();
         footer.setWidth("100%");
 
         footer.setHeightUndefined();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR + " TEXT_CENTER");
 
         // add food button
         btnAddFood = new Button(Language.ADD_FOOD);
-        btnAddFood.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnAddFood.addStyleName("BUTTON_GIGANTIC");
         btnAddFood.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         btnAddFood.addStyleName("margin-bottom1");
         btnAddFood.addClickListener(new ClickListener() {
@@ -470,10 +471,10 @@ public class OrderInfoView extends AbstractOrderView {
         // confirm button
         btnConfirmPaid = new Button(Language.CONFIRM_PAID);
         btnConfirmPaid.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        btnConfirmPaid.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnConfirmPaid.addStyleName("BUTTON_GIGANTIC");
 
         btnConfirmOrder = new Button(Language.CONFIRM_ORDER);
-        btnConfirmOrder.addStyleName(ValoTheme.BUTTON_HUGE);
+        btnConfirmOrder.addStyleName("BUTTON_GIGANTIC");
         btnConfirmOrder.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnConfirmOrder.addStyleName("margin-left1");
 
@@ -481,10 +482,6 @@ public class OrderInfoView extends AbstractOrderView {
         setControlButtonsState();
 
         footer.addComponents(btnAddFood, btnConfirmOrder, btnConfirmPaid);
-        footer.setComponentAlignment(btnAddFood, Alignment.MIDDLE_RIGHT);
-        footer.setComponentAlignment(btnConfirmOrder, Alignment.MIDDLE_LEFT);
-        footer.setComponentAlignment(btnConfirmPaid, Alignment.MIDDLE_CENTER);
-        footer.setSpacing(true);
 
         // Confirm order
         btnConfirmOrder.addClickListener(new ClickListener() {

@@ -8,6 +8,7 @@ public class LuvsoftNotification {
 
     Notification notify;
     public LuvsoftNotification(String caption, String description, Notification.Type type) {
+        caption += "</br>";
         description += "<span style=\"position:fixed;top:0;left:0;width:100%;height:100%\"></span>";
         notify = new Notification(caption, description, type, true);
         notify.setDelayMsec(300000);

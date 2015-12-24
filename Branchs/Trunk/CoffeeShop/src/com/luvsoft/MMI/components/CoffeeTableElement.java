@@ -13,6 +13,7 @@ import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
@@ -25,7 +26,7 @@ import com.vaadin.ui.themes.ValoTheme;
  *
  */
 @SuppressWarnings("serial")
-public class CoffeeTableElement extends VerticalLayout implements ClickListener {
+public class CoffeeTableElement extends CssLayout implements ClickListener {
     private TableListView tableListView;
     private Image btnTableState;
     private Label lblWaitingTime;
@@ -50,18 +51,18 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
     public void initCoffeeTableElement() {
         Types.State state = table.getState();
 
-        this.addStyleName("card");
+        this.addStyleName("card TEXT_ALIGN_CENTER");
         this.setSizeFull();
         this.removeAllComponents();
 
         this.btnTableState = new Image();
         this.btnTableState.setWidth("70%");
         this.btnTableState.setHeight("70%");
-        this.btnTableState.addStyleName("hoverImage");
+        this.btnTableState.addStyleName("hoverImage TEXT_ALIGN_CENTER");
         this.setButtonResource(state);
         
         this.lblWaitingTime = new Label();
-        this.lblWaitingTime.addStyleName("TEXT_CENTER " + ValoTheme.LABEL_BOLD + " " + ValoTheme.LABEL_LARGE);
+        this.lblWaitingTime.addStyleName("TEXT_CENTER FONT_OVER_OVERSIZE " + ValoTheme.LABEL_BOLD);
         if(state == Types.State.PAID) {
             setPaymentState(Types.State.PAID);
         } else if (state == Types.State.UNPAID) {
@@ -78,10 +79,10 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         }
 
         this.lblTableNumber = new Label(Language.TABLE + " " + table.getNumber());
-        this.lblTableNumber.addStyleName("TEXT_BLUE TEXT_CENTER " + ValoTheme.LABEL_HUGE + " " + ValoTheme.LABEL_BOLD);
+        this.lblTableNumber.addStyleName("TEXT_BLUE TEXT_CENTER FONT_OVER_OVERSIZE " + ValoTheme.LABEL_BOLD);
 
-        this.addComponents(btnTableState, lblWaitingTime, lblTableNumber);
-        this.setComponentAlignment(btnTableState, Alignment.MIDDLE_CENTER);
+        this.addComponents(lblTableNumber, btnTableState, lblWaitingTime);
+        // this.setComponentAlignment(btnTableState, Alignment.MIDDLE_CENTER);
 
         // Add click listener
         this.btnTableState.addClickListener(this);
@@ -93,27 +94,26 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
      */
     public  void setWaitingTimeLabel(int waitingTime) {
         if (0 < waitingTime) {
-            this.lblWaitingTime.addStyleName("TEXT_RED");
-            this.lblWaitingTime.setValue(Language.WAITING + " " + waitingTime
-                    + " " + Language.MINUTE);
+            this.lblWaitingTime.addStyleName("TEXT_RED FONT_OVER_OVERSIZE");
+            this.lblWaitingTime.setValue(Language.WAITING + " " + waitingTime + " " + Language.MINUTE);
         }
         else if( waitingTime == -1){
             // no order for this table
-            this.lblWaitingTime.addStyleName("TEXT_RED");
+            this.lblWaitingTime.addStyleName("TEXT_RED FONT_OVER_OVERSIZE");
             this.lblWaitingTime.setValue(Language.NO_ORDER_IN_THIS_TABLE);
         }
         else {
-            this.lblWaitingTime.addStyleName("TEXT_WHITE");
-            this.lblWaitingTime.setValue("NO TIME");
+            this.lblWaitingTime.addStyleName("TEXT_WHITE FONT_OVER_OVERSIZE");
+            this.lblWaitingTime.setValue(".");
         }
     }
 
     private void setPaymentState(Types.State state) {
         if(state == Types.State.PAID) {
-            this.lblWaitingTime.addStyleName("TEXT_RED");
+            this.lblWaitingTime.addStyleName("TEXT_RED FONT_OVER_OVERSIZE");
             this.lblWaitingTime.setValue(Language.PAID);
         } else if(state == Types.State.UNPAID) {
-            this.lblWaitingTime.addStyleName("TEXT_RED");
+            this.lblWaitingTime.addStyleName("TEXT_RED FONT_OVER_OVERSIZE");
             this.lblWaitingTime.setValue(Language.UNPAID);
         }
         else{

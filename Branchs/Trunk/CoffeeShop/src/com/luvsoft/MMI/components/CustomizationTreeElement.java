@@ -39,12 +39,12 @@ public class CustomizationTreeElement extends VerticalLayout{
         this.horzFloorTitleContainer.addStyleName("BACKGROUND_BLUE TEXT_WHITE " + ValoTheme.LAYOUT_COMPONENT_GROUP);
 
         this.btnExpandElement = new Button();
-        this.btnExpandElement.addStyleName("icon-only primary TEXT_WHITE " + ValoTheme.BUTTON_LARGE);
+        this.btnExpandElement.addStyleName("icon-only primary TEXT_WHITE BUTTON_GIGANTIC");
         this.btnExpandElement.setIcon(FontAwesome.CHEVRON_DOWN);
         this.btnExpandElement.setWidth("15%");
 
         this.lblFloorName = new Label(title);
-        this.lblFloorName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE " +ValoTheme.LABEL_BOLD + " " + ValoTheme.LABEL_HUGE);
+        this.lblFloorName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE FONT_OVERSIZE " +ValoTheme.LABEL_BOLD);
         this.lblFloorName.setWidth("70%");
 
         if( additionalComponent == null ){
