@@ -1,11 +1,14 @@
 package com.luvsoft.MMI.components;
 
+import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.order.ChangeTableStateView;
+import com.luvsoft.MMI.threads.NewOrderManager;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Table;
 import com.luvsoft.entities.Types;
+import com.luvsoft.entities.Types.State;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.server.ThemeResource;
@@ -216,5 +219,48 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+    
+    public static void makeTableStateCompliantWithOrderState(Table table, Order order){
+        Types.State tblState = State.UNDEFINED;
+        if( order == null ){
+            tblState = State.EMPTY;
+            // Save state to db
+            Adapter.changeTableState(table.getId(), tblState);
+            return;
+        }
+
+        switch(order.getStatus()){
+        case CANCELED:
+            tblState = State.EMPTY;
+            break;
+        default:
+            tblState = order.getStatus();
+            break;
+        }
+        // Save state to db
+        if( Adapter.changeTableState(table.getId(), tblState) ){
+            // Update MMI state
+            Types.State preState = table.getState();
+            // Invoke waiting time thread if its order is WAITING
+            // Transition from other state to WAITING
+            if( !preState.equals(Types.State.WAITING) && tblState.equals(Types.State.WAITING)){
+                if( order.getStatus().equals(Types.State.WAITING) ){
+                    NewOrderManager waitingTimeThread = new NewOrderManager( order );
+                    waitingTimeThread.start();
+                }
+            }
+
+            // Transition from WAITING state to other state
+            if( preState.equals(Types.State.WAITING) && !tblState.equals(Types.State.WAITING)){
+                for(NewOrderManager orderMgr : NewOrderManager.listWaitingOrderThreads){
+                    if( orderMgr.getCurrentOrder().getId().equals(order.getId()) ){
+                        orderMgr.interrupt();
+                        break;
+                    }
+                }
+            }
+        }
+        
     }
 }

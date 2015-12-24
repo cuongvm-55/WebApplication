@@ -94,7 +94,10 @@ public class Language {
                 NO_ORDER_IN_THIS_TABLE = "No order";
                 FOOD = "Food";
                 HAS_BEEN_COMPLETED = "has been completed.";
-
+                CHANGE_TABLE = "Change Table";
+                MOVE_TO = "Move to ";
+                CHECK_ALL= "Check all";
+              
                 // Errors
                 ERROR = "Error";
                 CANNOT_CHANGE_TABLE_STATE = "Cannot change table state to Empty, curent Order is not Paid! Please Cancel this order if you want";
@@ -118,6 +121,8 @@ public class Language {
                 CONIFRM_CANCEL_ORDER = "Do you want to Cancel the order of this table?";
                 ASK_FOR_CONFIRM = "Ok";
                 ASK_FOR_DENIED = "Cancel";
+                CONFIRM_CHANGE_TABLE = "Confirm change table";
+                CONFIRM_CHANGE_TABLE_CONTENT = "Do you really want to change table?";
 
                 SAVE = "Save";
             }
@@ -199,6 +204,9 @@ public class Language {
                 NO_ORDER_IN_THIS_TABLE = "Chưa đặt món";
                 FOOD = "Món";
                 HAS_BEEN_COMPLETED = "đã xong!";
+                CHANGE_TABLE = "Chuyển Bàn";
+                MOVE_TO = "Chuyển đến ";
+                CHECK_ALL = "Chọn hết";
 
                 // Errors
                 ERROR = "Lỗi";
@@ -223,6 +231,8 @@ public class Language {
                 CONIFRM_CANCEL_ORDER = "Bạn có chắc chắn muốn Hủy hóa đơn của bàn này không?";
                 ASK_FOR_CONFIRM = "Đồng ý";
                 ASK_FOR_DENIED = "Hủy";
+                CONFIRM_CHANGE_TABLE = "Xác nhận";
+                CONFIRM_CHANGE_TABLE_CONTENT = "Bạn có chắc chắn muốn chuyển bàn không?";
 
                 SAVE = "Lưu";
             }
@@ -305,6 +315,9 @@ public class Language {
     public static String NO_ORDER_IN_THIS_TABLE;
     public static String FOOD;
     public static String HAS_BEEN_COMPLETED;
+    public static String CHANGE_TABLE;
+    public static String MOVE_TO;
+    public static String CHECK_ALL;
 
     // Currency
     public static String CURRENCY_SYMBOL;
@@ -343,6 +356,8 @@ public class Language {
     public static String CONIFRM_CANCEL_ORDER;
     public static String ASK_FOR_CONFIRM;
     public static String ASK_FOR_DENIED;
+    public static String CONFIRM_CHANGE_TABLE;
+    public static String CONFIRM_CHANGE_TABLE_CONTENT;
 
     // Form
     public static String SAVE;

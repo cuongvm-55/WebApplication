@@ -32,6 +32,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
     private Button btnAddOrder;
     private Button btnConfirm;
     private Button btnConfirmPaid;
+    private Button btnChangeTable; // to move (part/or whole) order to other table
     private OrderInfoView orderInforView;
     private Types.State newState;
     private Order currentOrder;
@@ -80,6 +81,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
         btnConfirm.addClickListener(this);
         btnAddOrder.addClickListener(this);
         btnConfirmPaid.addClickListener(this);
+        btnChangeTable.addClickListener(this);
     }
 
     @Override
@@ -143,6 +145,12 @@ public class ChangeTableStateView extends AbstractOrderView implements
             getUI().addWindow(orderInforView);
             close();
         }
+        else if(event.getComponent() == btnChangeTable){
+            ChangeTable changeTblWindow = new ChangeTable(currentOrder);
+             changeTblWindow.setParentView(this);
+             getUI().addWindow(changeTblWindow);
+             close();
+         }
     }
 
     private Component buildFooter() {
@@ -160,10 +168,13 @@ public class ChangeTableStateView extends AbstractOrderView implements
         btnAddOrder = new Button(Language.ADD_ORDER);
         btnAddOrder.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 " + ValoTheme.BUTTON_HUGE);
 
+        btnChangeTable = new Button(Language.CHANGE_TABLE);
+        btnChangeTable.addStyleName(ValoTheme.BUTTON_PRIMARY + " margin-right1 margin-left1 " + ValoTheme.BUTTON_HUGE);
+
         // set control buttons state
         setControlBtnState();
 
-        footer.addComponents(btnAddOrder, btnConfirm, btnConfirmPaid);
+        footer.addComponents(btnAddOrder, btnConfirm, btnConfirmPaid, btnChangeTable);
         return footer;
     }
 
@@ -226,11 +237,15 @@ public class ChangeTableStateView extends AbstractOrderView implements
         btnConfirm.setVisible(false);
         btnAddOrder.setVisible(false);
         btnConfirmPaid.setVisible(false);
+        btnChangeTable.setVisible(false);
+
+        // No order in this table
         if(currentOrder == null){
             btnConfirm.setVisible(true);
             btnAddOrder.setVisible(true);
             return;
         }
+        btnChangeTable.setVisible(true);
         switch(currentOrder.getStatus()){
         case CANCELED:
         case PAID:
