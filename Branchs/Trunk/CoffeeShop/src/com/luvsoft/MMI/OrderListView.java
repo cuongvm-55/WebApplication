@@ -151,27 +151,38 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
      */
     private void doUpdateOrderElementList(String orderId) {
         Order order = Adapter.getOrder(orderId);
-        if(order.getStatus().equals(Types.State.UNPAID) || order.getStatus().equals(Types.State.PAID)) {
-            return;
-        }
 
         boolean isFounded = false;
         if(!orderListElements.isEmpty()) {
-            for (OrderElement orderElement : orderListElements) {
+            for (Iterator<OrderElement> it = orderListElements.iterator(); it.hasNext(); ) {
+                OrderElement orderElement = it.next();
                 if(orderElement.getOrder().getId().equals(orderId)) {
                     OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
                     if(!orderInfo.getOrderDetailRecordList().isEmpty()) {
-                        System.out.println("ORDER DETAIL is EMPTY");
-                        orderElement.reloadView();
-                        orderElement.populate(orderInfo);
-                    } else {
                         System.out.println("ORDER DETAIL is not EMPTY");
+                        if(!order.getStatus().equals(Types.State.WAITING)) {
+                            it.remove();
+                            this.removeComponent(orderElement);
+                            return;
+                        } else {
+                            orderElement.setOrder(order);
+                            orderElement.reloadView();
+                            orderElement.populate(orderInfo);
+                        }
+                    } else {
+                        System.out.println("ORDER DETAIL is EMPTY");
+                        it.remove();
                         this.removeComponent(orderElement);
                     }
                     isFounded = true;
                     break;
                 }
             }
+        }
+
+        // We will not add new order to list if it was paid or unpaid
+        if(!order.getStatus().equals(Types.State.WAITING)) {
+            return;
         }
         if(!isFounded) {
             OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);

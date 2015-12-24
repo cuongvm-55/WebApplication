@@ -25,7 +25,7 @@ public class NewOrderManager extends Thread {
         super.run();
 
         while(runableFlag) {
-            System.out.println("Thread is running...");
+            System.out.println("Thread running...TableId: " + currentOrder.getTableId() + ", OrderId: " + currentOrder.getId());
             try {
                 currentOrder.setWaitingTime(waitingTime);
                 if(currentOrder.getStatus().equals(Types.State.WAITING) && waitingTime > 0) {
@@ -39,6 +39,8 @@ public class NewOrderManager extends Thread {
             }
             catch ( InterruptedException e ) {
                 e.printStackTrace();
+                // Restore the interrupted status
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -58,7 +60,9 @@ public class NewOrderManager extends Thread {
     @Override
     public void interrupt() {
         runableFlag = false;
-        super.interrupt();
+        if( !super.isInterrupted() ){
+            super.interrupt();
+        }
     }
 
     public static boolean interruptWaitingOrderThread(Order order) {
@@ -66,20 +70,45 @@ public class NewOrderManager extends Thread {
         for(Iterator<NewOrderManager> it = listWaitingOrderThreads.iterator(); it.hasNext(); ) {
             NewOrderManager newOrderManager = it.next();
             if( newOrderManager.getCurrentOrder().getId().equals(order.getId()) ) {
-                it.remove();
+                System.out.println("Interrupt thread...TableId: " + order.getTableId() + ", OrderId: " + order.getId());
                 newOrderManager.interrupt();
+                it.remove();
                 ret = true;
             }
         }
         return ret;
     }
 
-    public static void updateOrder(Order srcOrder, Order destOrder) {
-        for (NewOrderManager newOrderManager : listWaitingOrderThreads) {
-            if(newOrderManager.getCurrentOrder().getId().equals(srcOrder.getId())) {
-                System.out.println("ORDER FOUND");
-                newOrderManager.setCurrentOrder(destOrder);
+    /**
+     * Used to update or create or remove a thread corresponding to an order
+     * 
+     * @param order
+     */
+    public static void onOrderStateChange(Order order) {
+        if(order == null) {
+            return;
+        }
+
+        boolean isExisted = false;
+        for(Iterator<NewOrderManager> it = listWaitingOrderThreads.iterator(); it.hasNext(); ) {
+            NewOrderManager newOrderManager = it.next();
+            if( newOrderManager.getCurrentOrder().getId().equals(order.getId()) ) {
+                isExisted = true;
+                if(order.getStatus().equals(Types.State.WAITING)) {
+                    System.out.println("Update thread...TableId: " + order.getTableId() + ", OrderId: " + order.getId());
+                    newOrderManager.setCurrentOrder(order);
+                } else {
+                    newOrderManager.interrupt();
+                    it.remove();
+                }
+                break;
             }
+        }
+
+        if(!isExisted && !order.getId().equals("")) {
+            NewOrderManager newthread = new NewOrderManager(order);
+            newthread.start(order.getWaitingTime());
+            System.out.println("Add new thread...TableId: " + order.getTableId() + ", OrderId: " + order.getId());
         }
     }
 

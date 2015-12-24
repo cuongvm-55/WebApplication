@@ -21,6 +21,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
     public static final String DB_FIELD_NAME_STAFF_NAME_CONFIRM_PAID = "StaffNameConfirmPaid";
     public static final String DB_FIELD_NAME_STAFF_NAME_CONFIRM_ORDER_FINISH = "StaffNameConfirmOrderFinish";
     public static final String DB_FIELD_NAME_CREATING_TIME = "CreatingTime";
+    public static final String DB_FIELD_NAME_CREATOR_NAME = "CreatorName";
 
     private String id;
     private List<String> orderDetailIdList; // list of order detail object id
@@ -31,6 +32,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
     private Date paidTime;
     private String tableId;
     private String note;
+    private String creatorName; // staff name who create this order
     private String staffNameConfirmPaid;
     private String staffNameConfirmOrderFinish;
 
@@ -47,8 +49,25 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         note = "";
         staffNameConfirmPaid = "";
         staffNameConfirmOrderFinish = "";
+        creatorName = "";
     }
 
+    public Order(Order order)
+    {
+        id = order.id;
+        orderDetailIdList = order.orderDetailIdList;
+        status = order.status;
+        paidMoney = order.paidMoney;
+        creatingTime = order.creatingTime;
+        paidTime = order.paidTime;
+        waitingTime = order.waitingTime;
+        tableId = order.tableId;
+        note = order.note;
+        staffNameConfirmPaid = order.staffNameConfirmPaid;
+        staffNameConfirmOrderFinish = order.staffNameConfirmOrderFinish;
+        creatorName = order.creatorName;
+    }
+    
     public Order(BasicDBObject object)
     {
         super(object);
@@ -66,7 +85,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         map.put(DB_FIELD_NAME_STATUS, status.toString());
         map.put(DB_FIELD_NAME_STAFF_NAME_CONFIRM_PAID, staffNameConfirmPaid);
         map.put(DB_FIELD_NAME_STAFF_NAME_CONFIRM_ORDER_FINISH, staffNameConfirmOrderFinish);
-        // Date time need to save as TimeStamp type
+        map.put(DB_FIELD_NAME_CREATOR_NAME, creatorName);
         map.put(DB_FIELD_NAME_PAID_TIME, paidTime);
         map.put(DB_FIELD_NAME_CREATING_TIME, creatingTime);
         // Map list
@@ -106,6 +125,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         staffNameConfirmPaid = getString(DB_FIELD_NAME_STAFF_NAME_CONFIRM_PAID, dbObject);
         staffNameConfirmOrderFinish = getString(DB_FIELD_NAME_STAFF_NAME_CONFIRM_ORDER_FINISH, dbObject);
         waitingTime = getInt(DB_FIELD_NAME_WAITING_TIME, dbObject);
+        creatorName = getString(DB_FIELD_NAME_CREATOR_NAME, dbObject);
     }
 
     public String getId() {
@@ -196,14 +216,23 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         this.staffNameConfirmOrderFinish = staffNameConfirmOrderFinish;
     }
 
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
+
     @Override
     public String toString() {
         return "Order [id=" + id + ", orderDetailIdList=" + orderDetailIdList
                 + ", status=" + status + ", paidMoney=" + paidMoney
                 + ", creatingTime=" + creatingTime + ", waitingTime="
                 + waitingTime + ", paidTime=" + paidTime + ", tableId="
-                + tableId + ", note=" + note + ", staffNameConfirmPaid="
-                + staffNameConfirmPaid + ", staffNameConfirmOrderFinish="
+                + tableId + ", note=" + note + ", creatorName=" + creatorName
+                + ", staffNameConfirmPaid=" + staffNameConfirmPaid
+                + ", staffNameConfirmOrderFinish="
                 + staffNameConfirmOrderFinish + "]";
     }
 

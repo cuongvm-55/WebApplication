@@ -272,7 +272,6 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         String str[] = messageData.split("::");
         tableId = str[0];
         wattingTime = str[1];
-        System.out.println("TableID " + tableId);
 
         for (CoffeeTableElement coffeeTableElement : listTableElement) {
             if(tableId.equals(coffeeTableElement.getTable().getId())) {
