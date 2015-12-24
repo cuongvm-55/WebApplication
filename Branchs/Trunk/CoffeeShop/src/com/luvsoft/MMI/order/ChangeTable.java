@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javafx.scene.layout.BackgroundRepeat;
-
 import org.bson.types.ObjectId;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -131,13 +129,12 @@ public class ChangeTable extends Window implements ViewInterface{
                 }
             }
         }
-        
+        nsDestTables.removeItem(orderInfo.getTableName()); // Should not change to itself
         // set default selected dest table is the first one
         if( !tblList.isEmpty() ){
             nsDestTables.setValue(Language.TABLE + " " + tblList.get(0).getNumber());
         }
-        
-        nsDestTables.removeItem(orderInfo.getTableName()); // Should not change to itself
+
 
         HorizontalLayout hzLayout = new HorizontalLayout();
         hzLayout.setWidth("100%");
@@ -288,16 +285,15 @@ public class ChangeTable extends Window implements ViewInterface{
             }
         }
 
-        Order tempOrder = srcOrder;
         // Try to split tempOrder (source order)
-        OrderInfo orderInfo = Adapter.retrieveOrderInfo(tempOrder);
+        OrderInfo orderInfo = Adapter.retrieveOrderInfo(srcOrder);
         List<OrderDetailRecord> srcRecordList = orderInfo.getOrderDetailRecordList();
         // back up the order detail list
         List<String> orderDetailsBackup = new ArrayList<String>();
         orderDetailsBackup.addAll(srcOrder.getOrderDetailIdList());
 
         // split from source
-        splitOrder(tempOrder, srcRecordList, odDetailRecordExtList);
+        splitOrder(srcOrder, srcRecordList, odDetailRecordExtList);
 
         // No change
         if( !hasRecordTransfer ){
@@ -309,24 +305,30 @@ public class ChangeTable extends Window implements ViewInterface{
         if( isMoveWholeTable ){
             // Move whole table to an empty table
             if( destOrder == null){
+                destOrder = new Order(srcOrder);
                 System.out.println("Move to table " + destTable.getNumber());
-                // Set dest table id to src order
-                Adapter.updateFieldValueOfOrder(srcOrder.getId(), Order.DB_FIELD_NAME_TABLE_ID, destTable.getId());
+
+                // Move dest tableId to src order
+                destOrder.setTableId(destTable.getId());
+                
+                System.out.println("Src table: " + srcOrder.getTableId());
+                System.out.println("Des table: " + destOrder.getTableId());
+                Adapter.updateFieldValueOfOrder(destOrder.getId(), Order.DB_FIELD_NAME_TABLE_ID, destTable.getId());
 
                 // Broadcast order change event
                 Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
                         + destTable.getId() + "::" + srcOrder.getId() + "::" + srcOrder.getId());
             }
             else{
-                Types.State backupDestOrderState = destOrder.getStatus();
                 // Move whole table to a table that already has an order
                 // Append the order detail id
                 destOrder.getOrderDetailIdList().addAll(orderDetailsBackup);
-                if( destOrder.getStatus().equals(Types.State.WAITING) && srcOrder.getStatus().equals(Types.State.UNPAID)) {
-                    srcOrder.setStatus(Types.State.WAITING);
-                }
-                if( !destOrder.getStatus().equals(Types.State.WAITING) && srcOrder.getStatus().equals(Types.State.WAITING) ){
-                    destOrder.setStatus(Types.State.WAITING);
+
+                // move WAITING order to dest order
+                // if dest order state is differ from WAITING, set it to WAITING
+                if( !destOrder.getStatus().equals(Types.State.WAITING) &&
+                        srcOrder.getStatus().equals(Types.State.WAITING) ){
+                        destOrder.setStatus(Types.State.WAITING);
                 }
 
                 // save to db
@@ -338,21 +340,20 @@ public class ChangeTable extends Window implements ViewInterface{
                 // Broadcast order change event
                 Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
                         + destTable.getId() + "::" + srcOrder.getId() + "::" + destOrder.getId());
-                destOrder.setStatus(backupDestOrderState);
+                srcOrder.setStatus(Types.State.CANCELED);
+                NewOrderManager.interruptWaitingOrderThread(srcOrder);
             }
             // set table state to map to current order
-            Order canceledOrder = new Order();
-            canceledOrder.setStatus(Types.State.CANCELED);
-            canceledOrder.setTableId(srcOrder.getTableId());
-            CoffeeTableElement.makeTableStateCompliantWithOrderState(srcTable, canceledOrder, destOrder);
-            CoffeeTableElement.makeTableStateCompliantWithOrderState(destTable, srcOrder, destOrder);
-
+            srcOrder.setStatus(Types.State.CANCELED);
+            CoffeeTableElement.updateTableState(srcTable, srcOrder);
+            CoffeeTableElement.updateTableState(destTable, destOrder);
+            NewOrderManager.onOrderStateChange(destOrder);
             return;
         }
 
         // Move part of table
         // Update source order
-        if( Adapter.updateOrder(tempOrder) ){
+        if( Adapter.updateOrder(srcOrder) ){
             // Update order details
             // Change quantity
             if( srcRecordList != null ){
@@ -367,33 +368,31 @@ public class ChangeTable extends Window implements ViewInterface{
         }
 
         // If there's no order is dest table, create a new one
-        boolean isNewOrder = false;
         if( destOrder == null ){
             destOrder = new Order();
             destOrder.setId((new ObjectId()).toString());
             destOrder.setCreatingTime(new Date());
             destOrder.setTableId(destTable.getId());
-            destOrder.setStatus(Types.State.WAITING);
+            destOrder.setStatus(srcOrder.getStatus());
             if( !Adapter.addNewOrder(destOrder) ){
                 System.out.println("Fail to add new order!");
             }
-            isNewOrder = true;
         }
 
-        if( isMoveWholeTable == false ){
-            appendOrder(srcOrder, destOrder, odDetailRecordExtList);
-        }
+        // append order detail list to dest order
+        appendOrder(srcOrder, destOrder, odDetailRecordExtList);
 
-        // Broadcast new order event
-        if( isNewOrder ){
-            // set table state to map to current order
-            CoffeeTableElement.makeTableStateCompliantWithOrderState(srcTable, srcOrder, destOrder);
-            CoffeeTableElement.makeTableStateCompliantWithOrderState(destTable, destOrder, destOrder);
+        // set table state to map to current order
+        CoffeeTableElement.updateTableState(srcTable, srcOrder);
+        CoffeeTableElement.updateTableState(destTable, destOrder);
 
-            // Broadcast order change event
-            Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
-                    + destTable.getId() + "::" + srcOrder.getId() + "::" + destOrder.getId());
-        }
+        // Thread waiting time
+        NewOrderManager.onOrderStateChange(srcOrder);
+        NewOrderManager.onOrderStateChange(destOrder);
+
+        // Broadcast order change event
+        Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
+                + destTable.getId() + "::" + srcOrder.getId() + "::" + destOrder.getId());
     }
     
     /**
@@ -499,36 +498,21 @@ public class ChangeTable extends Window implements ViewInterface{
             }
         }
 
-        // New canceled / completed oder detail?
+        boolean hasWaitingOrderDetail = false;
+        for( int i=0;i<odDetailRcdExtList.size(); i++ ){
+            if( odDetailRcdExtList.get(i).isEnable() ){
+                if( odDetailRcdExtList.get(i).getOrderDetailRecord().getStatus().equals(Types.State.WAITING) ){
+                    hasWaitingOrderDetail = true;
+                }
+            }
+        }
+
         // Current order not in waiting state and new waiting order detail was added
         // Change order state to WAITING
-        for(int i=0;i<odDetailRcdExtList.size();i++){
-            if( odDetailRcdExtList.get(i).getOrderDetailRecord().getStatus().equals(Types.State.WAITING) && !desOder.getStatus().equals(Types.State.WAITING)){
-                desOder.setStatus(Types.State.WAITING);
-                if( Adapter.changeOrderState(desOder.getId(), Types.State.WAITING) ){
-                    System.out.println(" ORDER is changed to WAITING");
-                    // Update table state
-                    Adapter.changeTableState(desOder.getTableId(), Types.State.WAITING);
-
-                    // Broadcast order change event
-                    Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcOrder.getTableId() + "::"
-                            + desOder.getTableId() + "::" + srcOrder.getId() + "::" + desOder.getId());
-
-                    // In case add new food, add new waiting time thread if there's no thread exist for this order
-                    boolean isThreadTimeExist = false;
-                    for(NewOrderManager orderMgr : NewOrderManager.listWaitingOrderThreads){
-                        if( orderMgr.getCurrentOrder().getId().equals(desOder.getId()) ){
-                            isThreadTimeExist = true;
-                            break;
-                        }
-                    }
-                    if( !isThreadTimeExist ){
-                        NewOrderManager waitingTimeThread = new NewOrderManager(
-                                desOder);
-                        waitingTimeThread.start();
-                    }
-                }
-                break;
+        if( hasWaitingOrderDetail && !desOder.getStatus().equals(Types.State.WAITING)){
+            desOder.setStatus(Types.State.WAITING);
+            if( Adapter.changeOrderState(desOder.getId(), Types.State.WAITING) ){
+                System.out.println(" Change ORDER state to WAITING");
             }
         }
 

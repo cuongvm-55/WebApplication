@@ -3,7 +3,6 @@ package com.luvsoft.MMI.components;
 import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.TableListView;
 import com.luvsoft.MMI.order.ChangeTableStateView;
-import com.luvsoft.MMI.threads.NewOrderManager;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Table;
@@ -221,69 +220,29 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         this.order = order;
     }
     
-    public static void makeTableStateCompliantWithOrderState(Table table, Order srcOrder, Order destOrder){
+    /**
+     * Make the Table state to be compliant with its Order state
+     * @param table
+     * @param curOrder current Order of this table
+     */
+    public static void updateTableState(Table table, Order curOrder){
         Types.State tblState = State.UNDEFINED;
-        if( srcOrder == null ){
+        if( curOrder == null ){
             tblState = State.EMPTY;
-            // Save state to db
-            Adapter.changeTableState(table.getId(), tblState);
-            return;
         }
-
-        switch(srcOrder.getStatus()){
-            case CANCELED:
-                tblState = State.EMPTY;
-                break;
-            default:
-                tblState = srcOrder.getStatus();
-                break;
+        else{
+            switch(curOrder.getStatus()){
+                case CANCELED:
+                    tblState = State.EMPTY;
+                    break;
+                default:
+                    tblState = curOrder.getStatus();
+                    break;
+            }
         }
         // Save state to db
-        if( Adapter.changeTableState(table.getId(), tblState) ){
-            System.out.println("NEW STATE is " + tblState);
-            // Update MMI state
-            Types.State preState = table.getState();
-
-            if(destOrder != null) {
-                if(destOrder.getStatus().equals(Types.State.WAITING) && srcOrder.getStatus().equals(Types.State.WAITING)) {
-                    // Kill source thread
-                    System.out.println("KILL src THREAD");
-                    NewOrderManager.interruptWaitingOrderThread(srcOrder);
-                }
-
-                if(!destOrder.getStatus().equals(Types.State.WAITING) && srcOrder.getStatus().equals(Types.State.WAITING)) {
-                    // Change thread from src to dest
-                    destOrder.setStatus(State.WAITING);
-                    NewOrderManager.updateOrder(srcOrder, destOrder);
-                }
-            } else {
-                srcOrder.setTableId(table.getId());
-                if(srcOrder.getStatus().equals(Types.State.WAITING)) {
-                    NewOrderManager.updateOrder(srcOrder, srcOrder);
-                } else {
-                    NewOrderManager waitingTimeThread = new NewOrderManager(srcOrder);
-                    waitingTimeThread.start();
-                }
-            }
-
-            /*
-            // If src is waiting, dest is not waiting, update thread
-            // Transition from WAITING state to other state
-            if( preState.equals(Types.State.WAITING) && !tblState.equals(Types.State.WAITING)){
-                System.out.println("Interrupt Order " + srcOrder.getId());
-                NewOrderManager.interruptWaitingOrderThread(srcOrder);
-            }
-
-            // Invoke waiting time thread if its order is WAITING
-            // Transition from other state to WAITING
-            if( !preState.equals(Types.State.WAITING) && tblState.equals(Types.State.WAITING)){
-                if( srcOrder.getStatus().equals(Types.State.WAITING) ){
-                    System.out.println("Start new thread  " + srcOrder.getId());
-                    NewOrderManager waitingTimeThread = new NewOrderManager( srcOrder );
-                    waitingTimeThread.start();
-                }
-            }
-            */
+        if( !Adapter.changeTableState(table.getId(), tblState) ){
+            System.out.println("Fail to update table " + table.getNumber() + " to state " + tblState.toString());
         }
         
     }

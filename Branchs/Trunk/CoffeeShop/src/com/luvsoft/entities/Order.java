@@ -52,6 +52,22 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         creatorName = "";
     }
 
+    public Order(Order order)
+    {
+        id = order.id;
+        orderDetailIdList = order.orderDetailIdList;
+        status = order.status;
+        paidMoney = order.paidMoney;
+        creatingTime = order.creatingTime;
+        paidTime = order.paidTime;
+        waitingTime = order.waitingTime;
+        tableId = order.tableId;
+        note = order.note;
+        staffNameConfirmPaid = order.staffNameConfirmPaid;
+        staffNameConfirmOrderFinish = order.staffNameConfirmOrderFinish;
+        creatorName = order.creatorName;
+    }
+    
     public Order(BasicDBObject object)
     {
         super(object);
