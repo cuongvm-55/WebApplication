@@ -65,6 +65,26 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
     }
 
     /**
+     * This function is used to update order, table when it performs a change action
+     * 
+     * @param messageData
+     */
+    public void doChangeTableAndOrder(String messageData) {
+        System.out.println("messageData " + messageData);
+        String srcOrderId, desOrderId;
+        String str[] = messageData.split("::");
+        srcOrderId = str[2];
+        desOrderId = str[3];
+
+        if(srcOrderId.equals(desOrderId)) {
+            doUpdateOrderElementList(desOrderId);
+        } else {
+            doUpdateOrderElementList(srcOrderId);
+            doUpdateOrderElementList(desOrderId);
+        }
+    }
+
+    /**
      * This function is used to update any order view when it was canceled
      * 
      * @param messageData
@@ -108,7 +128,7 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
         String str[] = messageData.split("::");
         orderId = str[1];
 
-        doUpdateOrderElementList(orderId);
+        doRemoveOrderElementList(orderId);
     }
 
     /**
@@ -121,7 +141,7 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
         String str[] = messageData.split("::");
         orderId = str[1];
 
-        doUpdateOrderElementList(orderId);
+        doRemoveOrderElementList(orderId);
     }
 
     /**
@@ -131,13 +151,21 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
      */
     private void doUpdateOrderElementList(String orderId) {
         Order order = Adapter.getOrder(orderId);
+        if(order.getStatus().equals(Types.State.UNPAID) || order.getStatus().equals(Types.State.PAID)) {
+            return;
+        }
+
         boolean isFounded = false;
         if(!orderListElements.isEmpty()) {
             for (OrderElement orderElement : orderListElements) {
                 if(orderElement.getOrder().getId().equals(orderId)) {
                     OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
-                    orderElement.reloadView();
-                    orderElement.populate(orderInfo);
+                    if(!orderInfo.getOrderDetailRecordList().isEmpty()) {
+                        orderElement.reloadView();
+                        orderElement.populate(orderInfo);
+                    } else {
+                        this.removeComponent(orderElement);
+                    }
                     isFounded = true;
                     break;
                 }
@@ -145,12 +173,14 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
         }
         if(!isFounded) {
             OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
-            OrderElement orderElement = new OrderElement(order);
-            orderElement.setParentView(this);
-            orderElement.populate(orderInfo);
-
-            this.addComponent(orderElement);
-            orderListElements.add(orderElement);
+            if(!orderInfo.getOrderDetailRecordList().isEmpty()) {
+                OrderElement orderElement = new OrderElement(order);
+                orderElement.setParentView(this);
+                orderElement.populate(orderInfo);
+    
+                this.addComponent(orderElement);
+                orderListElements.add(orderElement);
+            }
         }
     }
 

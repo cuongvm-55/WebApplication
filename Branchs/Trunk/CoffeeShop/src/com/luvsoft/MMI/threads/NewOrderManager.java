@@ -25,6 +25,7 @@ public class NewOrderManager extends Thread {
         super.run();
 
         while(runableFlag) {
+            System.out.println("Thread is running...");
             try {
                 currentOrder.setWaitingTime(waitingTime);
                 if(currentOrder.getStatus().equals(Types.State.WAITING) && waitingTime > 0) {
@@ -33,6 +34,7 @@ public class NewOrderManager extends Thread {
                     }
                 }
                 Thread.sleep(60000);
+                // Thread.sleep(1000);
                 waitingTime++;
             }
             catch ( InterruptedException e ) {
@@ -43,6 +45,12 @@ public class NewOrderManager extends Thread {
 
     @Override
     public synchronized void start() {
+        super.start();
+        listWaitingOrderThreads.add(this);
+    }
+
+    public synchronized void start(int waitingTime) {
+        this.waitingTime = waitingTime;
         super.start();
         listWaitingOrderThreads.add(this);
     }
@@ -64,6 +72,15 @@ public class NewOrderManager extends Thread {
             }
         }
         return ret;
+    }
+
+    public static void updateOrder(Order srcOrder, Order destOrder) {
+        for (NewOrderManager newOrderManager : listWaitingOrderThreads) {
+            if(newOrderManager.getCurrentOrder().getId().equals(srcOrder.getId())) {
+                System.out.println("ORDER FOUND");
+                newOrderManager.setCurrentOrder(destOrder);
+            }
+        }
     }
 
     public Order getCurrentOrder() {

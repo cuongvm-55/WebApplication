@@ -140,6 +140,32 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         notify.show();
     }
 
+    /**
+     * This function is used to update order, table when it performs a change action
+     * 
+     * @param messageData
+     */
+    public void doChangeTableAndOrder(String messageData) {
+        String srcTableId, desTableId;
+        String str[] = messageData.split("::");
+        srcTableId = str[0];
+        desTableId = str[1];
+
+        Table desTable = new Table();
+        Table srcTable = new Table();
+        updateCoffeeTableElementByTableId(desTableId, desTable);
+        updateCoffeeTableElementByTableId(srcTableId, srcTable);
+
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
+                + "Đặt món ở bàn " + srcTable.getNumber() + " đã được chuyển sang bàn " + desTable.getNumber() + "</i>",
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
+    }
+
+    /**
+     * 
+     * @param messageData
+     */
     public void haveNewOrderUpdated(String messageData) {
         String tableId;
         String str[] = messageData.split("::");
@@ -148,7 +174,6 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         Table table = new Table();
         updateCoffeeTableElementByTableId(tableId, table);
 
-        System.out.println("table number is " + table.getNumber());
         LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
                 + Language.ORDER_IN_TABLE + table.getNumber() + Language.HAS_BEEN_UPDATED + "</i>",
                 Notification.Type.WARNING_MESSAGE);
@@ -247,6 +272,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         String str[] = messageData.split("::");
         tableId = str[0];
         wattingTime = str[1];
+        System.out.println("TableID " + tableId);
 
         for (CoffeeTableElement coffeeTableElement : listTableElement) {
             if(tableId.equals(coffeeTableElement.getTable().getId())) {
@@ -282,6 +308,15 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         table.setTable(tempTable);
         
         doUpdateCoffeeTableElement(tableId, table);
+    }
+
+    private void doUpdateTableElementsList(String srcOrderId, String destOderId) {
+        for (CoffeeTableElement coffeeTableElement : listTableElement) {
+            if(coffeeTableElement.getOrder().getId().equals(srcOrderId)) {
+                Order order = Adapter.getOrder(destOderId);
+                coffeeTableElement.setOrder(order);
+            }
+        }
     }
 
     private void doUpdateCoffeeTableElement(String tableId, Table table) {

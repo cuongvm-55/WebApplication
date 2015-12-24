@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javafx.scene.layout.BackgroundRepeat;
+
 import org.bson.types.ObjectId;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -57,6 +59,7 @@ public class ChangeTable extends Window implements ViewInterface{
     private NativeSelect nsDestTables;
     private List<Table> tblList;
     private Table destTable;
+    private Table srcTable;
     
     private boolean isMoveWholeTable;
     private boolean hasRecordTransfer;
@@ -311,18 +314,21 @@ public class ChangeTable extends Window implements ViewInterface{
                 Adapter.updateFieldValueOfOrder(srcOrder.getId(), Order.DB_FIELD_NAME_TABLE_ID, destTable.getId());
 
                 // Broadcast order change event
-                Broadcaster.broadcast(CoffeeshopUI.NEW_ORDER_MESSAGE + "::"
-                        + destTable.getNumber());
+                Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
+                        + destTable.getId() + "::" + srcOrder.getId() + "::" + srcOrder.getId());
             }
             else{
+                Types.State backupDestOrderState = destOrder.getStatus();
                 // Move whole table to a table that already has an order
                 // Append the order detail id
                 destOrder.getOrderDetailIdList().addAll(orderDetailsBackup);
-                if( !destOrder.getStatus().equals(Types.State.WAITING) &&
-                        srcOrder.getStatus().equals(Types.State.WAITING) ){
+                if( destOrder.getStatus().equals(Types.State.WAITING) && srcOrder.getStatus().equals(Types.State.UNPAID)) {
+                    srcOrder.setStatus(Types.State.WAITING);
+                }
+                if( !destOrder.getStatus().equals(Types.State.WAITING) && srcOrder.getStatus().equals(Types.State.WAITING) ){
                     destOrder.setStatus(Types.State.WAITING);
                 }
-                
+
                 // save to db
                 if( Adapter.updateOrder(destOrder) ){
                     // Remove source order
@@ -330,17 +336,16 @@ public class ChangeTable extends Window implements ViewInterface{
                 }
 
                 // Broadcast order change event
-                Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
-                        + destTable.getNumber());
+                Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
+                        + destTable.getId() + "::" + srcOrder.getId() + "::" + destOrder.getId());
+                destOrder.setStatus(backupDestOrderState);
             }
-
             // set table state to map to current order
-            Table srcTable = Adapter.getTableById(srcOrder.getTableId());
             Order canceledOrder = new Order();
             canceledOrder.setStatus(Types.State.CANCELED);
             canceledOrder.setTableId(srcOrder.getTableId());
-            CoffeeTableElement.makeTableStateCompliantWithOrderState(srcTable, canceledOrder);
-            CoffeeTableElement.makeTableStateCompliantWithOrderState(destTable, srcOrder);
+            CoffeeTableElement.makeTableStateCompliantWithOrderState(srcTable, canceledOrder, destOrder);
+            CoffeeTableElement.makeTableStateCompliantWithOrderState(destTable, srcOrder, destOrder);
 
             return;
         }
@@ -381,14 +386,13 @@ public class ChangeTable extends Window implements ViewInterface{
 
         // Broadcast new order event
         if( isNewOrder ){
-            // Broadcast order change event
-            Broadcaster.broadcast(CoffeeshopUI.NEW_ORDER_MESSAGE + "::"
-                    + destTable.getNumber());
-
             // set table state to map to current order
-            Table srcTable = Adapter.getTableById(srcOrder.getTableId());
-            CoffeeTableElement.makeTableStateCompliantWithOrderState(srcTable, srcOrder);
-            CoffeeTableElement.makeTableStateCompliantWithOrderState(destTable, destOrder);
+            CoffeeTableElement.makeTableStateCompliantWithOrderState(srcTable, srcOrder, destOrder);
+            CoffeeTableElement.makeTableStateCompliantWithOrderState(destTable, destOrder, destOrder);
+
+            // Broadcast order change event
+            Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
+                    + destTable.getId() + "::" + srcOrder.getId() + "::" + destOrder.getId());
         }
     }
     
@@ -507,8 +511,8 @@ public class ChangeTable extends Window implements ViewInterface{
                     Adapter.changeTableState(inOder.getTableId(), Types.State.WAITING);
 
                     // Broadcast order change event
-                    Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
-                            + destTable.getNumber());
+                    Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
+                            + destTable.getId() + "::" + srcOrder.getId() + "::" + destOrder.getId());
 
                     // In case add new food, add new waiting time thread if there's no thread exist for this order
                     boolean isThreadTimeExist = false;
@@ -547,5 +551,13 @@ public class ChangeTable extends Window implements ViewInterface{
     public void setParentView(ViewInterface parentView) {
         // TODO Auto-generated method stub
         
+    }
+
+    public Table getSrcTable() {
+        return srcTable;
+    }
+
+    public void setSrcTable(Table srcTable) {
+        this.srcTable = srcTable;
     }
 }

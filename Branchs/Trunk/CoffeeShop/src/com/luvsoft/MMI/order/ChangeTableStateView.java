@@ -147,9 +147,10 @@ public class ChangeTableStateView extends AbstractOrderView implements
         }
         else if(event.getComponent() == btnChangeTable){
             ChangeTable changeTblWindow = new ChangeTable(currentOrder);
-             changeTblWindow.setParentView(this);
-             getUI().addWindow(changeTblWindow);
-             close();
+            changeTblWindow.setParentView(this);
+            changeTblWindow.setSrcTable(getCurrentTable());
+            getUI().addWindow(changeTblWindow);
+            close();
          }
     }
 

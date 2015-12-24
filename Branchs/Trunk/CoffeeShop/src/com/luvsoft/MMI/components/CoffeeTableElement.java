@@ -221,45 +221,69 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
         this.order = order;
     }
     
-    public static void makeTableStateCompliantWithOrderState(Table table, Order order){
+    public static void makeTableStateCompliantWithOrderState(Table table, Order srcOrder, Order destOrder){
         Types.State tblState = State.UNDEFINED;
-        if( order == null ){
+        if( srcOrder == null ){
             tblState = State.EMPTY;
             // Save state to db
             Adapter.changeTableState(table.getId(), tblState);
             return;
         }
 
-        switch(order.getStatus()){
-        case CANCELED:
-            tblState = State.EMPTY;
-            break;
-        default:
-            tblState = order.getStatus();
-            break;
+        switch(srcOrder.getStatus()){
+            case CANCELED:
+                tblState = State.EMPTY;
+                break;
+            default:
+                tblState = srcOrder.getStatus();
+                break;
         }
         // Save state to db
         if( Adapter.changeTableState(table.getId(), tblState) ){
+            System.out.println("NEW STATE is " + tblState);
             // Update MMI state
             Types.State preState = table.getState();
-            // Invoke waiting time thread if its order is WAITING
-            // Transition from other state to WAITING
-            if( !preState.equals(Types.State.WAITING) && tblState.equals(Types.State.WAITING)){
-                if( order.getStatus().equals(Types.State.WAITING) ){
-                    NewOrderManager waitingTimeThread = new NewOrderManager( order );
+
+            if(destOrder != null) {
+                if(destOrder.getStatus().equals(Types.State.WAITING) && srcOrder.getStatus().equals(Types.State.WAITING)) {
+                    // Kill source thread
+                    System.out.println("KILL src THREAD");
+                    NewOrderManager.interruptWaitingOrderThread(srcOrder);
+                }
+
+                if(!destOrder.getStatus().equals(Types.State.WAITING) && srcOrder.getStatus().equals(Types.State.WAITING)) {
+                    // Change thread from src to dest
+                    destOrder.setStatus(State.WAITING);
+                    NewOrderManager.updateOrder(srcOrder, destOrder);
+                }
+            } else {
+                srcOrder.setTableId(table.getId());
+                if(srcOrder.getStatus().equals(Types.State.WAITING)) {
+                    NewOrderManager.updateOrder(srcOrder, srcOrder);
+                } else {
+                    NewOrderManager waitingTimeThread = new NewOrderManager(srcOrder);
                     waitingTimeThread.start();
                 }
             }
 
+            /*
+            // If src is waiting, dest is not waiting, update thread
             // Transition from WAITING state to other state
             if( preState.equals(Types.State.WAITING) && !tblState.equals(Types.State.WAITING)){
-                for(NewOrderManager orderMgr : NewOrderManager.listWaitingOrderThreads){
-                    if( orderMgr.getCurrentOrder().getId().equals(order.getId()) ){
-                        orderMgr.interrupt();
-                        break;
-                    }
+                System.out.println("Interrupt Order " + srcOrder.getId());
+                NewOrderManager.interruptWaitingOrderThread(srcOrder);
+            }
+
+            // Invoke waiting time thread if its order is WAITING
+            // Transition from other state to WAITING
+            if( !preState.equals(Types.State.WAITING) && tblState.equals(Types.State.WAITING)){
+                if( srcOrder.getStatus().equals(Types.State.WAITING) ){
+                    System.out.println("Start new thread  " + srcOrder.getId());
+                    NewOrderManager waitingTimeThread = new NewOrderManager( srcOrder );
+                    waitingTimeThread.start();
                 }
             }
+            */
         }
         
     }

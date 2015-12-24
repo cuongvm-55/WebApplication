@@ -41,6 +41,7 @@ public class CoffeeshopUI extends UI {
     public static final String CHANGE_TABLE_STATE = "change_table_state";
     public static final String ORDER_WAS_PAID = "order_was_paid";
     public static final String FOOD_WAS_COMPLETED = "food_was_complete";
+    public static final String PERFORM_SWITCH_TABLE = "perform_switch_table";
 
     public Navigator navigator;
     public MainView mainView;
@@ -179,9 +180,12 @@ public class CoffeeshopUI extends UI {
         } else if(str.length == 2) {
             messageId = str[0];
             messageData = str[1];
-        } else {
+        } else if(str.length == 3){
             messageId = str[0];
             messageData = str[1] + "::" + str[2];
+        } else {
+            messageId = str[0];
+            messageData = str[1] + "::" + str[2] + "::" + str[3] + "::" + str[4];
         }
 
         if(messageId.equals(CoffeeshopUI.UPDATE_WAITING_TIME)) {
@@ -206,6 +210,9 @@ public class CoffeeshopUI extends UI {
         } else if(messageId.equals(CoffeeshopUI.FOOD_WAS_COMPLETED)) {
             access(() -> mainView.getTableListView().foodWasCompleted(messageData));
             access(() -> mainView.getOrderListView().foodWasCompleted(messageData));
+        } else if(messageId.equals(CoffeeshopUI.PERFORM_SWITCH_TABLE)) {
+            access(() -> mainView.getTableListView().doChangeTableAndOrder(messageData));
+            access(() -> mainView.getOrderListView().doChangeTableAndOrder(messageData));
         }
 
     }
