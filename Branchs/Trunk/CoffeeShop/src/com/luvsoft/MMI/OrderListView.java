@@ -1,18 +1,17 @@
 package com.luvsoft.MMI;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import com.luvsoft.MMI.components.LuvsoftNotification;
 import com.luvsoft.MMI.components.OrderElement;
 import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Types;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -26,6 +25,7 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
 
     // data
     private List<Order> orderList; // Current order list
+    public List<OrderElement> orderListElements = new ArrayList<OrderElement>();
 
     public OrderListView() {
         super();
@@ -37,7 +37,13 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
         setWidth("100%");
         setHeightUndefined();
         removeAllComponents();
-        loadContent();
+        if(orderListElements.isEmpty()) {
+            loadContent();
+        } else {
+            for (OrderElement orderElement : orderListElements) {
+                this.addComponent(orderElement);
+            }
+        }
     }
 
     @Override
@@ -45,37 +51,152 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
         createView();
     }
 
-    public void haveNewOrder(String tableNumber) {
-        reloadView();
+    /**
+     * This function is used to update any order view when it was added new
+     * 
+     * @param messageData
+     */
+    public void haveNewOrder(String messageData) {
+        String orderId;
+        String str[] = messageData.split("::");
+        orderId = str[1];
 
-        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>",
-                "<i>" + Language.TABLE + " " + tableNumber + Language.ORDERED + "</i>",
-                Notification.Type.WARNING_MESSAGE);
-        notify.show();
+        doAddNewOrderElement(orderId);
     }
 
-    public void haveCanceledOrder(String tableNumber) {
-        reloadView();
+    /**
+     * This function is used to update any order view when it was canceled
+     * 
+     * @param messageData
+     */
+    public void haveCanceledOrder(String messageData) {
+        String orderId;
+        String str[] = messageData.split("::");
+        orderId = str[1];
 
-        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
-                + Language.ORDER_IN_TABLE + tableNumber + Language.HAS_BEEN_CANCELED + "</i>",
-                Notification.Type.WARNING_MESSAGE);
-        notify.show();
+        doRemoveOrderElementList(orderId);
     }
 
-    public void haveNewOrderUpdated(String tableNumber) {
-        reloadView();
+    /**
+     * This function is used to update any order view when it was updated
+     * 
+     * @param messageData
+     */
+    public void haveNewOrderUpdated(String messageData) {
+        String orderId;
+        String str[] = messageData.split("::");
+        orderId = str[1];
 
-        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
-                + Language.ORDER_IN_TABLE + tableNumber + Language.HAS_BEEN_UPDATED + "</i>",
-                Notification.Type.WARNING_MESSAGE);
-        notify.show();
+        doUpdateOrderElementList(orderId);
     }
+
+    /**
+     * This function is used to update any order view when it was completed
+     * 
+     * @param messageData
+     */
+    public void haveNewOrderCompleted(String messageData) {
+        String orderId;
+        String str[] = messageData.split("::");
+        orderId = str[1];
+
+        doRemoveOrderElementList(orderId);
+    }
+
+    public void foodWasCompleted(String messageData) {
+        String orderId;
+        String str[] = messageData.split("::");
+        orderId = str[1];
+
+        doUpdateOrderElementList(orderId);
+    }
+
+    /**
+     * This function is used to update any order view when it was paid
+     * 
+     * @param messageData
+     */
+    public void orderWasPaid(String messageData) {
+        String orderId;
+        String str[] = messageData.split("::");
+        orderId = str[1];
+
+        doUpdateOrderElementList(orderId);
+    }
+
+    /**
+     * This function is used to update or AddNew order element to list
+     * 
+     * @param orderId
+     */
+    private void doUpdateOrderElementList(String orderId) {
+        Order order = Adapter.getOrder(orderId);
+        boolean isFounded = false;
+        if(!orderListElements.isEmpty()) {
+            for (OrderElement orderElement : orderListElements) {
+                if(orderElement.getOrder().getId().equals(orderId)) {
+                    OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+                    orderElement.reloadView();
+                    orderElement.populate(orderInfo);
+                    isFounded = true;
+                    break;
+                }
+            }
+        }
+        if(!isFounded) {
+            OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+            OrderElement orderElement = new OrderElement(order);
+            orderElement.setParentView(this);
+            orderElement.populate(orderInfo);
+
+            this.addComponent(orderElement);
+            orderListElements.add(orderElement);
+        }
+    }
+
+    /**
+     * This function is used to AddNew order element to list
+     * 
+     * @param orderId
+     */
+    private void doAddNewOrderElement(String orderId) {
+        Order order = Adapter.getOrder(orderId);
+        OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+        OrderElement orderElement = new OrderElement(order);
+        orderElement.setParentView(this);
+        orderElement.populate(orderInfo);
+
+        this.addComponent(orderElement);
+        orderListElements.add(orderElement);
+    }
+
+    /**
+     * This function is used to remove order element in list
+     * 
+     * @param orderId
+     */
+    private void doRemoveOrderElementList(String orderId) {
+        for(Iterator<OrderElement> it = orderListElements.iterator(); it.hasNext(); ) {
+            OrderElement orderElement = it.next();
+            Order order = orderElement.getOrder();
+            if(order.getId().equals(orderId)) {
+                OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+                orderElement.reloadView();
+                orderElement.populate(orderInfo);
+
+                this.removeComponent(orderElement);
+                it.remove();
+                break;
+            }
+        }
+    }
+
     private void loadContent() {
         loadOrderList();
         if( orderList == null || orderList.isEmpty() ){
             // No Order in orderlist
             Label lbl = new Label(Language.NO_ORDER_IN_ORDER_LIST);
+            lbl.addStyleName(ValoTheme.LABEL_HUGE);
             this.addComponent(lbl);
             return;
         }
@@ -84,10 +205,8 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
             OrderElement orderElement = new OrderElement(order);
             orderElement.setParentView(this);
             orderElement.populate(orderInfo);
-            HorizontalLayout bottomLine = new HorizontalLayout();
-            bottomLine.setSizeFull();
-            bottomLine.setStyleName("bottom-line");
-            this.addComponents(/*topLine,*/ orderElement, bottomLine);
+            this.addComponents(orderElement);
+            orderListElements.add(orderElement);
         }
     }
 

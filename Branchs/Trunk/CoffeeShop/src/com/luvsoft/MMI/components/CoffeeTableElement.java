@@ -175,6 +175,9 @@ public class CoffeeTableElement extends VerticalLayout implements ClickListener 
             changeTableStateView = new ChangeTableStateView();
             changeTableStateView.setParentView(tableListView);
             changeTableStateView.setCurrentTable(table);
+            if(order != null) {
+                changeTableStateView.setOrder(order);
+            }
             changeTableStateView.createView();
             UI.getCurrent().addWindow(changeTableStateView);
             changeTableStateView.setImmediate(true);

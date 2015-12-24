@@ -121,27 +121,89 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         createView();
     }
 
-    public void haveNewOrderCompleted(String tableNumber) {
-        // notify message
-        LuvsoftNotification notify = new LuvsoftNotification("<b>"+Language.PAY_ATTENTION+"</b>",
-                "<i>" + Language.ORDER + " " + tableNumber + " " + Language.COMPLETED+"</i>",
+    /**
+     * This function is used to update display of any table when it has new order 
+     * 
+     * @param tableId
+     */
+    public void haveNewOrder(String messageData) {
+        String tableId;
+        String str[] = messageData.split("::");
+        tableId = str[0];
+
+        Table table = new Table();
+        updateCoffeeTableElementByTableId(tableId, table);
+
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>",
+                "<i>" + Language.TABLE + " " + table.getNumber() + Language.ORDERED + "</i>",
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
+    }
+
+    public void haveNewOrderUpdated(String messageData) {
+        String tableId;
+        String str[] = messageData.split("::");
+        tableId = str[0];
+
+        Table table = new Table();
+        updateCoffeeTableElementByTableId(tableId, table);
+
+        System.out.println("table number is " + table.getNumber());
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
+                + Language.ORDER_IN_TABLE + table.getNumber() + Language.HAS_BEEN_UPDATED + "</i>",
                 Notification.Type.WARNING_MESSAGE);
         notify.show();
 
-        reloadView();
     }
 
-    public void orderWasPaid(String tableNumber) {
+    /**
+     * This function is used to update display of any table when it's order was completed
+     * @param tableId
+     */
+    public void haveNewOrderCompleted(String messageData) {
+        String tableId;
+        String str[] = messageData.split("::");
+        tableId = str[0];
+
+        Table table = new Table();
+        updateCoffeeTableElementByTableId(tableId, table);
+
         // notify message
         LuvsoftNotification notify = new LuvsoftNotification("<b>"+Language.PAY_ATTENTION+"</b>",
-                "<i>Bàn " + tableNumber +" đã thanh toán</i>",
+                "<i>" + Language.ORDER + " " + table.getNumber() + " " + Language.COMPLETED+"</i>",
                 Notification.Type.WARNING_MESSAGE);
         notify.show();
-
-        reloadView();
     }
-    
-    public void foodWasCompleted(String message){
+
+    /**
+     * This function is used to update display of any table when it's order was paid
+     * @param tableId
+     */
+    public void orderWasPaid(String messageData) {
+        String tableId;
+        String str[] = messageData.split("::");
+        tableId = str[0];
+
+        Table table = new Table();
+        updateCoffeeTableElementByTableId(tableId, table);
+
+        // notify message
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+Language.PAY_ATTENTION+"</b>",
+                "<i>Bàn " + table.getNumber() +" đã thanh toán</i>",
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
+    }
+
+    /**
+     * This function is used to update display of any table when its order details was completed
+     * 
+     * @param messageData
+     */
+    public void foodWasCompleted(String messageData){
+        String message;
+        String str[] = messageData.split("::");
+        message = str[0];
+
         // notify message
         LuvsoftNotification notify = new LuvsoftNotification("<b>"+Language.PAY_ATTENTION+"</b>",
                 message,
@@ -149,10 +211,37 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         notify.show();
     }
 
-    public void haveCanceledOrder() {
-        reloadView();
+    /**
+     * This function is used to update table display when it's order was canceled
+     * @param tableId
+     */
+    public void haveCanceledOrder(String messageData) {
+        String tableId;
+        String str[] = messageData.split("::");
+        tableId = str[0];
+
+        Table table = new Table();
+        updateCoffeeTableElementByTableId(tableId, table);
+
+        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ Language.PAY_ATTENTION +"</b>", "<i>"
+                + Language.ORDER_IN_TABLE + table.getNumber() + Language.HAS_BEEN_CANCELED + "</i>",
+                Notification.Type.WARNING_MESSAGE);
+        notify.show();
     }
 
+    /**
+     * This function is used to update table display when it's order was changed state
+     * @param tableId
+     */
+    public void changeTableState(String tableId) {
+        updateCoffeeTableElementByTableId(tableId);
+    }
+
+    /**
+     * This function is used to update waiting time display of any table
+     * 
+     * @param messageData
+     */
     public void updateWaitingTime(String messageData) {
         String tableId, wattingTime;
         String str[] = messageData.split("::");
@@ -162,6 +251,67 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         for (CoffeeTableElement coffeeTableElement : listTableElement) {
             if(tableId.equals(coffeeTableElement.getTable().getId())) {
                 coffeeTableElement.setWaitingTimeLabel(Integer.parseInt(wattingTime));
+            }
+        }
+    }
+
+    /**
+     * This function is used as an API to update a table element when have a request
+     * 
+     * @param tableId
+     */
+    private void updateCoffeeTableElementByTableId(String tableId) {
+        Table table = Adapter.getTableById(tableId);
+        if(table == null) {
+            System.out.println("Cannot get the table");
+            return;
+        }
+        doUpdateCoffeeTableElement(tableId, table);
+    }
+
+    /**
+     * This function is used as an API to update a table element when have a request
+     * 
+     * @param tableId, table
+     */
+    private void updateCoffeeTableElementByTableId(String tableId, Table table) {
+        Table tempTable = Adapter.getTableById(tableId);
+        if(tempTable == null) {
+            return;
+        }
+        table.setTable(tempTable);
+        
+        doUpdateCoffeeTableElement(tableId, table);
+    }
+
+    private void doUpdateCoffeeTableElement(String tableId, Table table) {
+        for (CoffeeTableElement coffeeTableElement : listTableElement) {
+            if(tableId.equals(coffeeTableElement.getTable().getId())) {
+               // Get order of current table
+                List<Types.State> states = new ArrayList<Types.State>();
+                states.add(Types.State.PAID);
+                states.add(Types.State.CANCELED);
+                List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
+                Order currentOrder = null;
+                for (Order order : orderList) {
+                    if( order.getTableId().equals(tableId) ) {
+                        currentOrder = order;
+                        break;
+                    }
+                }
+
+                if(currentOrder != null) {
+                    table.setWaitingTime(currentOrder.getWaitingTime());
+                    coffeeTableElement.setOrder(currentOrder);
+                } else {
+                    coffeeTableElement.setOrder(null);
+                }
+
+                String staffName = ((MainView) getParentView()).getStaffName();
+                table.setStaffName(staffName);
+
+                coffeeTableElement.setTable(table);
+                coffeeTableElement.initCoffeeTableElement();
             }
         }
     }

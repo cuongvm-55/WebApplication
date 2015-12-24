@@ -82,6 +82,9 @@ public class OrderController extends AbstractController{
         return orderFacade.save(order);
     }
     
+    public boolean getOrder(String orderId, Order order) {
+        return orderFacade.findById(orderId, order);
+    }
     /*
      * Remove an Order
      */

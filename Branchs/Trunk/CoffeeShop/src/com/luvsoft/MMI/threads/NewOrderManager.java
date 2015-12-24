@@ -1,6 +1,7 @@
 package com.luvsoft.MMI.threads;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.luvsoft.MMI.Adapter;
@@ -53,14 +54,16 @@ public class NewOrderManager extends Thread {
     }
 
     public static boolean interruptWaitingOrderThread(Order order) {
-        for (NewOrderManager newOrderManager : listWaitingOrderThreads) {
+        boolean ret = false;
+        for(Iterator<NewOrderManager> it = listWaitingOrderThreads.iterator(); it.hasNext(); ) {
+            NewOrderManager newOrderManager = it.next();
             if( newOrderManager.getCurrentOrder().getId().equals(order.getId()) ) {
-                listWaitingOrderThreads.remove(newOrderManager);
+                it.remove();
                 newOrderManager.interrupt();
-                return true;
+                ret = true;
             }
         }
-        return false;
+        return ret;
     }
 
     public Order getCurrentOrder() {

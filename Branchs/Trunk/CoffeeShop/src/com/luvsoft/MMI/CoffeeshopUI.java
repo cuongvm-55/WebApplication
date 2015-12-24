@@ -188,23 +188,24 @@ public class CoffeeshopUI extends UI {
             access(() -> mainView.getTableListView().updateWaitingTime(messageData));
         } else if(messageId.equals(CoffeeshopUI.NEW_ORDER_MESSAGE)) {
             access(() -> mainView.getOrderListView().haveNewOrder(messageData));
-            access(() -> mainView.getTableListView().reloadView());
+            access(() -> mainView.getTableListView().haveNewOrder(messageData));
         } else if(messageId.equals(CoffeeshopUI.ORDER_UPDATED_MESSAGE)){
             access(() -> mainView.getOrderListView().haveNewOrderUpdated(messageData));
-            access(() -> mainView.getTableListView().reloadView());
+            access(() -> mainView.getTableListView().haveNewOrderUpdated(messageData));
         } else if(messageId.equals(CoffeeshopUI.ORDER_COMPLETED_MESSAGE)) {
             access(() -> mainView.getTableListView().haveNewOrderCompleted(messageData));
-            access(() -> mainView.getOrderListView().reloadView());
+            access(() -> mainView.getOrderListView().haveNewOrderCompleted(messageData));
         } else if(messageId.equals(CoffeeshopUI.CANCELED_ORDER)) {
             access(() -> mainView.getOrderListView().haveCanceledOrder(messageData));
-            access(() -> mainView.getTableListView().haveCanceledOrder());
+            access(() -> mainView.getTableListView().haveCanceledOrder(messageData));
         } else if(messageId.equals(CoffeeshopUI.CHANGE_TABLE_STATE)) {
-            access(() -> mainView.getTableListView().reloadView());
+            access(() -> mainView.getTableListView().changeTableState(messageData));
         } else if(messageId.equals(CoffeeshopUI.ORDER_WAS_PAID)) {
             access(() -> mainView.getTableListView().orderWasPaid(messageData));
-            access(() -> mainView.getOrderListView().reloadView());
+            access(() -> mainView.getOrderListView().orderWasPaid(messageData));
         } else if(messageId.equals(CoffeeshopUI.FOOD_WAS_COMPLETED)) {
             access(() -> mainView.getTableListView().foodWasCompleted(messageData));
+            access(() -> mainView.getOrderListView().foodWasCompleted(messageData));
         }
 
     }

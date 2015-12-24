@@ -68,6 +68,12 @@ public class Adapter {
         return orderDtl;
     }
 
+    public static Order getOrder(String orderId) {
+        Order order = new Order();
+        orderCtrl.getOrder(orderId, order);
+        return order;
+    }
+
     public static List<Floor> retrieveFloorList(){
         System.out.println("retrieveFloorList...");
         return floorCtrl.getAllFloor();

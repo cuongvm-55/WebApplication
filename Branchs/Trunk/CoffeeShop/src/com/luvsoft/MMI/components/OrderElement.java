@@ -21,6 +21,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Table;
@@ -85,7 +86,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                             Food food = Adapter.getFoodById(od.getFoodId());
                             Broadcaster.broadcast(CoffeeshopUI.FOOD_WAS_COMPLETED + "::"
                                     + "<i><b>" +orderInfo.getTableName() + "</b></i><br/><i>"
-                                    + Language.FOOD + " <b>" +food.getName()+"</b> " + Language.HAS_BEEN_COMPLETED + "</i>");
+                                    + Language.FOOD + " <b>" +food.getName()+"</b> " + Language.HAS_BEEN_COMPLETED + "</i>::" + order.getId());
                             }
                     }
                 }
@@ -100,13 +101,13 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         }
         tbOrderInfos.setVisibleColumns(Language.SEQUENCE,Language.FOOD_NAME,Language.QUANTITY,Language.STATUS);
         tbOrderInfos.setPageLength(orderDetailList.size());
-        //tbOrderInfos.setCacheRate ( 0.1 );
-        //tbOrderInfos.setEditable(true);
     }
 
     @Override
     public void createView() {
         this.setSpacing(true);
+
+        removeAllComponents();
 
         lbTableName = new Label();
         tbOrderInfos = new Table();
@@ -185,22 +186,24 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
 
                     // Set table status to be UNPAID
                     Adapter.changeTableState(order.getTableId(), Types.State.UNPAID);
-
-                    OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
-                    Broadcaster.broadcast(CoffeeshopUI.ORDER_COMPLETED_MESSAGE+"::"+orderInfo.getTableName());
                     NewOrderManager.interruptWaitingOrderThread(order);
+
+                    Broadcaster.broadcast(CoffeeshopUI.ORDER_COMPLETED_MESSAGE+"::"+order.getTableId() + "::" + order.getId());
                 }
             }
         });
 
-        this.addComponents(lbTableName, txtNote, tbOrderInfos, btnConfFinish);
+        HorizontalLayout bottomLine = new HorizontalLayout();
+        bottomLine.setSizeFull();
+        bottomLine.setStyleName("bottom-line");
+        this.addComponents(lbTableName, txtNote, tbOrderInfos, btnConfFinish, bottomLine);
         this.setComponentAlignment(tbOrderInfos, Alignment.MIDDLE_CENTER);
         this.setComponentAlignment(btnConfFinish, Alignment.MIDDLE_CENTER);
     }
 
     @Override
     public void reloadView() {
-        
+        createView();
     }
 
     @Override
@@ -211,5 +214,13 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
     @Override
     public void setParentView(ViewInterface parentView) {
         this.parentView = (OrderListView) parentView;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

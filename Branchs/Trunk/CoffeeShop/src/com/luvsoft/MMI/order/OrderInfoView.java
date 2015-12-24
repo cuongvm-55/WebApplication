@@ -504,10 +504,6 @@ public class OrderInfoView extends AbstractOrderView {
                 if (isNewOrder) {
                     if (Adapter.addNewOrder(currentOrder)) {
                         System.out.println("Add new Order: " + currentOrder.toString());
-                        // Broadcast order change event
-                        Broadcaster.broadcast(CoffeeshopUI.NEW_ORDER_MESSAGE + "::"
-                                + getCurrentTable().getNumber());
-
                         // Waiting time thread
                         NewOrderManager waitingTimeThread = new NewOrderManager(
                                 currentOrder);
@@ -515,19 +511,16 @@ public class OrderInfoView extends AbstractOrderView {
 
                         // set table state to map to current order
                         setTableState();
+
+                        // Broadcast order change event
+                        Broadcaster.broadcast(CoffeeshopUI.NEW_ORDER_MESSAGE + "::"
+                                + getCurrentTable().getId() + "::" + getCurrentOrder().getId());
                     } else {
                         System.out.println("Fail to add orderId: "
                                 + currentOrder.getId());
                     }
                 } else {
                     if (Adapter.updateOrder(currentOrder)) {
-                        System.out.println("Update Order: " + currentOrder.toString());
-                        if( isOrderDetailListChanged || !previousTextValue.equals(txtNote.getValue()) ){
-                            // Broadcast order change event
-                            Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
-                                    + getCurrentTable().getNumber());
-                        }
-
                         // In case add new food, add new waiting time thread if there's no thread exist for this order
                         if( isNewFoodAdded ){
                             boolean isThreadTimeExist = false;
@@ -546,6 +539,13 @@ public class OrderInfoView extends AbstractOrderView {
 
                         // set table state to map to current order
                         setTableState();
+
+                        System.out.println("Update Order: " + currentOrder.toString());
+                        if( isOrderDetailListChanged || !previousTextValue.equals(txtNote.getValue()) ){
+                            // Broadcast order change event
+                            Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
+                                    + getCurrentTable().getId() + "::" + getCurrentOrder().getId());
+                        }
                     } else {
                         System.out.println("Fail to update orderId: ");
                     }
@@ -599,7 +599,7 @@ public class OrderInfoView extends AbstractOrderView {
                                 Types.State.PAID);
                     }
                     close();// close the window
-                    Broadcaster.broadcast(CoffeeshopUI.ORDER_WAS_PAID+"::"+getCurrentTable().getNumber());
+                    Broadcaster.broadcast(CoffeeshopUI.ORDER_WAS_PAID+"::"+getCurrentTable().getId()+"::"+currentOrder.getId());
                 }
             }
         });

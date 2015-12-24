@@ -22,11 +22,20 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
         id = "";
         number = "";
         state = Types.State.EMPTY;
+        staffName = "";
     }
 
     public Table(BasicDBObject object)
     {
         super(object);
+    }
+
+    public void setTable(Table table) {
+        this.id = table.getId();
+        this.number = table.getNumber();
+        this.waitingTime = table.getWaitingTime();
+        this.state = table.getState();
+        this.staffName = table.getStaffName();
     }
 
     @Override

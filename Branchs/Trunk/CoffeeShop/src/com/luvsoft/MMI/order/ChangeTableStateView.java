@@ -1,8 +1,5 @@
 package com.luvsoft.MMI.order;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.luvsoft.MMI.Adapter;
@@ -51,18 +48,6 @@ public class ChangeTableStateView extends AbstractOrderView implements
         setSizeFull();
         addStyleName("close-style");
 
-        // Get order of current table
-        List<Types.State> states = new ArrayList<Types.State>();
-        states.add(Types.State.PAID);
-        states.add(Types.State.CANCELED);
-        List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
-        currentOrder = null;
-        for (Order order : orderList) {
-            if( order.getTableId().equals(getCurrentTable().getId()) ) {
-                currentOrder = order;
-                break;
-            }
-        }
         
         Label lblTableNumber = new Label(Language.TABLE + " "+ getCurrentTable().getNumber());
         lblTableNumber.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE BACKGROUND_BLUE");
@@ -108,6 +93,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
             orderInforView = new OrderInfoView(currentOrder, ViewMode.ORDER_DETAIL_VIEW);
             orderInforView.setParentView(this);
             orderInforView.setCurrentTable(getCurrentTable());
+            orderInforView.setCurrentOrder(currentOrder);
             orderInforView.createView();
             getUI().addWindow(orderInforView);
             close();
@@ -125,17 +111,13 @@ public class ChangeTableStateView extends AbstractOrderView implements
                                     newState = State.EMPTY;
                                     // Reset all current order
                                     if( currentOrder != null ) {
-                                        Adapter.changeOrderState(
-                                                currentOrder.getId(),
-                                                State.CANCELED);
+                                        Adapter.changeOrderState(currentOrder.getId(), State.CANCELED);
                                         for (String orderDetailId : currentOrder.getOrderDetailIdList()) {
                                             Adapter.changeOrderDetailState(orderDetailId, State.CANCELED);
                                         }
-                                        Adapter.changeTableState(
-                                                getCurrentTable().getId(),
-                                                newState);
+                                        Adapter.changeTableState(getCurrentTable().getId(), newState);
                                         NewOrderManager.interruptWaitingOrderThread(currentOrder);
-                                        Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+getCurrentTable().getNumber());
+                                        Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+getCurrentTable().getId()+"::"+currentOrder.getId());
                                         close();
                                     }
                                 }
@@ -148,7 +130,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
             }
             else {
                 Adapter.changeTableState(getCurrentTable().getId(), newState);
-                Broadcaster.broadcast(CoffeeshopUI.CHANGE_TABLE_STATE);
+                Broadcaster.broadcast(CoffeeshopUI.CHANGE_TABLE_STATE+"::"+getCurrentTable().getId());
                 close();
             }
         }
@@ -156,6 +138,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
             orderInforView = new OrderInfoView(currentOrder, ViewMode.ORDER_SUMMRY);
             orderInforView.setParentView(this);
             orderInforView.setCurrentTable(getCurrentTable());
+            orderInforView.setCurrentOrder(currentOrder);
             orderInforView.createView();
             getUI().addWindow(orderInforView);
             close();
@@ -263,5 +246,13 @@ public class ChangeTableStateView extends AbstractOrderView implements
         default:
             break;
         }
+    }
+
+    public void setOrder(Order order) {
+        this.currentOrder = order;
+    }
+
+    public Order getOrder(Order order) {
+        return this.currentOrder;
     }
 }
