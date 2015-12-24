@@ -381,7 +381,7 @@ public class ChangeTable extends Window implements ViewInterface{
         }
 
         if( isMoveWholeTable == false ){
-            appendOrder(destOrder, odDetailRecordExtList);
+            appendOrder(srcOrder, destOrder, odDetailRecordExtList);
         }
 
         // Broadcast new order event
@@ -465,11 +465,11 @@ public class ChangeTable extends Window implements ViewInterface{
     /**
      * Append odDetailRcdExtList to source Order
      * Expect all orderdetail in subOrder have state sifferent from CANCELED
-     * @param inOder - order to be merged
+     * @param desOder - order to be merged
      * @param odDetailRcdExtList - list of order detail record extension use to append
      * @return
      */
-    public boolean appendOrder(Order inOder, List<OrderDetailRecordExtension> odDetailRcdExtList){
+    public boolean appendOrder(Order srcOrder, Order desOder, List<OrderDetailRecordExtension> odDetailRcdExtList){
         for( OrderDetailRecordExtension recordExt : odDetailRcdExtList ){
             if( recordExt.isEnable() && recordExt.getOrderDetailRecord().getQuantity() > 0 ){
                 // This record is a part of an other order detail
@@ -483,18 +483,18 @@ public class ChangeTable extends Window implements ViewInterface{
                     newOd.setState(recordExt.getOrderDetailRecord().getStatus());
 
                     if( Adapter.addNewOrderDetail(newOd) ){
-                        inOder.getOrderDetailIdList().add(odId.toString());
-                        Adapter.updateFieldValueOfOrder(inOder.getId(),
+                        desOder.getOrderDetailIdList().add(odId.toString());
+                        Adapter.updateFieldValueOfOrder(desOder.getId(),
                                 Order.DB_FIELD_NAME_ORDER_DETAIL_LIST,
-                                Types.formatListToString(inOder.getOrderDetailIdList()));
+                                Types.formatListToString(desOder.getOrderDetailIdList()));
                     }
                 }
                 else{
                     // Just append the order detail to this order
-                    inOder.getOrderDetailIdList().add(recordExt.getOrderDetailRecord().getOrderDetailId());
-                    Adapter.updateFieldValueOfOrder(inOder.getId(),
+                    desOder.getOrderDetailIdList().add(recordExt.getOrderDetailRecord().getOrderDetailId());
+                    Adapter.updateFieldValueOfOrder(desOder.getId(),
                             Order.DB_FIELD_NAME_ORDER_DETAIL_LIST,
-                            Types.formatListToString(inOder.getOrderDetailIdList()));
+                            Types.formatListToString(desOder.getOrderDetailIdList()));
                 }
             }
         }
@@ -503,28 +503,28 @@ public class ChangeTable extends Window implements ViewInterface{
         // Current order not in waiting state and new waiting order detail was added
         // Change order state to WAITING
         for(int i=0;i<odDetailRcdExtList.size();i++){
-            if( odDetailRcdExtList.get(i).getOrderDetailRecord().getStatus().equals(Types.State.WAITING)
-                    && inOder.getStatus().equals(Types.State.WAITING)){
-                inOder.setStatus(Types.State.WAITING);
-                if( Adapter.changeOrderState(inOder.getId(), Types.State.WAITING) ){
+            if( odDetailRcdExtList.get(i).getOrderDetailRecord().getStatus().equals(Types.State.WAITING) && !desOder.getStatus().equals(Types.State.WAITING)){
+                desOder.setStatus(Types.State.WAITING);
+                if( Adapter.changeOrderState(desOder.getId(), Types.State.WAITING) ){
+                    System.out.println(" ORDER is changed to WAITING");
                     // Update table state
-                    Adapter.changeTableState(inOder.getTableId(), Types.State.WAITING);
+                    Adapter.changeTableState(desOder.getTableId(), Types.State.WAITING);
 
                     // Broadcast order change event
-                    Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
-                            + destTable.getId() + "::" + srcOrder.getId() + "::" + destOrder.getId());
+                    Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcOrder.getTableId() + "::"
+                            + desOder.getTableId() + "::" + srcOrder.getId() + "::" + desOder.getId());
 
                     // In case add new food, add new waiting time thread if there's no thread exist for this order
                     boolean isThreadTimeExist = false;
                     for(NewOrderManager orderMgr : NewOrderManager.listWaitingOrderThreads){
-                        if( orderMgr.getCurrentOrder().getId().equals(inOder.getId()) ){
+                        if( orderMgr.getCurrentOrder().getId().equals(desOder.getId()) ){
                             isThreadTimeExist = true;
                             break;
                         }
                     }
                     if( !isThreadTimeExist ){
                         NewOrderManager waitingTimeThread = new NewOrderManager(
-                                inOder);
+                                desOder);
                         waitingTimeThread.start();
                     }
                 }

@@ -128,7 +128,7 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
         String str[] = messageData.split("::");
         orderId = str[1];
 
-        doRemoveOrderElementList(orderId);
+        doUpdateOrderElementWhenFoodCompleted(orderId);
     }
 
     /**
@@ -161,9 +161,11 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
                 if(orderElement.getOrder().getId().equals(orderId)) {
                     OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
                     if(!orderInfo.getOrderDetailRecordList().isEmpty()) {
+                        System.out.println("ORDER DETAIL is EMPTY");
                         orderElement.reloadView();
                         orderElement.populate(orderInfo);
                     } else {
+                        System.out.println("ORDER DETAIL is not EMPTY");
                         this.removeComponent(orderElement);
                     }
                     isFounded = true;
@@ -180,6 +182,28 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
     
                 this.addComponent(orderElement);
                 orderListElements.add(orderElement);
+            }
+        }
+    }
+
+    /**
+     * This function is used to update order element when it has a food completed
+     * @param orderId
+     */
+    private void doUpdateOrderElementWhenFoodCompleted(String orderId) {
+        Order order = Adapter.getOrder(orderId);
+        if(order.getStatus().equals(Types.State.UNPAID) || order.getStatus().equals(Types.State.PAID)) {
+            return;
+        }
+
+        if(!orderListElements.isEmpty()) {
+            for (OrderElement orderElement : orderListElements) {
+                if(orderElement.getOrder().getId().equals(orderId)) {
+                    OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
+                    orderElement.reloadView();
+                    orderElement.populate(orderInfo);
+                    break;
+                }
             }
         }
     }
