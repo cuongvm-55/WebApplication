@@ -37,10 +37,11 @@ public class OrderInfoProducer extends AbstractReportProducer{
 
         TOTAL_AMOUNT(9), // Total = nbOfRecords * amount
         PAID_AMOUNT(10),  // Real amount received from customer
-        STAFF_NAME_CONFIRM_ORDER_FINISH(11),  // Staff name confirm order finish
-        STAFF_NAME_CONFIRM_PAID(12),  // Staff name confirm paid
-        PAID_TIME(13),  // Paid time
-        NOTE(14); // Note
+        CREATOR_NAME(11), // Staff name who create the order
+        STAFF_NAME_CONFIRM_ORDER_FINISH(12),  // Staff name confirm order finish
+        STAFF_NAME_CONFIRM_PAID(13),  // Staff name confirm paid
+        PAID_TIME(14),  // Paid time
+        NOTE(15); // Note
         private final int num;
         private FIELD_HEADER(int index){
             num = index;
@@ -101,6 +102,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
         Label lbPaidAmount = createLabelCell(FIELD_HEADER.PAID_AMOUNT.getValue(), 5, "Thực Thu");
         Label lbCreatingTime = createLabelCell(FIELD_HEADER.CREATING_TIME.getValue(), 5, "T.Gian Tạo H.Đơn");
         Label lbPaidTime = createLabelCell(FIELD_HEADER.PAID_TIME.getValue(), 5, "T.Gian T.Toán");
+        Label lbCratorName = createLabelCell(FIELD_HEADER.CREATOR_NAME.getValue(), 5, "NV Tạo");
         Label lbStaffNameConfirmOrderFinish = createLabelCell(FIELD_HEADER.STAFF_NAME_CONFIRM_ORDER_FINISH.getValue(), 5, "NV X.Nhận Xong Món");
         Label lbStaffNameConfirmPaid = createLabelCell(FIELD_HEADER.STAFF_NAME_CONFIRM_PAID.getValue(), 5, "NV X.Nhận T.Toán");
         Label lbNote = createLabelCell(FIELD_HEADER.NOTE.getValue(), 5, "Ghi chú");
@@ -117,6 +119,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
         lbPaidAmount.setCellFormat(times12format);
         lbCreatingTime.setCellFormat(times12format);
         lbPaidTime.setCellFormat(times12format);
+        lbCratorName.setCellFormat(times12format);
         lbStaffNameConfirmPaid.setCellFormat(times12format);
         lbStaffNameConfirmOrderFinish.setCellFormat(times12format);
         lbNote.setCellFormat(times12format);
@@ -135,6 +138,7 @@ public class OrderInfoProducer extends AbstractReportProducer{
         contents.add(lbEmpty);
         contents.add(lbTotalAmount);
         contents.add(lbPaidAmount);
+        contents.add(lbCratorName);
         contents.add(lbStaffNameConfirmOrderFinish);
         contents.add(lbStaffNameConfirmPaid);
         contents.add(lbPaidTime);
@@ -209,6 +213,9 @@ public class OrderInfoProducer extends AbstractReportProducer{
 
                     jxl.write.Number nbrPaidAmount = createNumberCell(FIELD_HEADER.PAID_AMOUNT.getValue(), row, order.getPaidMoney());
                     contents.add(nbrPaidAmount);
+
+                    Label lblCreatorName = createLabelCell(FIELD_HEADER.CREATOR_NAME.getValue(), row, order.getCreatorName());
+                    contents.add(lblCreatorName);
 
                     // staff name who confirm order finish
                     Label lblStaffNameOrderFinish = createLabelCell(FIELD_HEADER.STAFF_NAME_CONFIRM_ORDER_FINISH.getValue(), row, order.getStaffNameConfirmOrderFinish());

@@ -502,6 +502,15 @@ public class OrderInfoView extends AbstractOrderView {
                 // Update order
                 ////////////////////////////////////////////////////////////////////////
                 if (isNewOrder) {
+                    // save creator name
+                    if( getSession() != null &&
+                            getSession().getAttribute("user") != null ){
+                        String creatorName = getSession().getAttribute("user").toString();
+                        if (!creatorName.equals(currentOrder.getCreatorName())) {
+                            currentOrder.setCreatorName(creatorName);
+                        }
+                    }
+
                     if (Adapter.addNewOrder(currentOrder)) {
                         System.out.println("Add new Order: " + currentOrder.toString());
                         // Waiting time thread
@@ -691,15 +700,6 @@ public class OrderInfoView extends AbstractOrderView {
         ///////////////////////////////////////////////////////////////////////
         if( !currentOrder.getNote().equals(txtNote.getValue()) ) {
             currentOrder.setNote(txtNote.getValue());
-        }
-
-        // Update order if staffName is different
-        if( getSession() != null &&
-                getSession().getAttribute("user") != null ){
-            String staffName = getSession().getAttribute("user").toString();
-            if (!staffName.equals(currentOrder.getStaffNameConfirmOrderFinish())) {
-                currentOrder.setStaffNameConfirmOrderFinish(staffName);
-            }
         }
 
         ////////////////////////////////////////////////////////////////////////
