@@ -491,6 +491,9 @@ public class OrderInfoView extends AbstractOrderView {
                 if( !saveOrderDetailsData() ){
                     // set table state to map to current order
                     setTableState();
+
+                    // Update waiting thread
+                    NewOrderManager.onOrderStateChange(currentOrder);
                     close();
                     return;
                 }
@@ -552,6 +555,9 @@ public class OrderInfoView extends AbstractOrderView {
                             Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
                                     + getCurrentTable().getId() + "::" + getCurrentOrder().getId());
                         }
+                        
+                        // Update waiting thread
+                        NewOrderManager.onOrderStateChange(currentOrder);
                     } else {
                         System.out.println("Fail to update orderId: ");
                     }
