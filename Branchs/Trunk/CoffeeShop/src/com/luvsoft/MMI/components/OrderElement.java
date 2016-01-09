@@ -2,6 +2,8 @@ package com.luvsoft.MMI.components;
 
 import java.util.List;
 
+import org.vaadin.hene.expandingtextarea.ExpandingTextArea;
+
 import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.CoffeeshopUI;
 import com.luvsoft.MMI.OrderListView;
@@ -25,7 +27,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -41,7 +42,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
     private List<OrderDetailRecord> orderDetailList;
     private Order order;
     private OrderListView parentView;
-    private TextArea txtNote;
+    private ExpandingTextArea txtNote;
 
     public OrderElement(Order _order){
         super();
@@ -58,7 +59,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         }
         lbTableName.setValue(orderInfo.getTableName());
         txtNote.setValue(orderInfo.getNote());
-        
+
         tbOrderInfos.clear();
         for( int i = 0; i < orderDetailList.size(); i++ ){
             Integer itemId = new Integer(i);
@@ -120,9 +121,9 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
         lbTableName.setWidth("100%");
 
         // Note text field
-        txtNote = new TextArea(Language.NOTE);
+        txtNote = new ExpandingTextArea(Language.NOTE);
         txtNote.addStyleName("bold FONT_OVERSIZE TEXT_RED FONT_TAHOMA");
-        txtNote.setSizeFull();
+        txtNote.setWidth("100%");
 
         tbOrderInfos.addContainerProperty(Language.SEQUENCE, Integer.class, null);
         tbOrderInfos.addContainerProperty(Language.FOOD_NAME, String.class, null);
@@ -168,7 +169,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                     if( Adapter.changeOrderState(order.getId(), Types.State.CANCELED) ){
                         // Set table status to be EMPTY
                         Adapter.changeTableState(order.getTableId(), Types.State.EMPTY);
-                        parentView.reloadView();
+                        Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+order.getTableId() + "::" + order.getId());
                     }
                     else{
                         System.out.println("Fail to cancel order: " + order.getId());
@@ -185,10 +186,10 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
 
                     // Set table status to be UNPAID
                     Adapter.changeTableState(order.getTableId(), Types.State.UNPAID);
-                    NewOrderManager.interruptWaitingOrderThread(order);
-
                     Broadcaster.broadcast(CoffeeshopUI.ORDER_COMPLETED_MESSAGE+"::"+order.getTableId() + "::" + order.getId());
                 }
+                // We always interrupt thread when order is finished
+                NewOrderManager.interruptWaitingOrderThread(order);
             }
         });
 

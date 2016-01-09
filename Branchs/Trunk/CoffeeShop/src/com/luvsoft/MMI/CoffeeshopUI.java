@@ -56,7 +56,7 @@ public class CoffeeshopUI extends UI {
     CssLayout menu = new CssLayout();
 
     @WebServlet(value = "/*", asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = CoffeeshopUI.class)
+    @VaadinServletConfiguration(productionMode = false, ui = CoffeeshopUI.class, widgetset="com.luvsoft.MMI.widgetset.CoffeeshopWidgetset")
     public static class Servlet extends VaadinServlet {
         @Override
         protected void servletInitialized() throws ServletException {

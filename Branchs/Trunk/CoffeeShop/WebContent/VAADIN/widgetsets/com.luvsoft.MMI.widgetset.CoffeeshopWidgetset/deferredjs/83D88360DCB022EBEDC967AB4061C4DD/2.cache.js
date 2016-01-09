@@ -1,0 +1,1 @@
+$wnd.com_luvsoft_MMI_widgetset_CoffeeshopWidgetset.runAsyncCallback2('Lbb(1548,1,TTd);_.tc=function pbc(){rZb((!kZb&&(kZb=new wZb),kZb),this.a.d)};vNd(Th)(2);\n//# sourceURL=com.luvsoft.MMI.widgetset.CoffeeshopWidgetset-2.js\n')
