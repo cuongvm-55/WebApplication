@@ -494,6 +494,9 @@ public class OrderInfoView extends AbstractOrderView {
 
                     // Update waiting thread
                     NewOrderManager.onOrderStateChange(currentOrder);
+
+                    currentOrder = null;
+                    orderDetailRecordList = null;
                     close();
                     return;
                 }
@@ -577,7 +580,7 @@ public class OrderInfoView extends AbstractOrderView {
                 if( currentOrder != null ) {
                     // Save note
                     if( !currentOrder.getNote().equals(txtNote.getValue()) ) {
-                    currentOrder.setNote(txtNote.getValue());
+                        currentOrder.setNote(txtNote.getValue());
                     }
 
                     // Update order if staffName is different
@@ -610,28 +613,36 @@ public class OrderInfoView extends AbstractOrderView {
                         Adapter.changeTableState(currentOrder.getTableId(),
                                 Types.State.PAID);
                     }
-                    close();// close the window
                     Broadcaster.broadcast(CoffeeshopUI.ORDER_WAS_PAID+"::"+getCurrentTable().getId()+"::"+currentOrder.getId());
+                    close();// close the window
+                }
+                else{
+                    System.out.println("Unexpected case: confirm paid when order is null!");
                 }
             }
         });
 
         return footer;
     }
-    
+
     /**
      * Set table state depend on state of current order
      */
     private void setTableState()
     {
         Types.State tblState = State.UNDEFINED;
-        switch(currentOrder.getStatus()){
-        case CANCELED:
+        if( currentOrder == null){
             tblState = State.EMPTY;
-            break;
-        default:
-            tblState = currentOrder.getStatus();
-            break;
+        }
+        else{
+            switch(currentOrder.getStatus()){
+            case CANCELED:
+                tblState = State.EMPTY;
+                break;
+            default:
+                tblState = currentOrder.getStatus();
+                break;
+            }
         }
         Adapter.changeTableState(currentOrder.getTableId(), tblState);
     }
@@ -662,7 +673,7 @@ public class OrderInfoView extends AbstractOrderView {
                 hasWaitingOrderDetail = true;
                 break;
             }
-            
+
             if( record.getStatus() == Types.State.COMPLETED){
                 hasCompleltedOrderDetail = true;
             }

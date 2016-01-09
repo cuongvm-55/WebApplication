@@ -80,7 +80,7 @@ public class CategoryController extends AbstractController{
             CachedData.removeCategory(categoryId);
             return true;
         }
-        
+
         return false;
     }
     

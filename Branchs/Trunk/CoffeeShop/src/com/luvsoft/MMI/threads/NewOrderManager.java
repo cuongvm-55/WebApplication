@@ -23,7 +23,6 @@ public class NewOrderManager extends Thread {
     @Override
     public void run() {
         super.run();
-
         while(runableFlag) {
             System.out.println("Thread running...TableId: " + currentOrder.getTableId() + ", OrderId: " + currentOrder.getId());
             try {
@@ -59,6 +58,7 @@ public class NewOrderManager extends Thread {
 
     @Override
     public void interrupt() {
+        System.out.println("Interrupt thread...TableId: " + currentOrder.getTableId() + ", OrderId: " + currentOrder.getId());
         runableFlag = false;
         if( !super.isInterrupted() ){
             super.interrupt();
@@ -105,7 +105,12 @@ public class NewOrderManager extends Thread {
             }
         }
 
-        if(!isExisted && !order.getId().equals("")) {
+        // Only add new waiting thread when:
+        //  - waiting thread has not exist, and
+        //  - order is valid and in WAITING state
+        if(!isExisted &&
+                !order.getId().equals("") &&
+                order.getStatus() == Types.State.WAITING) {
             NewOrderManager newthread = new NewOrderManager(order);
             newthread.start(order.getWaitingTime());
             System.out.println("Add new thread...TableId: " + order.getTableId() + ", OrderId: " + order.getId());

@@ -262,7 +262,7 @@ public class ChangeTable extends Window implements ViewInterface{
             System.out.println("Unexpected case, Src order is null...");
             return;
         }
-        
+
         // Get order of dest table
         List<Types.State> states = new ArrayList<Types.State>();
         states.add(Types.State.PAID);
@@ -290,7 +290,7 @@ public class ChangeTable extends Window implements ViewInterface{
             }
         }
 
-        // Try to split tempOrder (source order)
+        // Try to split source order
         OrderInfo orderInfo = Adapter.retrieveOrderInfo(srcOrder);
         List<OrderDetailRecord> srcRecordList = orderInfo.getOrderDetailRecordList();
         // back up the order detail list
@@ -315,7 +315,7 @@ public class ChangeTable extends Window implements ViewInterface{
 
                 // Move dest tableId to src order
                 destOrder.setTableId(destTable.getId());
-                
+
                 System.out.println("Src table: " + srcOrder.getTableId());
                 System.out.println("Des table: " + destOrder.getTableId());
                 Adapter.updateFieldValueOfOrder(destOrder.getId(), Order.DB_FIELD_NAME_TABLE_ID, destTable.getId());
@@ -527,7 +527,6 @@ public class ChangeTable extends Window implements ViewInterface{
     @Override
     public void reloadView() {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
