@@ -38,6 +38,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
     private Order currentOrder;
 
     public ChangeTableStateView() {
+        currentOrder = null;
     }
 
     @Override

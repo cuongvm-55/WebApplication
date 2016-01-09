@@ -68,11 +68,15 @@ public class LoginView extends CustomComponent implements View, Button.ClickList
         fields.setMargin(new MarginInfo(true, true, true, false));
         fields.setSizeUndefined();
 
+        // App version
+        Label lblVersion = new Label("Version " + CoffeeshopUI.APP_VERSION);
+
         // The view root layout
-        VerticalLayout viewLayout = new VerticalLayout(lblWelcome, fields);
+        VerticalLayout viewLayout = new VerticalLayout(lblWelcome, fields, lblVersion);
         viewLayout.setSizeFull();
         viewLayout.setComponentAlignment(fields, Alignment.MIDDLE_CENTER);
         viewLayout.setComponentAlignment(lblWelcome, Alignment.BOTTOM_CENTER);
+        viewLayout.setComponentAlignment(lblVersion, Alignment.BOTTOM_RIGHT);
         viewLayout.setStyleName(Reindeer.LAYOUT_BLUE);
         viewLayout.setExpandRatio(fields, 1.0f);
         setCompositionRoot(viewLayout);

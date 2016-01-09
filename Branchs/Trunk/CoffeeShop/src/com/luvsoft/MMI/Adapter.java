@@ -8,6 +8,7 @@ import java.util.List;
 import com.luvsoft.MMI.order.OrderDetailRecord;
 import com.luvsoft.MMI.order.OrderInfo;
 import com.luvsoft.MMI.utils.Language;
+import com.luvsoft.controllers.CachedData;
 import com.luvsoft.controllers.CategoryController;
 import com.luvsoft.controllers.ConfigurationController;
 import com.luvsoft.controllers.FloorController;
@@ -298,11 +299,8 @@ public class Adapter {
         return configCtrl.updateConfiguration( conf);
     }
     
-    public static List<Category> initCategoryList(){
-        return categoryCtrl.initCategoryList();
-    }
-    public static void initFoodList(Category cate){
-        categoryCtrl.initFoodList(cate);
+    public static void initCachedData(){
+        CachedData.initFoodsCachedData();
     }
 
     public static Food getFood(String categoryId, int index){

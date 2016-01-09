@@ -148,6 +148,9 @@ public class FoodForm extends Window implements ViewInterface{
                 if(preCate != null){
                     if( preCate.getId().equals(newCate.getId()) ){
                         // nothing changed on category
+                        // but call this method to let the controller update cached data
+                        Adapter.updateCategory(preCate);
+
                         parentView.reloadView();
                         close();
                         return;

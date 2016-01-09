@@ -359,14 +359,5 @@ public class FoodManagement extends Window implements ViewInterface{
         // TODO Auto-generated method stub
         
     }
-    
-    @Override
-    public void close(){
-        // init some static data
-        List<Category> cateList = Adapter.retrieveCategoryList();
-        for( int i=0;i< cateList.size();i++){
-            Adapter.initFoodList(cateList.get(i));
-        }
-        super.close();
-    }
+
 }

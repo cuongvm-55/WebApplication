@@ -38,6 +38,7 @@ public class CoffeeTableElement extends CssLayout implements ClickListener {
         super();
         this.table = table;
         this.tableListView = tableListView;
+        order = null;
         System.out.println("Created CoffeeTableElement for tblId: " + table.getId());
     }
 

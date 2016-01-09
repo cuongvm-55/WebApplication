@@ -25,36 +25,12 @@ public class CategoryController extends AbstractController{
      */
     public List<Category> getAllCategory() {
         if( isSUPMode() ){
-            System.out.println("Supmode...");
             List<Category> list = new ArrayList<Category>();
             categoryFacade.findAll(list);
             return list;
         }
-        else{
-            System.out.println("Operator...");
-        }
-        return CachedData.categoryList;
-    }
 
-    public List<Category> initCategoryList(){
-        CachedData.categoryList.clear();
-        CachedData.categoriesMaps.clear();
-        categoryFacade.findAll(CachedData.categoryList);
         return CachedData.categoryList;
-    }
-
-    public void initFoodList(Category cate){
-        if( cate != null){
-            List<Food> foodList = new ArrayList<Food>();
-            FoodFacade foodFacade = new FoodFacade();
-            for( String foodId : cate.getFoodIdList() ){
-                Food food = new Food();
-                if( foodFacade.findById(foodId, food)){
-                    foodList.add(food);
-                }
-                CachedData.categoriesMaps.put(cate.getId(), foodList);
-            }
-        }
     }
 
     public Food getFood(String catId, int index){
@@ -93,27 +69,41 @@ public class CategoryController extends AbstractController{
         categoryFacade.findById(categoryId, cate);
         return cate;
     }
-    
+
     /**
      * Remove category by id
      * @param categoryId
      * @return
      */
     public boolean removeCategory(String categoryId){
-        return categoryFacade.removeById(categoryId);
+        if( categoryFacade.removeById(categoryId) ){
+            CachedData.removeCategory(categoryId);
+            return true;
+        }
+        
+        return false;
     }
     
     /**
      * Add new category
      */
     public boolean addNewCategory(Category cat){
-        return categoryFacade.save(cat);
+        if( categoryFacade.save(cat) ){
+            CachedData.addNewCategory(cat);
+            return true;
+        }
+        return false;
     }
 
     /**
      * Update category
      */
     public boolean updateCategory(Category cate){
-        return categoryFacade.update(cate.getId(), cate);
+        if( categoryFacade.update(cate.getId(), cate) ){
+            CachedData.updateCategory(cate);
+            return true;
+        }
+
+        return false;
     }
 }

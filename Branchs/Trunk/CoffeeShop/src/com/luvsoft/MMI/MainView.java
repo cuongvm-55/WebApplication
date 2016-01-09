@@ -1,12 +1,9 @@
 package com.luvsoft.MMI;
 
-import java.util.List;
-
 import com.luvsoft.MMI.components.ValoMenuLayout;
 import com.luvsoft.MMI.management.LoginForm;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.MMI.utils.MenuButtonListener;
-import com.luvsoft.entities.Category;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
@@ -48,12 +45,8 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
         tableListView.setParentView(this);
         setViewChangedByClickingButton(true);
 
-        // init some static data
-        List<Category> cateList = Adapter.initCategoryList();
-        for( int i=0;i< cateList.size();i++){
-            Adapter.initFoodList(cateList.get(i));
-        }
-
+        // init cached data
+        Adapter.initCachedData();
     }
 
     public void setMenu(CssLayout menu) {

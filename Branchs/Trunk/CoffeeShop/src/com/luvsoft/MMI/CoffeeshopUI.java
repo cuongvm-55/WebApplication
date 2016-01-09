@@ -27,6 +27,10 @@ import com.vaadin.ui.themes.ValoTheme;
 @Title("Huyền Coffee")
 @Push
 public class CoffeeshopUI extends UI {
+    // version
+    public static final String APP_VERSION = "1.0.1.16"; // major.minor.month.year
+
+    // constant
     public static final String LOGIN_VIEW = "login";
     public static final String MAIN_VIEW = "main";
     public static final String TABLE_LIST_VIEW = "tablelist";
