@@ -21,7 +21,7 @@ public class CustomizationTreeElement extends VerticalLayout{
 
     private Button btnExpandElement;
     private CssLayout horzFloorTitleContainer;
-    private Label lblFloorName;
+    private Label lblTitle;
     private Component addComponent;
     private Component content;
 
@@ -43,9 +43,9 @@ public class CustomizationTreeElement extends VerticalLayout{
         this.btnExpandElement.setIcon(FontAwesome.CHEVRON_DOWN);
         this.btnExpandElement.setWidth("15%");
 
-        this.lblFloorName = new Label(title);
-        this.lblFloorName.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE FONT_OVERSIZE " +ValoTheme.LABEL_BOLD);
-        this.lblFloorName.setWidth("70%");
+        this.lblTitle = new Label(title);
+        this.lblTitle.addStyleName("FONT_TAHOMA TEXT_CENTER TEXT_WHITE FONT_OVERSIZE " +ValoTheme.LABEL_BOLD);
+        this.lblTitle.setWidth("70%");
 
         if( additionalComponent == null ){
             addComponent = new Label("");
@@ -57,7 +57,7 @@ public class CustomizationTreeElement extends VerticalLayout{
         }
 
         // Add label and button to element container
-        this.horzFloorTitleContainer.addComponents(btnExpandElement, lblFloorName, addComponent);
+        this.horzFloorTitleContainer.addComponents(btnExpandElement, lblTitle, addComponent);
         this.addComponents(this.horzFloorTitleContainer, content);
     }
 
@@ -89,6 +89,22 @@ public class CustomizationTreeElement extends VerticalLayout{
         removeComponent(this.content);
         this.content = content;
         addComponent(this.content);
+    }
+
+    public Label getLblTitle() {
+        return lblTitle;
+    }
+
+    public void setLblTitle(Label lblTitle) {
+        this.lblTitle = lblTitle;
+    }
+
+    public CssLayout getHorzFloorTitleContainer() {
+        return horzFloorTitleContainer;
+    }
+
+    public void setHorzFloorTitleContainer(CssLayout horzFloorTitleContainer) {
+        this.horzFloorTitleContainer = horzFloorTitleContainer;
     }
 
 }

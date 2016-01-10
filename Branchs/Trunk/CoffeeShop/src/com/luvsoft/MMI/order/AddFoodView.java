@@ -14,6 +14,8 @@ import com.luvsoft.entities.Food;
 import com.luvsoft.entities.Types.State;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.LayoutEvents.LayoutClickEvent;
+import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -102,6 +104,21 @@ public class AddFoodView extends AbstractOrderView {
             CustomizationTreeElement treeElement = new CustomizationTreeElement(
                     /*buildContentElement(category)*/defaultLayout, category.getName(), null);
             treeElement.setContentCollapse();
+
+            treeElement.getHorzFloorTitleContainer().addLayoutClickListener(new LayoutClickListener() {
+                @Override
+                public void layoutClick(LayoutClickEvent event) {
+                    if( treeElement.getContent().isVisible() ){
+                        treeElement.setContent(defaultLayout);
+                        treeElement.setContentCollapse();
+                    }
+                    else{
+                        treeElement.setContent(buildContentElement(category));
+                        treeElement.setContentExpand();
+                    }
+                }
+            });
+            
             treeElement.getBtnExpandElement().addClickListener(new ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
