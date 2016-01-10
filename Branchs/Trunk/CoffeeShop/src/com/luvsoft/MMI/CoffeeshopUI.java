@@ -218,6 +218,5 @@ public class CoffeeshopUI extends UI {
             access(() -> mainView.getTableListView().doChangeTableAndOrder(messageData));
             access(() -> mainView.getOrderListView().doChangeTableAndOrder(messageData));
         }
-
     }
 }

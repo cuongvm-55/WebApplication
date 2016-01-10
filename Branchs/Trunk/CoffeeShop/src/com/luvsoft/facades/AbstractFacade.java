@@ -96,7 +96,11 @@ public abstract class AbstractFacade {
         map.remove(TAG_ID);
         BasicDBObject object = new BasicDBObject(map);
         object.append(TAG_ID, new ObjectId(id)); // we need to save _id as a ObjectId
-        collection.insert(object);
+        try{
+            collection.insert(object);
+        }catch(MongoException ex){
+            return false;
+        }
         return true;
     }
 
