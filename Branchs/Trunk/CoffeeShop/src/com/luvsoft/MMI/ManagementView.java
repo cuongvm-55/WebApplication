@@ -246,11 +246,11 @@ public class ManagementView extends VerticalLayout{
                     }
                     else{
                         Notification notify = new Notification("<b>Thông báo</b>",
-                                "<i>Đã gặp lỗi, xuất báo cáo không thành công!</i>",
+                                "<i>Đã gặp lỗi, xuất báo cáo không thành công!</i></br>"
+                                + "<i>Kiểm tra đường dẫn thư mục chứa báo cáo.<i>",
                                 Notification.Type.ERROR_MESSAGE  , true);
                         notify.setPosition(Position.BOTTOM_RIGHT);
                         notify.show(Page.getCurrent());
-                        System.out.println("Fail to remove data...");
                         System.out.println("Fail to export report");
                     }
                 }
