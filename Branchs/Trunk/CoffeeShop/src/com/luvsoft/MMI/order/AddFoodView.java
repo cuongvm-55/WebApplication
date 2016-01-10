@@ -190,7 +190,6 @@ public class AddFoodView extends AbstractOrderView {
         cbNumberList.setValue(1);
 
         cbNumberList.setEnabled(true);
-        //cbNumberList.setEnabled(false);
 
         grid.addComponents(foodName, checkBox, cbNumberList);
         grid.setColumnExpandRatio(0, 4.5f);

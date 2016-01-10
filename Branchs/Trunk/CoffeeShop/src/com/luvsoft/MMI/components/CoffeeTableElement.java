@@ -50,17 +50,18 @@ public class CoffeeTableElement extends CssLayout implements ClickListener {
         Types.State state = table.getState();
 
         this.addStyleName("card TEXT_ALIGN_CENTER");
-        this.setSizeFull();
+        this.setWidth("100%");
         this.removeAllComponents();
 
         this.btnTableState = new Image();
-        this.btnTableState.setWidth("70%");
-        this.btnTableState.setHeight("70%");
+        this.btnTableState.setWidth("150px");
+        this.btnTableState.setHeight("150px");
         this.btnTableState.addStyleName("hoverImage TEXT_ALIGN_CENTER");
         this.setButtonResource(state);
         
         this.lblWaitingTime = new Label();
         this.lblWaitingTime.addStyleName("TEXT_CENTER FONT_OVER_OVERSIZE " + ValoTheme.LABEL_BOLD);
+        this.lblWaitingTime.setHeight("220px");
         if(state == Types.State.PAID) {
             setPaymentState(Types.State.PAID);
         } else if (state == Types.State.UNPAID) {
@@ -102,7 +103,7 @@ public class CoffeeTableElement extends CssLayout implements ClickListener {
         }
         else {
             this.lblWaitingTime.addStyleName("TEXT_WHITE FONT_OVER_OVERSIZE");
-            this.lblWaitingTime.setValue(".");
+            this.lblWaitingTime.setValue("");
         }
     }
 
