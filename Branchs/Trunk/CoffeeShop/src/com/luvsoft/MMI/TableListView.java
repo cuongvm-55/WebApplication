@@ -53,7 +53,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
         List<Order> orderList = Adapter.getOrderListIgnoreStates(states, null, null);
         for (int j = 0; j < floorList.size(); j++) {
             GridLayout gridElementContent = new GridLayout();
-            gridElementContent.setColumns(2);
+            gridElementContent.setColumns(3);
             gridElementContent.setWidth("100%");
             System.out.println("FloorId: " + floorList.get(j).getId());
             tableList = Adapter.retrieveTableList(floorList.get(j).getTableIdList());
