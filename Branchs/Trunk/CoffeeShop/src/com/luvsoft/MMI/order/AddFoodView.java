@@ -11,6 +11,7 @@ import com.luvsoft.MMI.order.OrderDetailRecord.ChangedFlag;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Category;
 import com.luvsoft.entities.Food;
+import com.luvsoft.entities.Types;
 import com.luvsoft.entities.Types.State;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -263,25 +264,28 @@ public class AddFoodView extends AbstractOrderView {
                         // Merge new order details list to old order details list
                         boolean shouldCreateNewOne = true;
 
-                        // If id of records are matched and change flag different from READONLY
+                        // If id of records are matched
                         for (OrderDetailRecord record : orderDetailRecordList) {
-                            if (orderDetailExtension.getOrderDetailRecord().getFoodId().equals(record.getFoodId())
-                                    && record.getChangeFlag() != ChangedFlag.READONLY) {
-                                shouldCreateNewOne = false;
-                                ChangedFlag currentFlag = record.getChangeFlag();
-                                if( currentFlag == ChangedFlag.UNMODIFIED ) {
-                                    record.setChangeFlag(ChangedFlag.MODIFIED);
-                                    record.setQuantity(record.getQuantity() + orderDetailExtension.getOrderDetailRecord().getQuantity());
-                                    record.setStatus(State.WAITING);
-                                } else if( currentFlag == ChangedFlag.ADDNEW ) {
-                                    record.setQuantity(record.getQuantity() + orderDetailExtension.getOrderDetailRecord().getQuantity());
-                                    record.setStatus(State.WAITING);
-                                }
-                                else if( currentFlag == ChangedFlag.DELETED ) {
-                                    shouldCreateNewOne = true;
-                                }
+                            if (orderDetailExtension.getOrderDetailRecord().getFoodId().equals(record.getFoodId())){
+                                    ChangedFlag currentFlag = record.getChangeFlag();
+                                    // we merge the quantity of food if record's in waiting state
+                                    if( record.getStatus() == Types.State.WAITING ){
+                                        record.setQuantity(record.getQuantity() + orderDetailExtension.getOrderDetailRecord().getQuantity());
+                                        shouldCreateNewOne = false;
+                                        // record is add new, set it to waiting state
+                                        if( currentFlag == ChangedFlag.ADDNEW ){
+                                            record.setStatus(State.WAITING);
+                                        }
+                                        else{
+                                            // if record is not new, just mark as modified
+                                            record.setChangeFlag(ChangedFlag.MODIFIED);
+                                        }
+                                    }
+                                    else if( currentFlag == ChangedFlag.DELETED ) {
+                                        shouldCreateNewOne = true;
+                                    }
 
-                                System.out.println("Merged " + record.getFoodId() + " " + record.getQuantity());
+                                    System.out.println("Merged " + record.getFoodId() + " " + record.getQuantity());
                             }
                         }
                         if ( shouldCreateNewOne ) {

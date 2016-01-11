@@ -153,14 +153,17 @@ public class ChangeTable extends Window implements ViewInterface{
         // Grid to hold the order detail content
         GridLayout gridContent = new GridLayout();
         gridContent.addStyleName("large-checkbox grid-layout-custom");
-        gridContent.setColumns(3);
+        gridContent.setColumns(4);
         gridContent.setWidth("100%");
         gridContent.setSpacing(true);
 
         // build grid
         for( OrderDetailRecord record : orderInfo.getOrderDetailRecordList() ){
             // build grid line
-            buildGridLine(record, gridContent);
+            // do not move cancel record
+            //if( record.getStatus() != Types.State.CANCELED ){
+                buildGridLine(record, gridContent);
+            //}
         }
         
         // Create panel to contain grid content
@@ -248,11 +251,20 @@ public class ChangeTable extends Window implements ViewInterface{
             }
         });
 
-        grid.addComponents(checkBox, foodName, cbNumberList);
+        Label foodStatus = new Label();
+        //foodStatus.addStyleName( ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE FONT_OVERSIZE");
+        foodStatus.setValue(Types.StateToLanguageString(rc.getOrderDetailRecord().getStatus()));
+        if(rc.getOrderDetailRecord().getStatus() == Types.State.CANCELED){
+            foodStatus.addStyleName("TEXT_RED");
+        }
+
+        grid.addComponents(checkBox, foodName, foodStatus, cbNumberList);
         grid.setColumnExpandRatio(0, 0.5f);
         grid.setColumnExpandRatio(1, 4.0f);
         grid.setColumnExpandRatio(2, 1.0f);
+        grid.setColumnExpandRatio(3, 1.0f);
         grid.setComponentAlignment(cbNumberList, Alignment.MIDDLE_CENTER);
+        grid.setComponentAlignment(foodStatus, Alignment.MIDDLE_CENTER);
 
         odDetailRecordExtList.add(rc);
     }
@@ -379,6 +391,15 @@ public class ChangeTable extends Window implements ViewInterface{
             destOrder.setCreatingTime(new Date());
             destOrder.setTableId(destTable.getId());
             destOrder.setStatus(srcOrder.getStatus());
+            destOrder.setCreatorName(srcOrder.getCreatorName());
+            if( getSession() != null &&
+                    getSession().getAttribute("user") != null ){
+                String staffName = getSession().getAttribute("user").toString();
+                destOrder.setCreatorName(staffName);
+            }
+            destOrder.setStaffNameConfirmPaid(srcOrder.getStaffNameConfirmPaid());
+            destOrder.setStaffNameConfirmOrderFinish(srcOrder.getStaffNameConfirmOrderFinish());
+            destOrder.setWaitingTime(0);
             if( !Adapter.addNewOrder(destOrder) ){
                 System.out.println("Fail to add new order!");
             }

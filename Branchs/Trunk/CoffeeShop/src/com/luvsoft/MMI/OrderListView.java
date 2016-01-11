@@ -191,6 +191,10 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
                 orderElement.setParentView(this);
                 orderElement.populate(orderInfo);
     
+                // Remove all components in case the order element list is empty
+                if(orderListElements.isEmpty()){
+                    this.removeAllComponents();
+                }
                 this.addComponent(orderElement);
                 orderListElements.add(orderElement);
             }
@@ -248,23 +252,19 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
             OrderElement orderElement = it.next();
             Order order = orderElement.getOrder();
             if(order.getId().equals(orderId)) {
-                //OrderInfo orderInfo = Adapter.retrieveOrderInfo(order);
-                //orderElement.reloadView();
-                //orderElement.populate(orderInfo);
-
                 this.removeComponent(orderElement);
                 it.remove();
-                
-                // Check if we remove the last order element out of order list
-                if( !it.hasNext() ){
-                    // No Order in orderlist
-                    Label lbl = new Label(Language.NO_ORDER_IN_ORDER_LIST);
-                    lbl.addStyleName(ValoTheme.LABEL_HUGE);
-                    this.removeAllComponents();
-                    this.addComponent(lbl);
-                }
                 break;
             }
+        }
+
+        // Check if we remove the last order element out of order list
+        if( orderListElements.isEmpty() ){
+            // No Order in orderlist
+            Label lbl = new Label(Language.NO_ORDER_IN_ORDER_LIST);
+            lbl.addStyleName(ValoTheme.LABEL_HUGE);
+            this.removeAllComponents();
+            this.addComponent(lbl);
         }
     }
 

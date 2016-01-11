@@ -117,6 +117,17 @@ public class ChangeTableStateView extends AbstractOrderView implements
                                         for (String orderDetailId : currentOrder.getOrderDetailIdList()) {
                                             Adapter.changeOrderDetailState(orderDetailId, State.CANCELED);
                                         }
+
+                                        // save staff name who confirm paid (cancel in this case)
+                                        if( getSession() != null &&
+                                                getSession().getAttribute("user") != null ){
+                                            String staffName = getSession().getAttribute("user").toString();
+                                            if (!staffName.equals(currentOrder)) {
+                                                currentOrder.setStaffNameConfirmPaid(staffName);
+                                                Adapter.updateFieldValueOfOrder(currentOrder.getId(), Order.DB_FIELD_NAME_STAFF_NAME_CONFIRM_PAID, currentOrder.getStaffNameConfirmPaid());
+                                            }
+                                        }
+
                                         Adapter.changeTableState(getCurrentTable().getId(), newState);
                                         NewOrderManager.interruptWaitingOrderThread(currentOrder);
                                         Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+getCurrentTable().getId()+"::"+currentOrder.getId());

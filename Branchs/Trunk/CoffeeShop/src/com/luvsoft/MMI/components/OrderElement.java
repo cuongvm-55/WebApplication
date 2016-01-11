@@ -166,6 +166,15 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                 }
                 if( allOrderDetailCanceled ){
                     // Set status of order to be CANCELED
+                    // save staff name who confirm paid (cancel in this case)
+                    if( getSession() != null &&
+                            getSession().getAttribute("user") != null ){
+                        String staffName = getSession().getAttribute("user").toString();
+                        if (!staffName.equals(order.getStaffNameConfirmPaid())) {
+                            order.setStaffNameConfirmPaid(staffName);
+                            Adapter.updateFieldValueOfOrder(order.getId(), Order.DB_FIELD_NAME_STAFF_NAME_CONFIRM_PAID, order.getStaffNameConfirmPaid());
+                        }
+                    }
                     if( Adapter.changeOrderState(order.getId(), Types.State.CANCELED) ){
                         // Set table status to be EMPTY
                         Adapter.changeTableState(order.getTableId(), Types.State.EMPTY);

@@ -21,10 +21,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -218,11 +215,6 @@ public class OrderInfoView extends AbstractOrderView {
         for (int i = 0; i < orderDetailRecordList.size(); i++) {
             OrderDetailRecord record = orderDetailRecordList.get(i);
 
-            // If status of record is COMPLETED or CANCELED, mark as READONLY
-            if(record.getStatus() == Types.State.COMPLETED || record.getStatus() == Types.State.CANCELED){
-                record.setChangeFlag(ChangedFlag.READONLY);
-            }
-
             // If item already deleted, nothing to do
             if( record.getChangeFlag() == ChangedFlag.DELETED ) {
                 continue;
@@ -373,7 +365,10 @@ public class OrderInfoView extends AbstractOrderView {
                     }
                 }
             });
-            if( record.getChangeFlag() == ChangedFlag.READONLY){
+            
+            // We do not allow to change Finished and Canceled record
+            if( record.getStatus() == Types.State.CANCELED
+                    || record.getStatus() == Types.State.COMPLETED ){
                 btnRemove.setEnabled(false);
                 cbStatus.setReadOnly(true);
                 txtQuantity.setReadOnly(true);
@@ -427,18 +422,6 @@ public class OrderInfoView extends AbstractOrderView {
         // container.setResponsive(true);
         container.setSizeFull();
         container.setComponentAlignment(lbTableName, Alignment.TOP_CENTER);
-
-        tbOrderDetails.addItemClickListener(new ItemClickListener() {
-            @Override
-            public void itemClick(ItemClickEvent itemClickEvent) {
-                if( itemClickEvent.getButton().equals(MouseButton.RIGHT) ) {
-                    System.out.println("Right Click on\nrow: "
-                            + itemClickEvent.getItemId().toString()
-                            + "\ncolumn: "
-                            + itemClickEvent.getPropertyId().toString());
-                }
-            }
-        });
 
         this.setContent(container);
     }
@@ -553,7 +536,12 @@ public class OrderInfoView extends AbstractOrderView {
                         setTableState();
 
                         System.out.println("Update Order: " + currentOrder.toString());
-                        if( isOrderDetailListChanged || !previousTextValue.equals(txtNote.getValue()) ){
+                        // we're canceling the order, broadcast the news
+                        if( currentOrder.getStatus() == Types.State.CANCELED ){
+                            // Broadcast order cancel event
+                            Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+getCurrentTable().getId()+"::"+currentOrder.getId());
+                        }
+                        else if( isOrderDetailListChanged || !previousTextValue.equals(txtNote.getValue()) ){
                             // Broadcast order change event
                             Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
                                     + getCurrentTable().getId() + "::" + getCurrentOrder().getId());
@@ -684,22 +672,26 @@ public class OrderInfoView extends AbstractOrderView {
             if( hasWaitingOrderDetail ){
                 // there's an waiting order detail
                 btnConfirmPaid.setEnabled(false);
-                textFieldpaidAmount.setEnabled(false);
             }
             else if( hasCompleltedOrderDetail ){
                 // No waiting one, all are canceled or completed
                 btnConfirmPaid.setEnabled(true);
-                textFieldpaidAmount.setEnabled(true);
             }
             else{
                 // all are canceled
                 btnConfirmPaid.setEnabled(false);
-                textFieldpaidAmount.setEnabled(false);
             }
         }
         else{
             btnConfirmOrder.setEnabled(false);
             btnConfirmPaid.setEnabled(false);
+        }
+
+        // text field paid amount is enable only on summary mode
+        if( currentMode == ViewMode.ORDER_SUMMRY ){
+            textFieldpaidAmount.setEnabled(true);
+        }
+        else{
             textFieldpaidAmount.setEnabled(false);
         }
     }
@@ -810,6 +802,15 @@ public class OrderInfoView extends AbstractOrderView {
             // If all order details are canceled or deleted, mark order as CANCELED
             if (allOrderDetailCanceled || currentOrder.getOrderDetailIdList().isEmpty()) {
                 currentOrder.setStatus(Types.State.CANCELED);
+                // Update order if staffName is different
+                if( getSession() != null &&
+                        getSession().getAttribute("user") != null ){
+                    String staffName = getSession().getAttribute("user").toString();
+                    if (!staffName.equals(currentOrder.getStaffNameConfirmPaid())) {
+                        currentOrder.setStaffNameConfirmPaid(staffName);
+                    }
+                }
+
                 if( isNewOrder ){
                     // Ignore this order by return false
                     return false;
@@ -821,7 +822,6 @@ public class OrderInfoView extends AbstractOrderView {
                     currentOrder.setCreatingTime(new Date());
                 }
                 currentOrder.setStatus(Types.State.WAITING);
-                currentOrder.setWaitingTime(0); // reset waiting time
             }
             else if( !hasWaitingOrderDetail ){
                 currentOrder.setStatus(Types.State.UNPAID);
