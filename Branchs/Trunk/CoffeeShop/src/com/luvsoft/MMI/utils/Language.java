@@ -30,6 +30,7 @@ public class Language {
                 WAITER = "Waiter";
                 BARTENDER = "Bartender";
                 MANAGEMENT = "Management";
+                LOGOUT = "Logout";
                 ORDER = "Order";
                 
                 // States
@@ -117,7 +118,9 @@ public class Language {
                 TO = "To";
 
                 CONFIRM_DELETE_TITLE = "Confirm to delete";
+                CONFIRM_LOGOUT_TITLE = "Confirm to logout";
                 CONFIRM_DELETE_CONTENT = "Do you really want to delete?";
+                CONFIRM_LOGOUT_CONTENT = "Do you really want to logout?";
                 CONIFRM_CANCEL_ORDER = "Do you want to Cancel the order of this table?";
                 ASK_FOR_CONFIRM = "Ok";
                 ASK_FOR_DENIED = "Cancel";
@@ -140,6 +143,7 @@ public class Language {
                 WAITER = "Nhân Viên Phục Vụ";
                 BARTENDER = "Nhân Viên Pha Chế";
                 MANAGEMENT = "Quản Lý";
+                LOGOUT = "Thoát";
                 ORDER = "Đặt món";
 
                 // States
@@ -227,7 +231,9 @@ public class Language {
                 TO = "Đến";
 
                 CONFIRM_DELETE_TITLE = "Xác nhận";
+                CONFIRM_LOGOUT_TITLE = "Thoát";
                 CONFIRM_DELETE_CONTENT = "Bạn có chắc chắn muốn xóa dữ liệu không?";
+                CONFIRM_LOGOUT_CONTENT = "Bạn có chắc chắn muốn thoát không?";
                 CONIFRM_CANCEL_ORDER = "Bạn có chắc chắn muốn Hủy hóa đơn của bàn này không?";
                 ASK_FOR_CONFIRM = "Đồng ý";
                 ASK_FOR_DENIED = "Hủy";
@@ -250,6 +256,7 @@ public class Language {
     public static String WAITER;
     public static String BARTENDER;
     public static String MANAGEMENT;
+    public static String LOGOUT;
 
     // States
     public static String EMPTY;
@@ -352,7 +359,9 @@ public class Language {
  
     // Confirm dialog
     public static String CONFIRM_DELETE_TITLE;
+    public static String CONFIRM_LOGOUT_TITLE;
     public static String CONFIRM_DELETE_CONTENT;
+    public static String CONFIRM_LOGOUT_CONTENT;
     public static String CONIFRM_CANCEL_ORDER;
     public static String ASK_FOR_CONFIRM;
     public static String ASK_FOR_DENIED;

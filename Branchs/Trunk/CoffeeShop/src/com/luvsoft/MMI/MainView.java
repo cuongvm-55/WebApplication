@@ -1,5 +1,7 @@
 package com.luvsoft.MMI;
 
+import org.vaadin.dialogs.ConfirmDialog;
+
 import com.luvsoft.MMI.components.ValoMenuLayout;
 import com.luvsoft.MMI.management.LoginForm;
 import com.luvsoft.MMI.utils.Language;
@@ -30,6 +32,7 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
     private Button btnWaiterView;
     private Button btnBartenderView;
     private Button btnManagementView;
+    private Button btnLogout;
     private OrderListView orderListView;
     private TableListView tableListView;
     private MenuBar mnbSettings;
@@ -119,7 +122,32 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
         btnManagementView.setPrimaryStyleName("valo-menu-item");
         btnManagementView.setIcon(FontAwesome.KEY);
 
-        menuItemsLayout.addComponents(btnWaiterView, btnBartenderView, btnManagementView);
+        btnLogout = new Button(Language.LOGOUT);
+        btnLogout.setPrimaryStyleName("valo-menu-item");
+        btnLogout.setIcon(FontAwesome.POWER_OFF);
+
+        menuItemsLayout.addComponents(btnWaiterView, btnBartenderView, btnManagementView, btnLogout);
+
+        btnLogout.addClickListener(new ClickListener() {
+            
+            @Override
+            public void buttonClick(ClickEvent event) {
+                ConfirmDialog.show(getUI(), Language.CONFIRM_LOGOUT_TITLE,
+                        Language.CONFIRM_LOGOUT_CONTENT,
+                        Language.ASK_FOR_CONFIRM, Language.ASK_FOR_DENIED,
+                        new ConfirmDialog.Listener() {
+                            public void onClose(ConfirmDialog dialog) {
+                                if( dialog.isConfirmed() ) {
+                                    UI.getCurrent().getNavigator().navigateTo(CoffeeshopUI.LOGIN_VIEW);
+                                    getSession().close();
+                                } else {
+                                    System.out.println("User canceled logout");
+                                }
+                            }
+                        }
+                );
+            }
+        });
 
         return menu;
     }
