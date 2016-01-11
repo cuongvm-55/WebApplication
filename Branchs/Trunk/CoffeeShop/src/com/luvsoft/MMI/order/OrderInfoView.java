@@ -303,6 +303,8 @@ public class OrderInfoView extends AbstractOrderView {
                         lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
                         record.setPreviousStatus(Types.State.CANCELED);
 
+                        // Cannot input text when order detail was canceled
+                        txtQuantity.setReadOnly(true);
                     }
                     else if( record.getStatus() != Types.State.CANCELED
                             && record.getPreviousStatus() == Types.State.CANCELED ) {
@@ -315,6 +317,9 @@ public class OrderInfoView extends AbstractOrderView {
                         btnRemove.removeStyleName("TEXT_RED");
                         txtQuantity.removeStyleName("TEXT_RED");
                         record.setPreviousStatus(record.getStatus());
+
+                        // Enable input text when order was switched from canceled to other state
+                        txtQuantity.setReadOnly(false);
                     }
 
                     // We do not change flag to Modified if this record is a new
@@ -355,6 +360,11 @@ public class OrderInfoView extends AbstractOrderView {
                                 .println("OrderInfoView::UpdateTable::Cannot parse from String to Integer");
                         return;
                     }
+
+                    if(quantity < 0) {
+                        return;
+                    }
+
                     // update total amount
                     int offset = quantity - record.getQuantity();
                     totalAmount += record.getPrice() * offset;
