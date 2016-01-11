@@ -264,15 +264,24 @@ public class OrderInfoView extends AbstractOrderView {
             btnRemove.addClickListener(new ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
-                    record.setChangeFlag(ChangedFlag.DELETED);
-                    if( record.getStatus() != State.CANCELED ) {
-                        totalAmount -= record.getPrice() * record.getQuantity();
-                        paidAmount -= record.getPrice() * record.getQuantity();
-                        textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
-                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+                    // if we remove ADDNEW record, just remove it from this list
+                    if(record.getChangeFlag() == ChangedFlag.ADDNEW){
+                        orderDetailRecordList.remove(record);
+                        tbOrderDetails.removeItem(event.getButton().getData());
+                        tbOrderDetails.setImmediate(true);
                     }
-                    tbOrderDetails.removeItem(event.getButton().getData());
-                    tbOrderDetails.setImmediate(true);
+                    else{
+                        record.setChangeFlag(ChangedFlag.DELETED);
+                        if( record.getStatus() != State.CANCELED ) {
+                            totalAmount -= record.getPrice() * record.getQuantity();
+                            paidAmount -= record.getPrice() * record.getQuantity();
+                            textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
+                            lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+                        }
+                        record.setStatus(Types.State.CANCELED); // mark it as canceled
+                        tbOrderDetails.removeItem(event.getButton().getData());
+                        tbOrderDetails.setImmediate(true);
+                    }
                 }
             });
 
@@ -470,13 +479,30 @@ public class OrderInfoView extends AbstractOrderView {
         btnConfirmOrder.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                // Save note
+                if( !currentOrder.getNote().equals(txtNote.getValue()) ) {
+                    currentOrder.setNote(txtNote.getValue());
+                }
+
                 // update order details infomation
                 if( !saveOrderDetailsData() ){
-                    // set table state to map to current order
-                    setTableState();
+                    // we didn't change any order detail,
+                    // or we might canceled this new order
 
-                    // Update waiting thread
-                    NewOrderManager.onOrderStateChange(currentOrder);
+                    // we just change the note of existing order
+                    if( !previousTextValue.equals(txtNote.getValue()) && !isNewOrder ){
+                        Adapter.updateFieldValueOfOrder(currentOrder.getId(), Order.DB_FIELD_NAME_NOTE, currentOrder.getNote());
+                        // Broadcast order change event
+                        Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
+                                + getCurrentTable().getId() + "::" + getCurrentOrder().getId());
+                    }
+                    if( isOrderDetailListChanged ){
+                        // set table state to map to current order
+                        setTableState();
+
+                        // Update waiting thread
+                        NewOrderManager.onOrderStateChange(currentOrder);
+                    }
 
                     currentOrder = null;
                     orderDetailRecordList = null;
@@ -702,13 +728,6 @@ public class OrderInfoView extends AbstractOrderView {
      */
     private boolean saveOrderDetailsData(){
         ////////////////////////////////////////////////////////////////////////
-        // Save note
-        ///////////////////////////////////////////////////////////////////////
-        if( !currentOrder.getNote().equals(txtNote.getValue()) ) {
-            currentOrder.setNote(txtNote.getValue());
-        }
-
-        ////////////////////////////////////////////////////////////////////////
         // Update order details
         ///////////////////////////////////////////////////////////////////////
         isOrderDetailListChanged = false;
@@ -826,9 +845,11 @@ public class OrderInfoView extends AbstractOrderView {
             else if( !hasWaitingOrderDetail ){
                 currentOrder.setStatus(Types.State.UNPAID);
             }
+
+            return true; // order detail has been changed
         }
 
-        return true;
+        return false; // we do not change any order detail
     }
 
     public Order getCurrentOrder() {

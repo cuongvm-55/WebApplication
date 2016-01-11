@@ -271,7 +271,7 @@ public class AddFoodView extends AbstractOrderView {
                             if (orderDetailExtension.getOrderDetailRecord().getFoodId().equals(record.getFoodId())){
                                     ChangedFlag currentFlag = record.getChangeFlag();
                                     // we merge the quantity of food if record's in waiting state
-                                    if( record.getStatus() == Types.State.WAITING ){
+                                    if( record.getStatus() == Types.State.WAITING && currentFlag != ChangedFlag.DELETED){
                                         record.setQuantity(record.getQuantity() + orderDetailExtension.getOrderDetailRecord().getQuantity());
                                         shouldCreateNewOne = false;
                                         // record is add new, set it to waiting state
@@ -282,9 +282,6 @@ public class AddFoodView extends AbstractOrderView {
                                             // if record is not new, just mark as modified
                                             record.setChangeFlag(ChangedFlag.MODIFIED);
                                         }
-                                    }
-                                    else if( currentFlag == ChangedFlag.DELETED ) {
-                                        shouldCreateNewOne = true;
                                     }
 
                                     System.out.println("Merged " + record.getFoodId() + " " + record.getQuantity());
