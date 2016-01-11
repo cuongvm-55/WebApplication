@@ -13,7 +13,9 @@ public class FoodController extends AbstractController{
     }
 
     public boolean removeFood(String foodId){
-        return foodFacade.removeById(foodId);
+        // return foodFacade.removeById(foodId);
+        // We don't want to delete this food, just change it's state to inactive 
+        return foodFacade.updateFieldValue(foodId, Food.DB_FIELD_NAME_ACTIVE, false);
     }
 
     /*

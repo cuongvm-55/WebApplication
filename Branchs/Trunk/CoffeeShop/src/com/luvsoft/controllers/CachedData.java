@@ -50,7 +50,9 @@ public class CachedData {
             for( String foodId : cate.getFoodIdList() ){
                 Food food = new Food();
                 if( foodFacade.findById(foodId, food)){
-                    foodList.add(food);
+                    if(food.isActive() == true) {
+                        foodList.add(food);
+                    }
                 }
                 // first, remove the old map if it exist
                 categoriesMaps.remove(cate.getId());

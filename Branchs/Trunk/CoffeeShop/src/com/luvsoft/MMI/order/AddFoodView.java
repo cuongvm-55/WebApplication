@@ -149,8 +149,10 @@ public class AddFoodView extends AbstractOrderView {
         gridElementContent.setSizeFull();
         gridElementContent.setSpacing(true);
         for(int index=0; index < category.getFoodIdList().size();index++){
-            buildChildElementContainer(
-                    Adapter.getFood(category.getId(), index), gridElementContent);
+            Food food = Adapter.getFood(category.getId(), index);
+            if(food.isActive() == true) {
+                buildChildElementContainer(food, gridElementContent);
+            }
         }
         return gridElementContent;
     }

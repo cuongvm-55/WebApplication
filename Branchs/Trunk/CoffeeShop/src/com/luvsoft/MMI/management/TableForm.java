@@ -5,7 +5,9 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.CoffeeshopUI;
 import com.luvsoft.MMI.ViewInterface;
+import com.luvsoft.MMI.threads.Broadcaster;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Floor;
 import com.luvsoft.entities.Table;
@@ -157,6 +159,8 @@ public class TableForm extends Window implements ViewInterface{
                 }
 
                 parentView.reloadView();
+                // Broadcast order change event
+                Broadcaster.broadcast(CoffeeshopUI.SUPERVISOR_UPDATE_TABLE);
                 close();
             }
         });

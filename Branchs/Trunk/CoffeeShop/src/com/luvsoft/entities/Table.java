@@ -10,12 +10,14 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_NUMBER = "Number";
     public static final String DB_FIELD_NAME_STATE = "State";
+    public static final String DB_FIELD_NAME_ACTIVE = "isActive";
 
     private String id;
     private String number;
     private int waitingTime;
     private Types.State state;
     private String staffName;
+    private boolean isActive;
 
     public Table()
     {
@@ -23,6 +25,7 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
         number = "";
         state = Types.State.EMPTY;
         staffName = "";
+        isActive = true;
     }
 
     public Table(BasicDBObject object)
@@ -36,6 +39,7 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
         this.waitingTime = table.getWaitingTime();
         this.state = table.getState();
         this.staffName = table.getStaffName();
+        this.isActive = table.isActive();
     }
 
     @Override
@@ -45,6 +49,7 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_NUMBER, number);
         map.put(DB_FIELD_NAME_STATE, state.toString());
+        map.put(DB_FIELD_NAME_ACTIVE, isActive());
         return map;
     }
 
@@ -52,6 +57,7 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
     public void setObject(BasicDBObject dbObject){
         id = getString(DB_FIELD_NAME_ID, dbObject);
         number = getString(DB_FIELD_NAME_NUMBER, dbObject);
+        isActive = getBoolean(DB_FIELD_NAME_ACTIVE, dbObject);
         // extract state
         switch( getString(DB_FIELD_NAME_STATE, dbObject) )
         {
@@ -109,10 +115,19 @@ public class Table extends AbstractEntity implements Serializable, Comparable<Ta
         this.staffName = staffName;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
     @Override
     public String toString() {
         return "Table [id=" + id + ", number=" + number + ", waitingTime="
                 + waitingTime + ", state=" + state + ", staffName=" + staffName
+                + "isActive " + isActive
                 + "]";
     }
 
