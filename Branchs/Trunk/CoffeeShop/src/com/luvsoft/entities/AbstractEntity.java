@@ -39,6 +39,13 @@ public abstract class AbstractEntity {
         return 0;
     }
 
+    public boolean getBoolean(String fieldName, BasicDBObject dbObject) {
+        if( dbObject.get(fieldName) != null ){
+            return dbObject.getBoolean(fieldName);
+        }
+        return true;
+    }
+
     public Date getDate(String fieldName, BasicDBObject dbObject){
         if( dbObject.get(fieldName) != null ){
             return dbObject.getDate(fieldName);

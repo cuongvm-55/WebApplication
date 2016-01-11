@@ -56,7 +56,7 @@ public class TableListView extends VerticalLayout implements ViewInterface {
             gridElementContent.setColumns(3);
             gridElementContent.setWidth("100%");
             System.out.println("FloorId: " + floorList.get(j).getId());
-            tableList = Adapter.retrieveTableList(floorList.get(j).getTableIdList());
+            tableList = Adapter.retrieveTableListIgnoreInactive(floorList.get(j).getTableIdList());
             // Add components to grid layout
             for (int i = 0; i < tableList.size(); i++) {
                 Table table = tableList.get(i);

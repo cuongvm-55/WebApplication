@@ -77,7 +77,9 @@ public class FloorController extends AbstractController{
      * @return
      */
     public boolean removeTable(String tableId){
-        return tableFacade.removeById(tableId);
+        // return tableFacade.removeById(tableId);
+        // We don't want to delete this table, just change it's state to inactive
+        return tableFacade.updateFieldValue(tableId, Table.DB_FIELD_NAME_ACTIVE, false);
     }
     
     /**

@@ -46,6 +46,7 @@ public class CoffeeshopUI extends UI {
     public static final String ORDER_WAS_PAID = "order_was_paid";
     public static final String FOOD_WAS_COMPLETED = "food_was_complete";
     public static final String PERFORM_SWITCH_TABLE = "perform_switch_table";
+    public static final String SUPERVISOR_UPDATE_TABLE = "sup_update_table";
 
     public Navigator navigator;
     public MainView mainView;
@@ -217,6 +218,8 @@ public class CoffeeshopUI extends UI {
         } else if(messageId.equals(CoffeeshopUI.PERFORM_SWITCH_TABLE)) {
             access(() -> mainView.getTableListView().doChangeTableAndOrder(messageData));
             access(() -> mainView.getOrderListView().doChangeTableAndOrder(messageData));
+        } else if(messageId.equals(CoffeeshopUI.SUPERVISOR_UPDATE_TABLE)) {
+            access(() -> mainView.getTableListView().reloadView());
         }
     }
 }

@@ -6,8 +6,10 @@ import java.util.List;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.luvsoft.MMI.Adapter;
+import com.luvsoft.MMI.CoffeeshopUI;
 import com.luvsoft.MMI.ViewInterface;
 import com.luvsoft.MMI.components.CustomizationTreeElement;
+import com.luvsoft.MMI.threads.Broadcaster;
 import com.luvsoft.MMI.utils.Language;
 import com.luvsoft.entities.Floor;
 import com.luvsoft.entities.Table;
@@ -261,6 +263,7 @@ public class TableManagement extends Window implements ViewInterface{
 
                                     // Refresh
                                     reloadView();
+                                    Broadcaster.broadcast(CoffeeshopUI.SUPERVISOR_UPDATE_TABLE);
                                 } else {
                                     System.out.println("user canceled, do nothing!");
                                 }

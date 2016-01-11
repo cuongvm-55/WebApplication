@@ -10,16 +10,19 @@ public class Food extends AbstractEntity implements Serializable {
     public static final String DB_FIELD_NAME_ID = "_id";
     public static final String DB_FIELD_NAME_NAME = "Name";
     public static final String DB_FIELD_NAME_PRICE = "Price";
+    public static final String DB_FIELD_NAME_ACTIVE = "isActive";
 
     private String id;
     private String name;
     private double price;
+    private boolean isActive;
 
     public Food()
     {
         id = "";
         name = "";
         price = 0;
+        isActive = true;
     }
 
     public Food(BasicDBObject object)
@@ -34,6 +37,7 @@ public class Food extends AbstractEntity implements Serializable {
         map.put(DB_FIELD_NAME_ID, id);
         map.put(DB_FIELD_NAME_NAME, name);
         map.put(DB_FIELD_NAME_PRICE, price);
+        map.put(DB_FIELD_NAME_ACTIVE, isActive);
         return map;
     }
 
@@ -42,6 +46,7 @@ public class Food extends AbstractEntity implements Serializable {
         id = getString(DB_FIELD_NAME_ID, dbObject);
         name = getString(DB_FIELD_NAME_NAME, dbObject);
         price = getDouble(DB_FIELD_NAME_PRICE, dbObject);
+        isActive = getBoolean(DB_FIELD_NAME_ACTIVE, dbObject);
     }
 
     public String getId() {
@@ -68,9 +73,17 @@ public class Food extends AbstractEntity implements Serializable {
         this.price = price;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
     @Override
     public String toString() {
-        return "Food [id=" + id + ", name=" + name + ", price=" + price + "]";
+        return "Food [id=" + id + ", name=" + name + ", price=" + price + "isActive " + isActive + "]";
     }
 
 }

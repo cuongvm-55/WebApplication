@@ -90,6 +90,18 @@ public class Adapter {
         return list;
     }
 
+    public static List<Table> retrieveTableListIgnoreInactive(List<String> tableIdList){
+        List<Table> list = new ArrayList<Table>();
+        for( String tableId : tableIdList ){
+            Table table = floorCtrl.getTableById(tableId);
+            if(table.isActive() == true) {
+                list.add(table);
+            }
+        }
+        Collections.sort(list);
+        return list;
+    }
+
     public static List<Category> retrieveCategoryList() {
         List<Category> list = categoryCtrl.getAllCategory();
          return list;
