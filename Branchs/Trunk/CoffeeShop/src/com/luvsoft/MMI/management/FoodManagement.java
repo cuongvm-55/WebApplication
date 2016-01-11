@@ -155,7 +155,9 @@ public class FoodManagement extends Window implements ViewInterface{
 
         for(int index=0; index < category.getFoodIdList().size();index++){
             Food food = Adapter.getFoodById(category.getFoodIdList().get(index));
-            vtcElementContainer.addComponents(buildChildElementContainer(category, food));
+            if(food.isActive() == true) {
+                vtcElementContainer.addComponents(buildChildElementContainer(category, food));
+            }
         }
         return vtcElementContainer;
     }
