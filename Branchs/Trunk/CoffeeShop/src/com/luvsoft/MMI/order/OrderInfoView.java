@@ -264,6 +264,13 @@ public class OrderInfoView extends AbstractOrderView {
             btnRemove.addClickListener(new ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
+                    if( record.getStatus() != State.CANCELED ) {
+                        totalAmount -= record.getPrice() * record.getQuantity();
+                        paidAmount -= record.getPrice() * record.getQuantity();
+                        textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
+                        lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
+                    }
+
                     // if we remove ADDNEW record, just remove it from this list
                     if(record.getChangeFlag() == ChangedFlag.ADDNEW){
                         orderDetailRecordList.remove(record);
@@ -272,12 +279,6 @@ public class OrderInfoView extends AbstractOrderView {
                     }
                     else{
                         record.setChangeFlag(ChangedFlag.DELETED);
-                        if( record.getStatus() != State.CANCELED ) {
-                            totalAmount -= record.getPrice() * record.getQuantity();
-                            paidAmount -= record.getPrice() * record.getQuantity();
-                            textFieldpaidAmount.setValue(Types.getNumberFormat().format(paidAmount));
-                            lbTotalAmount.setValue(Language.TOTAL_AMOUNT + Types.getNumberFormat().format(totalAmount) + " "+ Language.CURRENCY_SYMBOL);
-                        }
                         record.setStatus(Types.State.CANCELED); // mark it as canceled
                         tbOrderDetails.removeItem(event.getButton().getData());
                         tbOrderDetails.setImmediate(true);
