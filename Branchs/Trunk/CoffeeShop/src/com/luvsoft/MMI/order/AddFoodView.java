@@ -282,6 +282,7 @@ public class AddFoodView extends AbstractOrderView {
                                             // if record is not new, just mark as modified
                                             record.setChangeFlag(ChangedFlag.MODIFIED);
                                         }
+                                        break;
                                     }
 
                                     System.out.println("Merged " + record.getFoodId() + " " + record.getQuantity());
