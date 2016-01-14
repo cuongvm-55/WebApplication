@@ -22,6 +22,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
     public static final String DB_FIELD_NAME_STAFF_NAME_CONFIRM_ORDER_FINISH = "StaffNameConfirmOrderFinish";
     public static final String DB_FIELD_NAME_CREATING_TIME = "CreatingTime";
     public static final String DB_FIELD_NAME_CREATOR_NAME = "CreatorName";
+    public static final String DB_FIELD_NAME_CHECKSUM = "CheckSum";
 
     private String id;
     private List<String> orderDetailIdList; // list of order detail object id
@@ -35,6 +36,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
     private String creatorName; // staff name who create this order
     private String staffNameConfirmPaid;
     private String staffNameConfirmOrderFinish;
+    private int checkSum;
 
     public Order()
     {
@@ -50,6 +52,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         staffNameConfirmPaid = "";
         staffNameConfirmOrderFinish = "";
         creatorName = "";
+        checkSum = 0;
     }
 
     public Order(Order order)
@@ -66,6 +69,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         staffNameConfirmPaid = order.staffNameConfirmPaid;
         staffNameConfirmOrderFinish = order.staffNameConfirmOrderFinish;
         creatorName = order.creatorName;
+        checkSum = order.checkSum;
     }
     
     public Order(BasicDBObject object)
@@ -88,6 +92,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         map.put(DB_FIELD_NAME_CREATOR_NAME, creatorName);
         map.put(DB_FIELD_NAME_PAID_TIME, paidTime);
         map.put(DB_FIELD_NAME_CREATING_TIME, creatingTime);
+        map.put(DB_FIELD_NAME_CHECKSUM, checkSum);
         // Map list
         map.put(DB_FIELD_NAME_ORDER_DETAIL_LIST, Types.formatListToString(orderDetailIdList));
         return map;
@@ -126,6 +131,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         staffNameConfirmOrderFinish = getString(DB_FIELD_NAME_STAFF_NAME_CONFIRM_ORDER_FINISH, dbObject);
         waitingTime = getInt(DB_FIELD_NAME_WAITING_TIME, dbObject);
         creatorName = getString(DB_FIELD_NAME_CREATOR_NAME, dbObject);
+        checkSum = getInt(DB_FIELD_NAME_CHECKSUM, dbObject);
     }
 
     public String getId() {
@@ -224,6 +230,14 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
         this.creatorName = creatorName;
     }
 
+    public int getCheckSum() {
+        return checkSum;
+    }
+
+    public void setCheckSum(int checkSum) {
+        this.checkSum = checkSum;
+    }
+
     @Override
     public String toString() {
         return "Order [id=" + id + ", orderDetailIdList=" + orderDetailIdList
@@ -233,7 +247,7 @@ public class Order extends AbstractEntity implements Comparable<Order>, Serializ
                 + tableId + ", note=" + note + ", creatorName=" + creatorName
                 + ", staffNameConfirmPaid=" + staffNameConfirmPaid
                 + ", staffNameConfirmOrderFinish="
-                + staffNameConfirmOrderFinish + "]";
+                + staffNameConfirmOrderFinish + "checkSum=" + checkSum + "]";
     }
 
     @Override

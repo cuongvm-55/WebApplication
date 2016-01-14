@@ -4,6 +4,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.CoffeeshopUI;
+import com.luvsoft.MMI.components.LuvsoftNotification;
 import com.luvsoft.MMI.order.OrderInfoView.ViewMode;
 import com.luvsoft.MMI.threads.Broadcaster;
 import com.luvsoft.MMI.threads.NewOrderManager;
@@ -19,6 +20,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -101,6 +103,13 @@ public class ChangeTableStateView extends AbstractOrderView implements
             close();
         }
         else if( event.getComponent() == btnConfirm ) {
+            if(!Adapter.checkSum(currentOrder)) {
+                LuvsoftNotification notify = new LuvsoftNotification("<b>"+ "Cảnh Báo" +"</b>",
+                        "<i>" + Language.CANNOT_CHANGE_THIS_ORDER_BECAUSE_IT_CHANGED + "</i>",
+                        Notification.Type.WARNING_MESSAGE);
+                notify.show();
+                return;
+            }
             // Save to db, change the displayed state upon success
             newState = Types.StringToState(optionState.getValue().toString());
             if( newState == State.CANCELED ) {
@@ -131,6 +140,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
                                         Adapter.changeTableState(getCurrentTable().getId(), newState);
                                         NewOrderManager.interruptWaitingOrderThread(currentOrder);
                                         Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+getCurrentTable().getId()+"::"+currentOrder.getId());
+                                        Adapter.setCheckSum(currentOrder);
                                         close();
                                     }
                                 }
@@ -144,6 +154,7 @@ public class ChangeTableStateView extends AbstractOrderView implements
             else {
                 Adapter.changeTableState(getCurrentTable().getId(), newState);
                 Broadcaster.broadcast(CoffeeshopUI.CHANGE_TABLE_STATE+"::"+getCurrentTable().getId());
+                Adapter.setCheckSum(currentOrder);
                 close();
             }
         }

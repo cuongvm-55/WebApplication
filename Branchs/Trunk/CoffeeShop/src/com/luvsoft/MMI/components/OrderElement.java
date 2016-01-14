@@ -178,6 +178,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
                     if( Adapter.changeOrderState(order.getId(), Types.State.CANCELED) ){
                         // Set table status to be EMPTY
                         Adapter.changeTableState(order.getTableId(), Types.State.EMPTY);
+                        Adapter.setCheckSum(order);
                         Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+order.getTableId() + "::" + order.getId());
                     }
                     else{
@@ -195,6 +196,7 @@ public class OrderElement extends VerticalLayout implements ViewInterface {
 
                     // Set table status to be UNPAID
                     Adapter.changeTableState(order.getTableId(), Types.State.UNPAID);
+                    Adapter.setCheckSum(order);
                     Broadcaster.broadcast(CoffeeshopUI.ORDER_COMPLETED_MESSAGE+"::"+order.getTableId() + "::" + order.getId());
                 }
                 // We always interrupt thread when order is finished

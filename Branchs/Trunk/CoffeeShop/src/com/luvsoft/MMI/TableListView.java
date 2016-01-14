@@ -325,6 +325,11 @@ public class TableListView extends VerticalLayout implements ViewInterface {
                 }
 
                 if(currentOrder != null) {
+                    // The table state must be follow the order state
+                    if(table.getState() != currentOrder.getStatus()) {
+                        table.setState(currentOrder.getStatus());
+                        Adapter.updateTable(table.getId(), table);
+                    }
                     table.setWaitingTime(currentOrder.getWaitingTime());
                     coffeeTableElement.setOrder(currentOrder);
                 } else {

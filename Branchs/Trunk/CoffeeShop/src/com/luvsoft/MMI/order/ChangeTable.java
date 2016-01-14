@@ -11,6 +11,7 @@ import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.CoffeeshopUI;
 import com.luvsoft.MMI.ViewInterface;
 import com.luvsoft.MMI.components.CoffeeTableElement;
+import com.luvsoft.MMI.components.LuvsoftNotification;
 import com.luvsoft.MMI.order.OrderDetailRecord.ChangedFlag;
 import com.luvsoft.MMI.threads.Broadcaster;
 import com.luvsoft.MMI.threads.NewOrderManager;
@@ -32,6 +33,7 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -184,6 +186,14 @@ public class ChangeTable extends Window implements ViewInterface{
         btnConfirm.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                if(!Adapter.checkSum(srcOrder)) {
+                    LuvsoftNotification notify = new LuvsoftNotification("<b>"+ "Cảnh Báo" +"</b>",
+                            "<i>" + Language.CANNOT_CHANGE_THIS_ORDER_BECAUSE_IT_CHANGED + "</i>",
+                            Notification.Type.WARNING_MESSAGE);
+                    notify.show();
+                    return;
+                }
+
                 ConfirmDialog.show( getUI(), Language.CONFIRM_CHANGE_TABLE, Language.CONFIRM_CHANGE_TABLE_CONTENT,
                         Language.ASK_FOR_CONFIRM, Language.ASK_FOR_DENIED, new ConfirmDialog.Listener() {
                             public void onClose(ConfirmDialog dialog) {
@@ -252,6 +262,7 @@ public class ChangeTable extends Window implements ViewInterface{
         });
 
         Label foodStatus = new Label();
+        foodStatus.addStyleName(ValoTheme.LABEL_LARGE + " bold TEXT_CENTER");
         //foodStatus.addStyleName( ValoTheme.LABEL_BOLD + " FONT_TAHOMA TEXT_BLUE FONT_OVERSIZE");
         foodStatus.setValue(Types.StateToLanguageString(rc.getOrderDetailRecord().getStatus()));
         if(rc.getOrderDetailRecord().getStatus() == Types.State.CANCELED){
@@ -332,6 +343,8 @@ public class ChangeTable extends Window implements ViewInterface{
                 System.out.println("Des table: " + destOrder.getTableId());
                 Adapter.updateFieldValueOfOrder(destOrder.getId(), Order.DB_FIELD_NAME_TABLE_ID, destTable.getId());
 
+                // We set check sum before broad cast event just to be sure that the order is up to date
+                Adapter.setCheckSum(srcOrder);
                 // Broadcast order change event
                 Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
                         + destTable.getId() + "::" + srcOrder.getId() + "::" + srcOrder.getId());
@@ -354,6 +367,9 @@ public class ChangeTable extends Window implements ViewInterface{
                     Adapter.removeOrder(srcOrder.getId());
                 }
 
+                // We set check sum before broad cast event just to be sure that the order is up to date
+                Adapter.setCheckSum(srcOrder);
+                Adapter.setCheckSum(destOrder);
                 // Broadcast order change event
                 Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
                         + destTable.getId() + "::" + srcOrder.getId() + "::" + destOrder.getId());
@@ -416,6 +432,9 @@ public class ChangeTable extends Window implements ViewInterface{
         NewOrderManager.onOrderStateChange(srcOrder);
         NewOrderManager.onOrderStateChange(destOrder);
 
+        // We set check sum before broad cast event just to be sure that the order is up to date
+        Adapter.setCheckSum(srcOrder);
+        Adapter.setCheckSum(destOrder);
         // Broadcast order change event
         Broadcaster.broadcast(CoffeeshopUI.PERFORM_SWITCH_TABLE + "::" + srcTable.getId() + "::"
                 + destTable.getId() + "::" + srcOrder.getId() + "::" + destOrder.getId());

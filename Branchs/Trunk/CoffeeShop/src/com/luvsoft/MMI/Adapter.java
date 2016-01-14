@@ -69,6 +69,14 @@ public class Adapter {
         return orderDtl;
     }
 
+    public static boolean setCheckSum(Order currentOrder) {
+        return orderCtrl.setCheckSum(currentOrder);
+    }
+
+    public static boolean checkSum(Order currentOrder) {
+        return orderCtrl.checkSum(currentOrder);
+    }
+
     public static Order getOrder(String orderId) {
         Order order = new Order();
         orderCtrl.getOrder(orderId, order);

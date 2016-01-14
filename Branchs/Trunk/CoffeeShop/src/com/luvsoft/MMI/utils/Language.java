@@ -111,6 +111,7 @@ public class Language {
                 HAS_BEEN_CANCELED = " has been canceled";
                 HAS_BEEN_UPDATED = " has been changed";
                 ORDERED = " ordered";
+                CANNOT_CHANGE_THIS_ORDER_BECAUSE_IT_CHANGED = "The order of this table was changed by other waiter. Please close this window and do this action again.";
 
                 DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
                 DATE_TIME_FORMAT_DATE_ONLY = "yyyy/MM/dd";
@@ -224,6 +225,7 @@ public class Language {
                 HAS_BEEN_CANCELED = " đã bị HỦY";
                 HAS_BEEN_UPDATED = " đã thay đổi";
                 ORDERED = " đã đặt món";
+                CANNOT_CHANGE_THIS_ORDER_BECAUSE_IT_CHANGED = "Đặt món của bàn này đã bị thay đổi bởi nhân viên khác. Hãy đóng cửa sổ này và thao tác lại";
 
                 DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
                 DATE_TIME_FORMAT_DATE_ONLY = "dd/MM/yyyy";
@@ -348,6 +350,7 @@ public class Language {
     public static String HAS_BEEN_UPDATED;
     public static String ORDERED;
     public static String ORDER;
+    public static String CANNOT_CHANGE_THIS_ORDER_BECAUSE_IT_CHANGED;
 
     // Date time format
     public static String DATE_TIME_FORMAT;

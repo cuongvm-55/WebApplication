@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 
 import com.luvsoft.MMI.Adapter;
 import com.luvsoft.MMI.CoffeeshopUI;
+import com.luvsoft.MMI.components.LuvsoftNotification;
 import com.luvsoft.MMI.order.OrderDetailRecord.ChangedFlag;
 import com.luvsoft.MMI.threads.Broadcaster;
 import com.luvsoft.MMI.threads.NewOrderManager;
@@ -31,6 +32,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
@@ -490,12 +492,20 @@ public class OrderInfoView extends AbstractOrderView {
         btnConfirmOrder.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                if(!Adapter.checkSum(currentOrder)) {
+                    LuvsoftNotification notify = new LuvsoftNotification("<b>"+ "Cảnh Báo" +"</b>",
+                            "<i>" + Language.CANNOT_CHANGE_THIS_ORDER_BECAUSE_IT_CHANGED + "</i>",
+                            Notification.Type.WARNING_MESSAGE);
+                    notify.show();
+                    return;
+                }
+
                 // Save note
                 if( !currentOrder.getNote().equals(txtNote.getValue()) ) {
                     currentOrder.setNote(txtNote.getValue());
                 }
 
-                // update order details infomation
+                // update order details information
                 if( !saveOrderDetailsData() ){
                     // we didn't change any order detail,
                     // or we might canceled this new order
@@ -503,6 +513,7 @@ public class OrderInfoView extends AbstractOrderView {
                     // we just change the note of existing order
                     if( !previousTextValue.equals(txtNote.getValue()) && !isNewOrder ){
                         Adapter.updateFieldValueOfOrder(currentOrder.getId(), Order.DB_FIELD_NAME_NOTE, currentOrder.getNote());
+                        Adapter.setCheckSum(currentOrder);
                         // Broadcast order change event
                         Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
                                 + getCurrentTable().getId() + "::" + getCurrentOrder().getId());
@@ -544,6 +555,7 @@ public class OrderInfoView extends AbstractOrderView {
                         // set table state to map to current order
                         setTableState();
 
+                        Adapter.setCheckSum(currentOrder);
                         // Broadcast order change event
                         Broadcaster.broadcast(CoffeeshopUI.NEW_ORDER_MESSAGE + "::"
                                 + getCurrentTable().getId() + "::" + getCurrentOrder().getId());
@@ -553,6 +565,7 @@ public class OrderInfoView extends AbstractOrderView {
                     }
                 } else {
                     if (Adapter.updateOrder(currentOrder)) {
+                        Adapter.setCheckSum(currentOrder);
                         // In case add new food, add new waiting time thread if there's no thread exist for this order
                         if( isNewFoodAdded ){
                             boolean isThreadTimeExist = false;
@@ -575,10 +588,12 @@ public class OrderInfoView extends AbstractOrderView {
                         System.out.println("Update Order: " + currentOrder.toString());
                         // we're canceling the order, broadcast the news
                         if( currentOrder.getStatus() == Types.State.CANCELED ){
+                            Adapter.setCheckSum(currentOrder);
                             // Broadcast order cancel event
                             Broadcaster.broadcast(CoffeeshopUI.CANCELED_ORDER+"::"+getCurrentTable().getId()+"::"+currentOrder.getId());
                         }
                         else if( isOrderDetailListChanged || !previousTextValue.equals(txtNote.getValue()) ){
+                            Adapter.setCheckSum(currentOrder);
                             // Broadcast order change event
                             Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
                                     + getCurrentTable().getId() + "::" + getCurrentOrder().getId());
@@ -603,6 +618,14 @@ public class OrderInfoView extends AbstractOrderView {
             @Override
             public void buttonClick(ClickEvent event) {
                 if( currentOrder != null ) {
+                    if(!Adapter.checkSum(currentOrder)) {
+                        LuvsoftNotification notify = new LuvsoftNotification("<b>"+ "Cảnh Báo" +"</b>",
+                                "<i>" + Language.CANNOT_CHANGE_THIS_ORDER_BECAUSE_IT_CHANGED + "</i>",
+                                Notification.Type.WARNING_MESSAGE);
+                        notify.show();
+                        return;
+                    }
+
                     // Save note
                     if( !currentOrder.getNote().equals(txtNote.getValue()) ) {
                         currentOrder.setNote(txtNote.getValue());
@@ -638,6 +661,7 @@ public class OrderInfoView extends AbstractOrderView {
                         Adapter.changeTableState(currentOrder.getTableId(),
                                 Types.State.PAID);
                     }
+                    Adapter.setCheckSum(currentOrder);
                     Broadcaster.broadcast(CoffeeshopUI.ORDER_WAS_PAID+"::"+getCurrentTable().getId()+"::"+currentOrder.getId());
                     close();// close the window
                 }

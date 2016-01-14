@@ -84,6 +84,28 @@ public abstract class AbstractFacade {
         }
     }
 
+    /**
+     * This function is used to find one object by query
+     * @param query
+     * @param ret
+     * @return
+     */
+    public <T extends AbstractEntity> boolean findOneByQuery(BasicDBObject query, T ret){
+        DBCollection collection = getDBCollection();
+        try {
+            BasicDBObject bdbObject = (BasicDBObject) collection.findOne(query);
+            if(bdbObject != null) {
+                ret.setObject(bdbObject);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public <T extends AbstractEntity> boolean save(T entity) {
         DBCollection collection = getDBCollection();
         HashMap<String, Object> map = entity.toHashMap();
