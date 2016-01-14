@@ -565,7 +565,6 @@ public class OrderInfoView extends AbstractOrderView {
                     }
                 } else {
                     if (Adapter.updateOrder(currentOrder)) {
-                        Adapter.setCheckSum(currentOrder);
                         // In case add new food, add new waiting time thread if there's no thread exist for this order
                         if( isNewFoodAdded ){
                             boolean isThreadTimeExist = false;
