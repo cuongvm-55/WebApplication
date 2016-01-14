@@ -123,6 +123,9 @@ public class OrderInfoView extends AbstractOrderView {
             if( orderInfo != null ) {
                 orderDetailRecordList = orderInfo.getOrderDetailRecordList();
             }
+            if(currentOrder.getStatus() == State.UNPAID) {
+                currentOrder.setWaitingTime(0);
+            }
             previousTextValue = currentOrder.getNote();
             isNewOrder = false;
         }
@@ -565,22 +568,6 @@ public class OrderInfoView extends AbstractOrderView {
                     }
                 } else {
                     if (Adapter.updateOrder(currentOrder)) {
-                        // In case add new food, add new waiting time thread if there's no thread exist for this order
-                        if( isNewFoodAdded ){
-                            boolean isThreadTimeExist = false;
-                            for(NewOrderManager orderMgr : NewOrderManager.listWaitingOrderThreads){
-                                if( orderMgr.getCurrentOrder().getId().equals(currentOrder.getId()) ){
-                                    isThreadTimeExist = true;
-                                    break;
-                                }
-                            }
-                            if( !isThreadTimeExist ){
-                                NewOrderManager waitingTimeThread = new NewOrderManager(
-                                        currentOrder);
-                                waitingTimeThread.start();
-                            }
-                        }
-
                         // set table state to map to current order
                         setTableState();
 
@@ -597,7 +584,7 @@ public class OrderInfoView extends AbstractOrderView {
                             Broadcaster.broadcast(CoffeeshopUI.ORDER_UPDATED_MESSAGE + "::"
                                     + getCurrentTable().getId() + "::" + getCurrentOrder().getId());
                         }
-                        
+
                         // Update waiting thread
                         NewOrderManager.onOrderStateChange(currentOrder);
                     } else {

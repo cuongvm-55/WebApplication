@@ -24,7 +24,7 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
     public static OrderListView orderListView;
 
     // data
-    private List<Order> orderList; // Current order list
+    private List<Order> orderList = new ArrayList<Order>(); // Current order list
     public List<OrderElement> orderListElements = new ArrayList<OrderElement>();
 
     public OrderListView() {
@@ -49,6 +49,11 @@ public class OrderListView extends VerticalLayout implements ViewInterface{
     @Override
     public void reloadView() {
         createView();
+    }
+
+    public void clearData() {
+        orderListElements.clear();
+        orderList.clear();
     }
 
     /**

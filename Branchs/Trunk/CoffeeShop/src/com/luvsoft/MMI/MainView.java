@@ -193,6 +193,7 @@ public class MainView extends ValoMenuLayout implements View, ViewInterface {
                 isViewChangedByClickingButton = false;
             } else if(event.getParameters().equals(CoffeeshopUI.ORDER_LIST_VIEW)) {
                 getContentContainer().removeAllComponents();
+                orderListView.clearData();
                 orderListView.createView();
                 getContentContainer().addComponent(orderListView);
                 menu.removeStyleName("valo-menu-visible");
